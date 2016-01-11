@@ -1,1 +1,1 @@
-This folder is EntryPoint
+This folder is SNS
