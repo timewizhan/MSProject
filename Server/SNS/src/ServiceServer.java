@@ -71,35 +71,37 @@ public class ServiceServer implements Runnable {
 				
 				// check the type of the msg
 				// and do the proper operation according to the type
-				int type = (int) msg.get("Type");				
+				int type = (int) msg.get("Type");
+				String res = null;
 				switch (type) {
 					case Type.TWEET:
-						writeStatus(msg, socket);
+						res = writeStatus(msg, socket);
 						break;
 					case Type.READ:
-						readStatus(msg, socket);
+						res = readStatus(msg, socket);
 						break;
 					case Type.REPLY:
-						writeReply(msg, socket);
+						res = writeReply(msg, socket);
 						break;
 					case Type.RETWEET:
-						writeRetweet(msg, socket);
+						res= writeRetweet(msg, socket);
 						break;
 					case Type.LIKE:
 						break;													
 				}
 											
-				// send the response with "Success"
-			    JSONObject resp = new JSONObject();
-			    resp.put("RESPONSE", "Success");		
+				// send the response with proper message
 				
+				JSONObject resp = new JSONObject();
+				resp.put("RESPONSE", res);	
+								
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
 						socket.getOutputStream(), "UTF-8"));
 				out.write(resp.toString());
+				out.close();
 				
 				// close
-				input.close();				
-				out.close(); 				
+				input.close();				 				
 				socket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -109,22 +111,25 @@ public class ServiceServer implements Runnable {
 		}
 	}
 
-	private void writeStatus(JSONObject msg, Socket socket) {
+	private String writeStatus(JSONObject msg, Socket socket) {
 		// write the status
 		
+		return "";		
 	}
 
-	private void readStatus(JSONObject msg, Socket socket) {
+	private String readStatus(JSONObject msg, Socket socket) {
 		
-		
+		return "";
 	}
 
-	private void writeReply(JSONObject msg, Socket socket) {
+	private String writeReply(JSONObject msg, Socket socket) {
 				
+		return "";
 	}
 	
-	private void writeRetweet(JSONObject msg, Socket socket) {
+	private String writeRetweet(JSONObject msg, Socket socket) {
 				
+		return "";
 	}
 
 	private String getTime() {
