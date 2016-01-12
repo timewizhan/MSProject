@@ -1,6 +1,7 @@
 import Timer
 import Structure
 import JsonTools
+import log
 
 class Scheduler:
 	def __init__(self):
@@ -21,11 +22,13 @@ class Scheduler:
 
 				nextJobToWork = self.jobHashMap.dequeJobValueByKey(currentHour)
 				if nextJobToWork == 0:
+					Log.debug("Wait for 60 seconds")
 					time.sleep(60)
 					continue
 
 				self.startToCommunicateWithServer()
 
+				Log.debug()
 				self.saveResultToDataBase()
 
 	def startToCommunicateWithServer(self):
