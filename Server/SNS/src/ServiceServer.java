@@ -75,16 +75,16 @@ public class ServiceServer implements Runnable {
 				String res = null;
 				switch (type) {
 					case Type.TWEET:
-						res = writeStatus(msg, socket);
+						res = writeStatus(msg);
 						break;
 					case Type.READ:
-						res = readStatus(msg, socket);
+						res = readStatus(msg);
 						break;
 					case Type.REPLY:
-						res = writeReply(msg, socket);
+						res = writeReply(msg);
 						break;
 					case Type.RETWEET:
-						res= writeRetweet(msg, socket);
+						res= writeRetweet(msg);
 						break;
 					case Type.LIKE:
 						break;													
@@ -111,23 +111,23 @@ public class ServiceServer implements Runnable {
 		}
 	}
 
-	private String writeStatus(JSONObject msg, Socket socket) {
+	private String writeStatus(JSONObject msg) {
 		// write the status
 		
 		return "";		
 	}
 
-	private String readStatus(JSONObject msg, Socket socket) {
+	private String readStatus(JSONObject msg) {
 		
 		return "";
 	}
 
-	private String writeReply(JSONObject msg, Socket socket) {
+	private String writeReply(JSONObject msg) {
 				
 		return "";
 	}
 	
-	private String writeRetweet(JSONObject msg, Socket socket) {
+	private String writeRetweet(JSONObject msg) {
 				
 		return "";
 	}
