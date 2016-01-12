@@ -1,5 +1,6 @@
 import Timer
 import Structure
+import JsonTools
 
 class Scheduler:
 	def __init__(self):
@@ -23,16 +24,36 @@ class Scheduler:
 					time.sleep(60)
 					continue
 
-				'''
-					To do.
-					Apply to network communication
-				'''
+				self.startToCommunicateWithServer()
 
-				'''
-					To do.
-					Save data to Database
-				'''
+				self.saveResultToDataBase()
 
+	def startToCommunicateWithServer(self):
+		dataToSend = self.makeJsonFromJob(nextJobToWork)
+		self.networkingWithBroker(dataToSend)
 
+		dataToSend = self.makeJsonFromJob(nextJobToWork)
+		self.networkingWithEntryPoint(dataToSend)
+
+	def saveResultToDataBase(self):
+		'''
+			To do.
+			Apply to database
+		'''
+		pass
+
+	def makeJsonFromJob(self, jobToWork):
+		jsonGenerator = JsonGenerator()
+		jsonGenerator.appendElement("type", jobToWork.getJonType())
+
+		return jsonGenerator.toString()
+
+	def networkingWithEntryPoint(self, dataToSend):
+		epServer = EntryPoint()
+		epServer.startNetworkingWithData()
+
+	def networkingWithBroker(self, dataToSend):
+		brServer = Broker()
+		brServer.startNetworkingWithData()
 
 		

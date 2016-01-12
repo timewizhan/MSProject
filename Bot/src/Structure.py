@@ -10,6 +10,9 @@ class Job:
 	def setJobType(self, jobType):
 		self.jobType = jobType		
 
+	def getJonType(self):
+		return self.jobType
+
 class JobHashMap:
 	TOTAL_TIME_COUNT = 24
 
