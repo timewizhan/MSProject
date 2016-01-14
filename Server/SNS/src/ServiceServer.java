@@ -95,12 +95,20 @@ public class ServiceServer implements Runnable {
 						break;													
 				}
 											
-				// send the response with proper message				
+				// prepare the response message
 				JSONObject resp = new JSONObject();
-				resp.put("RESPONSE", res);	
-								
+				resp.put("RESPONSE", res);					
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-						socket.getOutputStream(), "UTF-8"));
+						socket.getOutputStream(), "UTF-8"));				
+				
+				// insert the delay to emulate geo-distributed clouds 
+				try {
+					Thread.sleep(calRTT());
+				} catch(InterruptedException e) {
+					System.out.println("InterruptedException: " + e.getMessage());
+				}
+				
+				// send the response message
 				out.write(resp.toString());
 				out.close();
 				
