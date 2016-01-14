@@ -5,6 +5,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -90,8 +95,7 @@ public class ServiceServer implements Runnable {
 						break;													
 				}
 											
-				// send the response with proper message
-				
+				// send the response with proper message				
 				JSONObject resp = new JSONObject();
 				resp.put("RESPONSE", res);	
 								
@@ -104,15 +108,36 @@ public class ServiceServer implements Runnable {
 				input.close();				 				
 				socket.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("IOException: " + e.getMessage());
 			} catch (ParseException e) {
-				e.printStackTrace();
-			} 
+				System.out.println("ParseException: " + e.getMessage());
+			} finally {
+				System.out.println(getTime() + " has handled the request.");
+			}
 		}
 	}
 
 	private String writeStatus(JSONObject msg) {
 		// write the status
+		try {
+			Connection conn = DriverManager.getConnection("", "", "");			
+			System.out.println(getTime() + "connected to MySQL.");
+			
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("");
+			
+			while(rs.next()) {
+				rs.getString(1);				
+			}
+			
+			stmt.close();
+			rs.close();
+			conn.close();			
+		} catch (SQLException e) {
+			System.out.println("SQLExecption: " + e.getMessage());
+		} finally {
+			System.out.println("MySQL has handled the request.");
+		}
 		
 		return "";		
 	}
