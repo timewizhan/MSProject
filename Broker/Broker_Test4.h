@@ -32,7 +32,8 @@ struct add_num{
 
 class Broker_Test4{
 
-	int optval;                        				//소켓옵션의 설정값
+	//SOCKET//////////////////////////////////////////////////////////////////////////////////////////////////////
+	int optval;                        					//소켓옵션의 설정값
 	int ssock,csock;                       				//소켓
 	struct sockaddr_in server_addr, client_addr;        //IP와 Port값(즉 주소값)
 
@@ -46,6 +47,9 @@ class Broker_Test4{
 
 	char greet[1];
 	char no_greet[1];
+
+	//DATABASE//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 public:
 	Broker_Test4();

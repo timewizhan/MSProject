@@ -7,7 +7,7 @@
 
 #include "Common.h"
 #include "EP_Test4.h"
-
+#include "mysql.h"
 
 EP_Test4::EP_Test4(){}
 EP_Test4::~EP_Test4(){}
@@ -19,6 +19,7 @@ void EP_Test4::initEntryPoint()
 	entrySockStart();
 
 	//DB
+	initDB();
 
 	//etc..
 
@@ -119,4 +120,77 @@ void EP_Test4::sendMessage()
 		}
 	}
 	close(ssock);
+}
+
+int EP_Test4::initDB(){
+
+	mysql_init(&conn);
+
+	connection = mysql_real_connect(&conn, DB_HOST,
+									DB_USER, DB_PASS,
+									DB_NAME, 3306,
+									(char *)NULL, 0);
+
+	if (connection == NULL)
+	{
+		fprintf(stderr, "Mysql connection error : %s", mysql_error(&conn));
+		return 1;
+	}
+
+	return 0;
+}
+
+
+int EP_Test4::extractData()
+{
+
+		query_stat = mysql_query(connection, "select * from address");
+	    if (query_stat != 0)
+	    {
+	        fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	        return 1;
+	    }
+
+	    sql_result = mysql_store_result(connection);
+
+	    printf("%+11s   %-30s   %-10s", "이름", "주소", "전화번호");
+	    while ( (sql_row = mysql_fetch_row(sql_result)) != NULL )
+	    {
+	        printf("%+11s   %-30s   %-10s", sql_row[0], sql_row[1], sql_row[2]);
+	    }
+
+	    mysql_free_result(sql_result);
+
+	    printf("이름 :");
+	    fgets(_name, 12, stdin);
+	    CHOP(_name);
+
+	    printf("주소 :");
+	    fgets(address, 80, stdin);
+	    CHOP(address);
+
+	    printf("전화 :");
+	    fgets(tel, 12, stdin);
+	    CHOP(tel);
+
+	    sprintf(query, "insert into address values "
+	                   "('%s', '%s', '%s')",
+	                   _name, address, tel);
+
+	    query_stat = mysql_query(connection, query);
+	    if (query_stat != 0)
+	    {
+	        fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	        return 1;
+	    }
+
+//	    mysql_close(connection); <-- 이거 적절한 곳에 넣어줘야 함
+
+
+	return 0;
+}
+int EP_Test4::storeData()
+{
+
+	return 0;
 }
