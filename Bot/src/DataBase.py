@@ -1,5 +1,5 @@
 import psycopg2
-import Log
+from Log import *
 
 class PyDatabase:
     def __init__(self):

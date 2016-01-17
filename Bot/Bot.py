@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
 	currentPath = getCurrentDir()
 	setEnvPath(currentPath)
-	from Log import Log
+	from Log import *
 	from Scheduler import Scheduler
 
 	# sample id

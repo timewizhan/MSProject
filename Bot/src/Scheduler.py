@@ -1,8 +1,10 @@
 from Structure import JobHashMap
 from Timer import *
 from JsonTools import *
-from Log import *
 from Pattern import *
+import time
+
+import pdb
 
 class Scheduler:
 	ONE_MINUTE = 60
@@ -12,6 +14,7 @@ class Scheduler:
 		self.patternDelegator = PatternDelegator(userID)
 
 	def start(self):
+		from Log import *
 		Log.debug("Start to scheduler")
 
 		timer = Timer()
@@ -21,9 +24,10 @@ class Scheduler:
 
 		continued =	firstStep = True
 		lastHourClock = False
-
+		
 		while continued:
 			try:
+				pdb.set_trace()
 				self.checkNextWork(firstStep, lastHourClock)
 
 				while timer.compareHourWithNowHour():

@@ -1,24 +1,27 @@
-import DataBase
+from DataBase import *
+from Structure import *
 import random
+import pdb
 
 class AbstractPattern:
 	TOTAL_TIME_COUNT = 24
 	INIT_COUNT = 0
 
-	def __init__(self):
+	def initialize(self):
 		self.dataBase = PyDatabase()
 		self.dataBase.connectToDB()
 
-		def startToMakePattern(self):
-			pass
+	def startToMakePattern(self):
+		pass
 		
 class TimePattern(AbstractPattern):
 	def __init__(self, userID):
+		self.initialize()
 		self.userID = userID
 
 		self.jobCountByTimeList = []
-		for i in range(0, TOTAL_TIME_COUNT):
-			self.jobCountByTimeList.append(INIT_COUNT)
+		for i in range(0, self.TOTAL_TIME_COUNT):
+			self.jobCountByTimeList.append(self.INIT_COUNT)
 
 	def startToMakePattern(self):
 			return self.startToMakeTimePattern()
@@ -27,12 +30,12 @@ class TimePattern(AbstractPattern):
 		writtenTimeList = self.getAllDataFromDataBase()
 		if len(writtenTimeList) == 0:
 			return
-
+		
 		self.generalizeAllDataAsOneDay(writtenTimeList)
 		return self.getWorkCountByEachHour()
 
 	def getAllDataFromDataBase(self):
-		sql = "SELECT \"TweetTime\" FROM \"UserProperty\" WHERE userid=" + self.userID
+		sql = "SELECT \"TweetTime\" FROM \"UserProperty\" WHERE \"UserName\"=\'" + self.userID +"\'"
 		return self.dataBase.querySQL(sql)
 
 	def generalizeAllDataAsOneDay(self, writtenTimeList):
@@ -41,13 +44,13 @@ class TimePattern(AbstractPattern):
 			dateTimeValue = writtenTimeList[i][0]
 
 			hourValue = dateTimeValue.hour
-			if not checkProperHourValue(hourValue):
+			if not self.checkProperHourValue(hourValue):
 				continue
 
 			self.inputValueByHour(hourValue)
 
 	def checkProperHourValue(self, hourValue):
-		if hourValue >= TOTAL_TIME_COUNT:
+		if hourValue >= self.TOTAL_TIME_COUNT:
 			return False
 		return True
 
@@ -56,12 +59,12 @@ class TimePattern(AbstractPattern):
 
 	def getWorkCountByEachHour(self):
 		totalWrittenCount = self.getTotalWrittenCountInList()
-
+		
 		countlistToWorkInOneDay = []
-		for selectedTime in range(0, TOTAL_TIME_COUNT):
-			writtenCount 	= self.getWrittenCountBySelectedTime(selectedTime)
+		for selectedTime in range(0, self.TOTAL_TIME_COUNT):
+			writtenCount 	= self.getWrittenCountBySelectedTime(totalWrittenCount, selectedTime)
 			randomCount 	= self.getWrittenValueByRandom(writtenCount)
-			finalCount 		= self.getWrittenValueByRatio(randomCount)
+			finalCount 		= self.getWrittenValueByRatio(totalWrittenCount, selectedTime, randomCount)
 
 			countlistToWorkInOneDay.append(finalCount)
 
@@ -69,7 +72,7 @@ class TimePattern(AbstractPattern):
 
 	def getTotalWrittenCountInList(self):
 		totalValue = 0
-		for i in range(0, TOTAL_TIME_COUNT):	
+		for i in range(0, self.TOTAL_TIME_COUNT):	
 			totalValue += self.jobCountByTimeList[i]
 
 		return totalValue
@@ -77,7 +80,7 @@ class TimePattern(AbstractPattern):
 	def getWrittenCountBySelectedTime(self, totalWrittenCount, selectedTime):
 		TOTAL_MINUTE_COUNT = 60
 
-		selectedTimeCount = self.jobCountByTimeList(selectedTime)
+		selectedTimeCount = self.jobCountByTimeList[selectedTime]
 		firstValue = (selectedTimeCount * TOTAL_MINUTE_COUNT) / totalWrittenCount
 		return int(firstValue)
 
@@ -90,7 +93,7 @@ class TimePattern(AbstractPattern):
 	def getWrittenValueByRatio(self, totalWrittenCount, selectedTime, countValue):
 		selectedTimeCount = self.jobCountByTimeList[selectedTime]
 		selectedTimeRatio = (selectedTimeCount * 100) / totalWrittenCount
-		return round(selectedTimeRatio)
+		return int(round(selectedTimeRatio))
 
 
 class BehaviorPattern(AbstractPattern):
@@ -106,6 +109,7 @@ class BehaviorPattern(AbstractPattern):
 	MSG_NOTHING		= 0
 
 	def __init__(self, userID):
+		self.initialize()
 		self.userID = userID
 
 	def startToMakeBehaviorPattern(self, countlistToWorkInOneDay):
@@ -117,7 +121,7 @@ class BehaviorPattern(AbstractPattern):
 	def decideBehaviorByEachHour(self, countlistToWorkInOneDay):
 		workListInOneDay = []
 
-		for selectedHour in range(1, TOTAL_TIME_COUNT):
+		for selectedHour in range(1, self.TOTAL_TIME_COUNT):
 			countToWork = countlistToWorkInOneDay[selectedHour]
 
 			workListInHour = self.decideWorkByBehaviorCount(countToWork)
@@ -139,16 +143,16 @@ class BehaviorPattern(AbstractPattern):
 			jobToWork.append(forRWType)
 
 			nameToWork = ""
-			if forType == WORK_FOR_YOU:
-				nameToWork = selectFriendInRatioList(friendListByRatio)
+			if forType == self.WORK_FOR_YOU:
+				nameToWork = self.selectFriendInRatioList(friendListByRatio)
 			else:
 				jobToWork.append(nameToWork)
 
-			if forRWType == WRITE_TYPE:
+			if forRWType == self.WRITE_TYPE:
 				writeType = self.selectAmongWriteType()
 				jobToWork.append(writeType)				
 			else:
-				jobToWork.append(MSG_NOTHING)
+				jobToWork.append(self.MSG_NOTHING)
 
 			jobToWorkInHour.append(jobToWork)
 
@@ -162,7 +166,7 @@ class BehaviorPattern(AbstractPattern):
 			return
 
 		DEFAULT_RATIO = 12
-		ratioValue = round((lengthOfFriendList * 12) / 100)
+		ratioValue = int(round((lengthOfFriendList * 12) / 100))
 		return self.selectFriendByRandom(friendList, ratioValue)
 
 	def selectFriendByRandom(self, friendList, ratioValue):
@@ -178,7 +182,7 @@ class BehaviorPattern(AbstractPattern):
 		return selectedFriendList
 
 	def getAllDataFromDataBase(self):
-		sql = "SELECT \"DestinationName\" FROM \"UserLink\" WHERE SourceName=" + self.userID
+		sql = "SELECT \"DestinationName\" FROM \"UserLink\" WHERE \"SourceName\"=\'" + self.userID +"\'"
 		return self.dataBase.querySQL(sql)
 
 	def selectFriendInRatioList(self, friendListByRatio):
@@ -190,26 +194,26 @@ class BehaviorPattern(AbstractPattern):
 		FOR_ME = 45
 		randomValue = random.randrange(1, 100)
 		if randomValue <= FOR_ME:
-			return WORK_FOR_ME
+			return self.WORK_FOR_ME
 		else:
-			return WORK_FOR_YOU
+			return self.WORK_FOR_YOU
 
 	def selectBetweenReadAndWrite(self):
 		FOR_READ = 70
 		randomValue = random.randrange(1, 100)
 		if randomValue <= FOR_READ:
-			return READ_TYPE
+			return self.READ_TYPE
 		else:
-			return WRITE_TYPE
+			return self.WRITE_TYPE
 
 	def selectAmongWriteType(self):
 		randomValue = random.randrange(1, 100)
 		if randomValue <= 70:
-			return MSG_WRITE
+			return self.MSG_WRITE
 		elif randomValue <= 90:
-			return MSG_REPLY
+			return self.MSG_REPLY
 		else:
-			return MSG_LIKE
+			return self.MSG_LIKE
 
 class LocationPattern(AbstractPattern):
 	def __init__(self):

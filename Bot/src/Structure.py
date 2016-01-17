@@ -51,7 +51,7 @@ class JobHashMap:
 		if not self.checkMapKey(mapKey):
 			return 0
 
-		selectedTimeList = self.oneDayTimeListPerOneHour(mapKey)
+		selectedTimeList = self.oneDayTimeListPerOneHour[mapKey]
 		if self.checkLengthOfTimeList(selectedTimeList) < 1:
 			return 0
 
