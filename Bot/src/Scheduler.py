@@ -2,33 +2,40 @@ import Timer
 import Structure
 import JsonTools
 import log
+import Pattern
 
 class Scheduler:
-	def __init__(self):
+	def __init__(self, userID):
 		self.jobHashMap = JobHashMap()
+		self.patternDelegator = PatternDelegator(userID)
 
 	def start(self):
+		Log.debug("Start to scheduler")
+
 		timer = Timer()
 		timer.setCurrentDateAndTime()
 
+		Log.debug("Start to operate bot")
+
 		while timer.compareDayWithNowDay():
-			'''
-				To do.
-				Apply to pattern algorithm
-			'''
+			Log.debug("Start to make patterns to operate bot")
+			self.patternDelegator.startToGetPattern(self.jobHashMap)
+	
 
 			while timer.compareHourWithNowHour():
 				currentHour = timer.getCurrentHour()
 
+				Log.debug("Start to deque for next work")
 				nextJobToWork = self.jobHashMap.dequeJobValueByKey(currentHour)
 				if nextJobToWork == 0:
 					Log.debug("Wait for 60 seconds")
 					time.sleep(60)
 					continue
 
+				Log.debug("Start to communicate with servers")
 				self.startToCommunicateWithServer()
 
-				Log.debug()
+				Log.debug("Start to save results")
 				self.saveResultToDataBase()
 
 	def startToCommunicateWithServer(self):

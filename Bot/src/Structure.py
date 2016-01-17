@@ -1,17 +1,31 @@
 
-E_JOB_TYPE_READ		= 0
-E_JOB_TYPE_WRITE	= 1
-E_JOB_TYPE_UNKNOWN	= -1
-
 class Job:
 	def __init__(self):
-		self.jobType = E_JOB_TYPE_UNKNOWN
+		pass
 
-	def setJobType(self, jobType):
-		self.jobType = jobType		
+	def setWhoType(self, whoType):
+		self.whoType = whoType
 
-	def getJonType(self):
-		return self.jobType
+	def getWhoType(self):
+		return self.whoType
+
+	def setRWType(self, rwType):
+		self.rwType = rwType
+
+	def getRWType(self):
+		return self.rwType
+
+	def setWhoName(self, whoName):
+		self.whoName = whoName
+
+	def getWhoName(self):
+		return self.whoName
+
+	def setWriteType(self, writeType):
+		self.writeType = writeType
+
+	def getWriteType(self):
+		return self.writeType
 
 class JobHashMap:
 	TOTAL_TIME_COUNT = 24
