@@ -74,3 +74,6 @@ class Timer:
 
 	def getCurrentHour(self):
 		return self.botTime.getHour()
+
+	def getCurrentDay(self):
+		return self.botDate.getDay()

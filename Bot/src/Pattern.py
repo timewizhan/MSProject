@@ -41,7 +41,7 @@ class TimePattern(AbstractPattern):
 			dateTimeValue = writtenTimeList[i][0]
 
 			hourValue = dateTimeValue.hour
-			if !checkProperHourValue(hourValue):
+			if not checkProperHourValue(hourValue):
 				continue
 
 			self.inputValueByHour(hourValue)

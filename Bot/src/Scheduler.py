@@ -1,10 +1,12 @@
-import Timer
-import Structure
-import JsonTools
-import log
-import Pattern
+from Structure import JobHashMap
+from Timer import *
+from JsonTools import *
+from Log import *
+from Pattern import *
 
 class Scheduler:
+	ONE_MINUTE = 60
+
 	def __init__(self, userID):
 		self.jobHashMap = JobHashMap()
 		self.patternDelegator = PatternDelegator(userID)
@@ -17,26 +19,50 @@ class Scheduler:
 
 		Log.debug("Start to operate bot")
 
-		while timer.compareDayWithNowDay():
-			Log.debug("Start to make patterns to operate bot")
+		continued =	firstStep = True
+		lastHourClock = False
+
+		while continued:
+			try:
+				self.checkNextWork(firstStep, lastHourClock)
+
+				while timer.compareHourWithNowHour():
+					currentHour = timer.getCurrentHour()
+					if currentHour == 23:
+						lastHourClock = True
+
+					Log.debug("Start to deque for next work")
+					nextJobToWork = self.jobHashMap.dequeJobValueByKey(currentHour)
+					if nextJobToWork == 0:
+						Log.debug("Wait for 60 seconds")
+						time.sleep(self.ONE_MINUTE)
+						continue
+
+					Log.debug("Start to communicate with servers")
+					self.startToCommunicateWithServer()
+
+					Log.debug("Start to save results")
+					self.saveResultToDataBase()
+
+				Log.debug("Next Hour")
+			except Exception as e:
+				continued = False
+
+				Log.error("There is error in scheduler")
+			
+	def checkNextWork(self, firstStep, lastHourClock):
+		if firstStep == True:
+			firstStep = False
+
 			self.patternDelegator.startToGetPattern(self.jobHashMap)
-	
 
-			while timer.compareHourWithNowHour():
-				currentHour = timer.getCurrentHour()
+		elif lastHourClock == True and timer.compareDayWithNowDay() == False:
+			lastHourClock = False
+			timer.setCurrentDateAndTime()
 
-				Log.debug("Start to deque for next work")
-				nextJobToWork = self.jobHashMap.dequeJobValueByKey(currentHour)
-				if nextJobToWork == 0:
-					Log.debug("Wait for 60 seconds")
-					time.sleep(60)
-					continue
-
-				Log.debug("Start to communicate with servers")
-				self.startToCommunicateWithServer()
-
-				Log.debug("Start to save results")
-				self.saveResultToDataBase()
+			self.patternDelegator.startToGetPattern(self.jobHashMap)
+		elif timer.compareDayWithNowDay() == True:
+			timer.setCurrentDateAndTime()
 
 	def startToCommunicateWithServer(self):
 		dataToSend = self.makeJsonFromJob(nextJobToWork)

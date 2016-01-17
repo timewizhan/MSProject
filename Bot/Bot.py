@@ -1,6 +1,12 @@
-import sys
-import Log
-import Scheduler
+import sys, os
+import pdb
+
+def getCurrentDir():
+	return os.getcwd()
+
+def setEnvPath(path):
+	path += "\\src"
+	sys.path.append(path)
 
 if __name__ == "__main__":
 	'''
@@ -8,11 +14,13 @@ if __name__ == "__main__":
 		extract user name to operate bot
 	'''
 
-	if not sys.argv[2]:
-		Log.error("Invalid argument")
-		sys.exit(1)
+	currentPath = getCurrentDir()
+	setEnvPath(currentPath)
+	from Log import Log
+	from Scheduler import Scheduler
 
-	userID = sys.argv[2]
+	# sample id
+	userID = "gdenny517"
 
 	Log.debug("=============================================")
 	Log.debug("================= Start Bot =================")

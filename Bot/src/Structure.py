@@ -34,21 +34,21 @@ class JobHashMap:
 		self.oneDayTimeListPerOneHour = []
 		timeListPerOneHour = []
 
-		for i in range(0, TOTAL_TIME_COUNT):
-			oneDayTimeListPerOneHour.apppend(timeListPerOneHour)
+		for i in range(0, self.TOTAL_TIME_COUNT):
+			self.oneDayTimeListPerOneHour.append(timeListPerOneHour)
 
 	def insertJobValueByKey(self, jobValue, mapKey):
-		if !(self.checkLengthOfDayTimeList()):
+		if not self.checkLengthOfDayTimeList():
 			return 0
 
-		if !(self.checkMapKey(mapKey)):
+		if not self.checkMapKey(mapKey):
 			return 0
 
-		self.oneDayTimeListPerOneHour[mapKey].apppend(jobValue)
+		self.oneDayTimeListPerOneHour[mapKey].append(jobValue)
 		return 1
 
 	def dequeJobValueByKey(self, mapKey):
-		if !(self.checkMapKey(mapKey)):
+		if not self.checkMapKey(mapKey):
 			return 0
 
 		selectedTimeList = self.oneDayTimeListPerOneHour(mapKey)
