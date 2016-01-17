@@ -48,6 +48,18 @@ class PyDatabase:
     
             Log.error("%s" % e)
 
+    def updateSQL(self, sql):
+        try:
+            cur = self.connection.cursor()
+            cur.execute(sql)                
+            self.connection.commit()
+
+        except psycopg2.DatabaseError, e:
+            if self.connection:
+                self.connection.rollback()
+    
+            Log.error("%s" % e)
+
    
 
     

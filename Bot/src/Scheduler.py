@@ -2,6 +2,7 @@ from Structure import JobHashMap
 from Timer import *
 from JsonTools import *
 from Pattern import *
+from DataBase import *
 import time
 
 import pdb
@@ -76,11 +77,12 @@ class Scheduler:
 		self.networkingWithEntryPoint(dataToSend)
 
 	def saveResultToDataBase(self):
-		'''
-			To do.
-			Apply to database
-		'''
-		pass
+		self.dataBase = PyDatabase()
+		self.dataBase.connectToDB()
+
+		sql = ""
+		self.dataBase.updateSQL(sql)
+		self.dataBase.disconnectFromDB()
 
 	def makeJsonFromJob(self, jobToWork):
 		jsonGenerator = JsonGenerator()
