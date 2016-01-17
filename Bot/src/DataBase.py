@@ -1,4 +1,5 @@
 import psycopg2
+import Log
 
 class PyDatabase:
     def __init__(self):
@@ -8,29 +9,45 @@ class PyDatabase:
         try:
             self.connection = psycopg2.connect("user='postgres' password='xeros' dbname='postgres' hostaddr='165.132.120.152' port=5432'")   
             if self.connection:
-                print "[Info] DB connection is initialized"
+                Log.debug("DB connection is initialized")
+
         except psycopg2.DatabaseError, e:
             if self.connection:
                 self.connection.rollback()
     
-            print '[Error] %s' % e
-            sys.exit(1)
+            Log.error("%s" % e)
 
     def disconnectFromDB(self):
         if self.connection:
             self.connection.close()
 
     def querySQL(self, sql):
-
         try:
             cur = self.connection.cursor()
             cur.execute(sql)
 
-            return cur.fetchall()
+            rows = cur.fetchall()
+            self.connection.commit()
+
+            return rows
         except psycopg2.DatabaseError, e:
             if self.connection:
                 self.connection.rollback()
     
-            print '[Error] %s' % e    
+            Log.error("%s" % e)
+
+    def insertSQL(self, sql):
+        try:
+            cur = self.connection.cursor()
+            cur.execute(sql)                
+            self.connection.commit()
+
+        except psycopg2.DatabaseError, e:
+            if self.connection:
+                self.connection.rollback()
+    
+            Log.error("%s" % e)
+
+   
 
     
