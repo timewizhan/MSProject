@@ -28,7 +28,6 @@ class Scheduler:
 		
 		while continued:
 			try:
-				pdb.set_trace()
 				self.checkNextWork(firstStep, lastHourClock)
 
 				while timer.compareHourWithNowHour():
@@ -40,14 +39,15 @@ class Scheduler:
 					nextJobToWork = self.jobHashMap.dequeJobValueByKey(currentHour)
 					if nextJobToWork == 0:
 						Log.debug("Wait for 60 seconds")
-						time.sleep(self.ONE_MINUTE)
+						#time.sleep(self.ONE_MINUTE)
+						time.sleep(1)
 						continue
 
 					Log.debug("Start to communicate with servers")
-					self.startToCommunicateWithServer()
+					self.startToCommunicateWithServer(nextJobToWork)
 
 					Log.debug("Start to save results")
-					self.saveResultToDataBase()
+					#self.saveResultToDataBase()
 
 				Log.debug("Next Hour")
 			except Exception as e:
@@ -69,9 +69,12 @@ class Scheduler:
 		elif timer.compareDayWithNowDay() == True:
 			timer.setCurrentDateAndTime()
 
-	def startToCommunicateWithServer(self):
-		dataToSend = self.makeJsonFromJob(nextJobToWork)
-		self.networkingWithBroker(dataToSend)
+	def startToCommunicateWithServer(self, nextJobToWork):
+		'''
+			To do.
+			communicate with Broker server
+		'''
+		#self.networkingWithBroker(dataToSend)
 
 		dataToSend = self.makeJsonFromJob(nextJobToWork)
 		self.networkingWithEntryPoint(dataToSend)
@@ -86,7 +89,10 @@ class Scheduler:
 
 	def makeJsonFromJob(self, jobToWork):
 		jsonGenerator = JsonGenerator()
-		jsonGenerator.appendElement("type", jobToWork.getJonType())
+		jsonGenerator.appendElement("whotype", jobToWork.getWhoType())
+		jsonGenerator.appendElement("rw", jobToWork.getRWType())
+		jsonGenerator.appendElement("whoname", jobToWork.getWhoName())
+		jsonGenerator.appendElement("wtype", jobToWork.getWriteType())
 
 		return jsonGenerator.toString()
 
@@ -98,4 +104,3 @@ class Scheduler:
 		brServer = Broker()
 		brServer.startNetworkingWithData()
 
-		

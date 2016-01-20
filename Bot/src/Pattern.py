@@ -11,6 +11,9 @@ class AbstractPattern:
 		self.dataBase = PyDatabase()
 		self.dataBase.connectToDB()
 
+	def deinitailize(self):
+		self.dataBase.disconnectFromDB()
+
 	def startToMakePattern(self):
 		pass
 		
@@ -22,6 +25,9 @@ class TimePattern(AbstractPattern):
 		self.jobCountByTimeList = []
 		for i in range(0, self.TOTAL_TIME_COUNT):
 			self.jobCountByTimeList.append(self.INIT_COUNT)
+
+	def __del__(self):
+		self.deinitailize()
 
 	def startToMakePattern(self):
 			return self.startToMakeTimePattern()
@@ -92,7 +98,7 @@ class TimePattern(AbstractPattern):
 
 	def getWrittenValueByRatio(self, totalWrittenCount, selectedTime, countValue):
 		selectedTimeCount = self.jobCountByTimeList[selectedTime]
-		selectedTimeRatio = (selectedTimeCount * 100) / totalWrittenCount
+		selectedTimeRatio = (selectedTimeCount * 100/ totalWrittenCount)
 		return int(round(selectedTimeRatio))
 
 
@@ -112,6 +118,9 @@ class BehaviorPattern(AbstractPattern):
 		self.initialize()
 		self.userID = userID
 
+	def __del__(self):
+		self.deinitailize()
+
 	def startToMakeBehaviorPattern(self, countlistToWorkInOneDay):
 		if len(countlistToWorkInOneDay) == 0:
 			return
@@ -121,7 +130,7 @@ class BehaviorPattern(AbstractPattern):
 	def decideBehaviorByEachHour(self, countlistToWorkInOneDay):
 		workListInOneDay = []
 
-		for selectedHour in range(1, self.TOTAL_TIME_COUNT):
+		for selectedHour in range(0, self.TOTAL_TIME_COUNT):
 			countToWork = countlistToWorkInOneDay[selectedHour]
 
 			workListInHour = self.decideWorkByBehaviorCount(countToWork)
@@ -133,7 +142,7 @@ class BehaviorPattern(AbstractPattern):
 		friendListByRatio = self.getFriendByRatio()
 
 		jobToWorkInHour = []
-		for i in range(1, countToWork):
+		for i in range(0, countToWork):
 			jobToWork = []
 
 			forType = self.selectBetweenMeAndYou()
@@ -145,6 +154,7 @@ class BehaviorPattern(AbstractPattern):
 			nameToWork = ""
 			if forType == self.WORK_FOR_YOU:
 				nameToWork = self.selectFriendInRatioList(friendListByRatio)
+				jobToWork.append(nameToWork)
 			else:
 				jobToWork.append(nameToWork)
 
@@ -247,10 +257,10 @@ class PatternDelegator:
 		return self.behaviorPattern.startToMakeBehaviorPattern(countlistToWorkInOneDay)
 
 	def makeHashMap(self, jobHashMap ,workListInOneDay):
-		for hour in range(1, len(workListInOneDay)):
+		for hour in range(0, len(workListInOneDay)):
 			workListInOneHour = workListInOneDay[hour]
 
-			for workInHour in range(1, len(workListInOneHour)):
+			for workInHour in range(0, len(workListInOneHour)):
 				eachWork = workListInOneHour[workInHour]
 				jobForEachWork = Job()
 				self.makeOneJob(jobForEachWork, eachWork)

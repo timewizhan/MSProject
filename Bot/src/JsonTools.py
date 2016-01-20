@@ -8,4 +8,4 @@ class JsonGenerator:
 		self.jsonDic[key] = value
 
 	def toString(self):
-		strJson = json.dumps(self.jsonDic)
+		return json.dumps(self.jsonDic)
