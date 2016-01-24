@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,7 +19,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 interface Type {
-	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, LIKE = 5;
+	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, REPLACEMENT = 5;
 }
 
 public class ServiceServer implements Runnable {
@@ -61,6 +62,9 @@ public class ServiceServer implements Runnable {
 				Socket socket = mServerSocket.accept();
 				System.out.println(getTime() + " received a request from " 
 						+ socket.getInetAddress());
+
+				System.out.println("Call writeStatus");
+				writeStatus();
 				
 				// get string from the socket
 				// and parse to JSONObject
@@ -73,14 +77,14 @@ public class ServiceServer implements Runnable {
 				}												
 				JSONParser parser = new JSONParser();
 				JSONObject msg = (JSONObject) parser.parse(result);
-				
+								
 				// check the type of the msg
 				// and do the proper operation according to the type
 				int type = (int) msg.get("Type");
 				String res = null;
 				switch (type) {
 					case Type.TWEET:
-						res = writeStatus(msg);
+//						res = writeStatus(msg);
 						break;
 					case Type.READ:
 						res = readStatus(msg);
@@ -91,7 +95,8 @@ public class ServiceServer implements Runnable {
 					case Type.RETWEET:
 						res= writeRetweet(msg);
 						break;
-					case Type.LIKE:
+					case Type.REPLACEMENT:
+						doReplacement();
 						break;													
 				}
 											
@@ -110,10 +115,10 @@ public class ServiceServer implements Runnable {
 				
 				// send the response message
 				out.write(resp.toString());
-				out.close();
-				
+								
 				// close
-				input.close();				 				
+				out.close();
+				input.close();				
 				socket.close();
 			} catch (IOException e) {
 				System.out.println("IOException: " + e.getMessage());
@@ -125,26 +130,40 @@ public class ServiceServer implements Runnable {
 		}
 	}
 
-	private String writeStatus(JSONObject msg) {
-		// write the status
+	private String writeStatus() {
+		
 		try {
-			Connection conn = DriverManager.getConnection("", "", "");			
+			Connection conn = DriverManager.getConnection(
+					"jdbc:mysql://localhost/snsdb?autoReconnect=true&useSSL=false", "snsuser", "password");			
+			
 			System.out.println(getTime() + "connected to MySQL.");
+
+			String uname = "bokor";
 			
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("");
+			Statement isResident = conn.createStatement();
+			ResultSet res = isResident.executeQuery("SELECT uid,type FROM users WHERE uname =" + "'" + uname + "'");
+						
+			if (res.next()) {			
+				System.out.println("bokor does exist!");
+				
+				// check the type and update the type from 10 (V) to 11 (RV) if needed
 			
-			while(rs.next()) {
-				rs.getString(1);				
+				// write his/her own status
+								
+			} else {
+				System.out.println("bokor does not exist!");
+				// add him/her to USERS as 01 (RESIDENT)
+				
+				// write his/her own status
+				
 			}
 			
-			stmt.close();
-			rs.close();
+			res.close();
 			conn.close();			
 		} catch (SQLException e) {
 			System.out.println("SQLExecption: " + e.getMessage());
 		} finally {
-			System.out.println("MySQL has handled the request.");
+			System.out.println("MySQL has handled the query.");
 		}
 		
 		return "";		
@@ -152,17 +171,130 @@ public class ServiceServer implements Runnable {
 
 	private String readStatus(JSONObject msg) {
 		
+		try {
+			Connection conn = DriverManager.getConnection(
+					"jdbc:mysql://localhost/snsdb?autoReconnect=true&useSSL=false", "snsuser", "password");
+			
+			System.out.println(getTime() + "connected to MySQL.");
+			
+			String uname = "bokor";
+			
+			Statement isVisitor = conn.createStatement();
+			ResultSet res = isVisitor.executeQuery("SELECT uid,type FROM users WHERE uname =" + "'" + uname + "'");
+
+			// assume that
+			// residents are already added to USERS
+			// and have enough status for Read or Write operations
+			
+			if (res.next()) {
+				
+				// check the type and update the type from 01 (R) to 11 (RV) if needed
+				
+				// read randomly selected resident's status
+				
+			} else {
+				// add his/her to USERS as 10 (VISITOR)
+				
+				// read randomly selected resident
+			}
+			
+			
+			res.close();
+			conn.close();
+		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+		} finally {
+			System.out.println("MySQL has handled the query.");
+		}
+		
 		return "";
 	}
 
 	private String writeReply(JSONObject msg) {
+
+		try {
+			Connection conn = DriverManager.getConnection(
+					"jdbc:mysql://localhost/snsdb?autoReconnect=true&useSSL=false", "snsuser", "password");
+			
+			System.out.println(getTime() + "connected to MySQL.");
+			
+			String uname = "bokor";
+			
+			Statement isVisitor = conn.createStatement();
+			ResultSet res = isVisitor.executeQuery("SELECT uid,type FROM users WHERE uname =" + "'" + uname + "'");
+
+			// assume that
+			// residents are already added to USERS
+			// and have enough status for Read or Write operations
+			
+			if (res.next()) {
 				
+				// check the type and update the type from 01 (R) to 11 (RV) if needed
+				
+				// write his/her reply to randomly selected resident's status
+				
+			} else {
+				// add his/her to USERS as 10 (VISITOR)
+				
+				// write his/her reply to randomly selected resident
+			}
+						
+			res.close();
+			conn.close();			
+		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+		} finally {
+			System.out.println("MySQL has handled the query.");
+		}
+		
 		return "";
 	}
 	
 	private String writeRetweet(JSONObject msg) {
+		
+		try {
+			Connection conn = DriverManager.getConnection(
+					"jdbc:mysql://localhost/snsdb?autoReconnect=true&useSSL=false", "snsuser", "password");
+			
+			System.out.println(getTime() + "connected to MySQL.");
+			
+			String uname = "bokor";
+			
+			Statement isVisitor = conn.createStatement();
+			ResultSet res = isVisitor.executeQuery("SELECT uid,type FROM users WHERE uname =" + "'" + uname + "'");
+
+			// assume that
+			// residents are already added to USERS
+			// and have enough status for Read or Write operations
+			
+			if (res.next()) {
 				
+				// check the type and update the type from 01 (R) to 11 (RV) if needed
+				
+				// read randomly selected resident's status
+				
+				// do writeStatus				
+			} else {
+				// add his/her to USERS as 10 (VISITOR)
+				
+				// read randomly selected resident
+				
+				// do writeStatus
+			}
+						
+			res.close();
+			conn.close();			
+		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+		} finally {
+			System.out.println("MySQL has handled the query.");
+		}
+		
 		return "";
+	}
+	
+	private void doReplacement() {
+		
 	}
 
 	private String getTime() {
