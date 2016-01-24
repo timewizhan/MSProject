@@ -12,8 +12,8 @@ import requests as rs
 import Queue
 
 facebook_url = 'http://www.facebook.com'
-facebook_id = 'kkh0590@naver.com'
-facebook_passwd = 'alrpal!@3'
+facebook_id = ''
+facebook_passwd = ''
 
 timeLineScrollDown = 5
 
