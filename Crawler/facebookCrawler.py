@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import requests as rs
 import Queue
 
-facebook_url = 'http://www.facebook.com'
+facebook_url = ''
 facebook_id = ''
 facebook_passwd = ''
 
@@ -37,8 +37,6 @@ class FacebookCrawler:
     WRITTEN_ALONE = 1
     WRITTEN_OTHER = 2
 
-
-
     def __init__(self):
         self.driver = webdriver.PhantomJS(service_args=['--ssl-protocol=any'])
         self.driver.get(facebook_url)
@@ -51,6 +49,8 @@ class FacebookCrawler:
         self.driver.find_element(By.ID, value='email').send_keys(facebook_id)
         self.driver.find_element(By.ID, value='pass').send_keys(facebook_passwd)
         self.driver.find_element(By.ID, value='loginbutton').click()
+
+        time.sleep(2)
 
     def get_friends(self):
         self.driver.get(self.friendsPageAddress)
@@ -68,14 +68,6 @@ class FacebookCrawler:
         # As html file is updated need to get html again
         self.htmlSource = self.driver.page_source
         self.navigator = BeautifulSoup(self.htmlSource, "lxml")
-        
-        cnt=0
-        """
-        for name in self.navigator.find_all('div', class_="fsl fwb fcb"):
-            cnt = cnt+1
-        #    print name.text, name[0].get('href')
-            self.nameQueue.put(name.text)
-        """
 
         # Get fiends information (name, page url)
         friendSection = self.navigator.select('.fsl.fwb.fcb a')
@@ -99,7 +91,7 @@ class FacebookCrawler:
 
         self.htmlSource = self.driver.page_source
         self.navigator = BeautifulSoup(self.htmlSource, "lxml")
-        print self.navigator.title
+        print self.navigator.title.text
 
         time.sleep(2)
         self.driver.save_screenshot('22222.png')
@@ -115,105 +107,118 @@ class FacebookCrawler:
         self.navigator = BeautifulSoup(self.htmlSource, "lxml")
 
         # Get timeline posts and reply, like
-        for outSector in self.navigator.select('._5pcb._4b0l'):
-            for inSector in outSector.select('.userContentWrapper._5pcr'):
-
-                # Get posts
-                numberOfWriter = len(inSector.select('.fwb.fcg a'))
-                #print numberOfWriter
-
-                name = inSector.select('.fwb.fcg a')
-
-                if numberOfWriter == self.SHARED:
-                    writer = inSector.select('.fwb a')[0].text
-                    sharedWriter = inSector.select('.fcg a')[1].text
-                    print writer, sharedWriter
-
-                elif numberOfWriter == self.WRITTEN_ALONE:
-                    writer = name[0].text
-                    print writer
-
-                elif numberOfWriter == self.WRITTEN_OTHER:  
-                    writer = name[0].text
-                    receiver = name[1].text
-                    print writer, receiver
-
-                else :
-                    pass
+        if self.navigator.select('._4-u2.mbm._5jmm._5pat._5v3q._4-u8._x72._50nb'):
+            for outSector in self.navigator.select('._5pcb._4b0l'):
+                for inSector in outSector.select('.userContentWrapper._5pcr'):
                     
-                writtenDate = inSector.select('._5pcq abbr')[0].get('title')
-                print writtenDate
+                    # Get posts
+                    numberOfWriter = len(inSector.select('.fwb.fcg a'))
+                    #print numberOfWriter
 
-                # Get likes
-                if inSector.select('.UFINoWrap'):
-                    #inSector.select('.UFILikeSentenceText a')
-                    #tmpPage = self.driver.page_source
-                    #nana = BeautifulSoup(nana, 'lxml')
+                    name = inSector.select('.fwb.fcg a')
 
-                    #print nana.select('._51-u.rfloat._ohf a').text
-                    self.driver.find_element(By.CLASS_NAME, value='UFINoWrap').click()
-                    #WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(
-                    #    By.CSS_SELECTOR('._42ft _5upp _50zy layerCancel _51-t _50-0 _50z-')))
+                    if numberOfWriter == self.SHARED:
+                        writer = inSector.select('.fwb a')[0].text
+                        sharedWriter = inSector.select('.fcg a')[1].text
+                        print writer, sharedWriter
 
-                    popUpPage = self.driver.page_source
-                    navigator = BeautifulSoup(popUpPage, 'lxml')
+                    elif numberOfWriter == self.WRITTEN_ALONE:
+                        writer = name[0].text
+                        print writer
+
+                    elif numberOfWriter == self.WRITTEN_OTHER:  
+                        writer = name[0].text
+                        receiver = name[1].text
+                        print writer, receiver
+
+                    else :
+                        pass
+                        
+                    writtenDate = inSector.select('._5pcq abbr')[0].get('title')
+                    print writtenDate
+
+                    
+                    # Get likes
+                    if inSector.select('.UFINoWrap'):
+                        self.driver.find_element(By.CLASS_NAME, value='UFINoWrap').click()
+                       
+                        time.sleep(2)
+                        self.driver.save_screenshot('11111.png')
+
+                        # local variables
+                        popUpPage = self.driver.page_source
+                        navigator = BeautifulSoup(popUpPage, 'lxml') 
+
+                        likeUser = navigator.select('.fsl.fwb.fcb a')
+
+                        for user in likeUser:
+                            print user.text
+
+                        self.driver.find_element_by_css_selector('._42ft._5upp._50zy.layerCancel._51-t._50-0._50z-').click()
+
+                        time.sleep(2)
+                        closePage = self.driver.page_source
+                        self.driver.save_screenshot('22222.png')
+
+                    elif inSector.select('.UFILikeSentenceText span'):
+                        for user in inSector.select('.UFILikeSentenceText a'):
+                            print user.text
+
+                    else :
+                        pass
+    
+
+                    #Get reply
+                    if inSector.select('.UFICommentContentBlock'):
+                        if not inSector.select('.UFIPagerLink'):
+                            for reply in inSector.select('.UFICommentContentBlock'):
+                                print reply.select('.UFICommentActorName')[0].text
+                                print reply.select('.livetimestamp')[0].get('title')
+                        
+                        else :
+                            flag=0
+
+                            if flag == 0:
+                                tmp_inSector = inSector.select('.UFIPagerLink')
+                                print tmp_inSector[0].text
+                                flag = 1
+
+                            while tmp_inSector:
+                                self.driver.find_element_by_css_selector('.UFIPagerLink').click()
+
+                                time.sleep(2)
+
+                                afterPage = self.driver.page_source
+                                afterSoup = BeautifulSoup(afterPage, "lxml")
+
+                                print afterSoup.select('.UFIPagerLink')
+
+                                if flag == 1:
+                                    tmp_inSector = afterSoup.select('.UFIPagerLink')
 
 
-                    print navigator.select('._51-u.rfloat._ohf a')
+                            for reply in afterSoup.select('.UFICommentContentBlock'):
+                                print reply.select('.UFICommentActorName')[0].text
+                                print reply.select('.livetimestamp')[0].get('title') 
 
+                    else :
+                        pass
 
-                    likeUser = navigator.select('.fsl.fwb.fcb a')
-
-                    for user in likeUser:
-                        print user.text
-
-                    closePage = self.driver.page_source
-
-                    time.sleep(2)
-                    self.driver.find_element(By.CSS_SELECTOR, value='._42ft _5upp _50zy layerCancel _51-t _50-0 _50z-').click()
-
-
-
-                elif inSector.select('.UFILikeSentenceText span'):
-                    for user in inSector.select('.UFILikeSentenceText a'):
-                        print user.text
-
-                else :
-                    pass
-
-                #Get reply
-                if inSector.select('.UFIPagerLink'):
-
-                    time.sleep(2)
-                    self.driver.save_screenshot('1111.png')
-            
-
-        #for lists in self.navigator.select('.clearfix._5x46'):
-        #    print lists.text
-
-
-    #def get_reply(self):
-
-
-    #def get_likes(self):
-
+        else :
+            print "Timeline is private mode or there is not posting"
 
     def goToTimeLine(self):
-        #self.htmlSource = self.driver.page_source
-        #self.navigator = BeautifulSoup(self.htmlSource, "lxml")
-        #self.initialPageAddress = self.navigator.find_all('a', class_="_2dpe _1ayn")[0].get('href')
-        self.initialPageAddress = 'http://www.facebook.com/kyehee.kim.3'
+        self.initialPageAddress = 'https://www.facebook.com/kyehee.kim.3'
         self.friendsPageAddress = self.initialPageAddress + '/friends'
         self.profilePageAddress = self.initialPageAddress + '/about'
 
-        #self.driver.find_element(By.CLASS_NAME, value='_2dpb').click()
 
     def crawling(self):
         self.login()
         self.goToTimeLine()
         self.get_timeLines()
-        #self.get_friends()
-        #self.get_profile()
+        self.get_friends()
+        self.get_profile()
 
 if __name__ == '__main__':
     crawler = FacebookCrawler()
