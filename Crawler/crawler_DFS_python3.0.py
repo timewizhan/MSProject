@@ -10,10 +10,10 @@ imp.reload(sys)
 #sys.setdefaultencoding('utf-8')
  
 
-API_KEY = 'LHPd4PY27a0x636wifac3pZy0'
-API_SECRET = 'gp0vusYL3KoaQCezNZyYtPVvcmmzt6afVPsKypJHAr7w23j6KE'
-ACCESS_KEY = '570768882-ExYiGDpIncUblUZPusroTXJnka6WAMavegNbeCBB'
-ACCESS_SECRET = 'Nd2OqTAOWFElyLXJupfecdzJbeX45zqSYO1K1WnttjUvN'
+API_KEY = ''
+API_SECRET = ''
+ACCESS_KEY = ''
+ACCESS_SECRET = ''
  
 oAuth = tweepy.OAuthHandler(API_KEY, API_SECRET)
 oAuth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
