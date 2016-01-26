@@ -196,8 +196,7 @@ public class DBConnection {
 			prepared.setString(2, msg);				
 			prepared.setString(3, getTime());
 			prepared.setString(4, loc);							
-			prepared.executeUpdate();	
-			
+			prepared.executeUpdate();			
 		} catch (SQLException e) {
 			System.out.println("[writeStatus]SQLException: " + e.getMessage());
 		} finally {

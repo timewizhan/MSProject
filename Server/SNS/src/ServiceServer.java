@@ -52,8 +52,7 @@ public class ServiceServer implements Runnable {
 	@Override
 	public void run() {
 		while (true) {			
-			Socket socket = null;
-			JSONObject request = null;	
+			Socket socket = null;			
 			BufferedWriter out = null;
 			
 			try {						
@@ -61,23 +60,19 @@ public class ServiceServer implements Runnable {
 				
 				socket = mServerSocket.accept();
 				System.out.println(getTime() + " received a request from " 
-						+ socket.getInetAddress());
-										
-				request = msgParser(socket);				
+						+ socket.getInetAddress());														 			
 															
-				String response = null;				
-				response = msgGenerator(operationHandler(request));								
+				String response = msgGenerator(operationHandler(msgParser(socket)));								
 				
 				out = new BufferedWriter(new OutputStreamWriter(
 						socket.getOutputStream(), "UTF-8"));				
 								
 				Thread.sleep(calRTT());
 				
-				if (response != null) {
-					out.write(response);
-					out.newLine();
-					out.flush();
-				}						
+				out.write(response);
+				out.newLine();
+				out.flush();
+										
 			} catch (IOException e) {
 				System.out.println("[run]IOException: " + e.getMessage());
 			} catch (PropertyVetoException e) {
@@ -111,8 +106,7 @@ public class ServiceServer implements Runnable {
 		
 		switch (reqType) {
 		case Type.TWEET:
-			uid = DBConnection.isThere(src, 1);
-			System.out.println("UID: " + uid);
+			uid = DBConnection.isThere(src, 1);			
 			res = DBConnection.writeStatus(uid, msg, loc);
 			break;
 		case Type.READ:
@@ -142,8 +136,7 @@ public class ServiceServer implements Runnable {
 					socket.getInputStream(), "UTF-8"));
 			result = input.readLine();			
 			JSONParser parser = new JSONParser();
-			msg = (JSONObject) parser.parse(result);
-			
+			msg = (JSONObject) parser.parse(result);			
 		} catch (UnsupportedEncodingException e) {
 			System.out.println("[msgParser]UnsupportedEncodingException e: " + e.getMessage());			
 		} catch (IOException e) {
