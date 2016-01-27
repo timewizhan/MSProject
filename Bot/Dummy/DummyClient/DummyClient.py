@@ -23,7 +23,7 @@ class NetworkConnection:
 		try:
 			self.socketToConnect.connect(serverConnectionAddress)
 		except Exception as e:
-			print "[Error] Cannot connect to server"
+			print "[Error] Cannot connect to server : %s" % e
 			return FAIL
 
 		return SUCCESS
@@ -40,19 +40,12 @@ class NetworkConnection:
 class DummyBotProcess:
 	def __init__(self):
 		self.networkConnection = NetworkConnection()
-		self.networkConnection.initializeConnection()
 
 	def startDummyBotProcess(self, serverIP, serverPort):
-		
-		ret = self.networkConnection.makeConnectionWithServer(serverIP, serverPort)
-		if ret != SUCCESS:
-			self.networkConnection.destoryConnection()
-			return
-		
-		self.startMainLoop()
+		self.startMainLoop(serverIP, serverPort)
 		self.networkConnection.destoryConnection()
 
-	def startMainLoop(self):
+	def startMainLoop(self, serverIP, serverPort):
 		'''
 			The timecount is used for sleeping of process
 
@@ -67,15 +60,27 @@ class DummyBotProcess:
 		TIMECOUNT_THRESHOLD = 600
 		timeCount = 1
 		
+		JSON_FILE_NAME = "json.txt"
+		currentPath = os.getcwd()
+		JSON_FILE_PATH = currentPath + "\\" + JSON_FILE_NAME
+
 		with open(JSON_FILE_PATH, "r") as jsonFile: 
 			self.readData = jsonFile.read()
 
 		while True:
+			self.networkConnection.initializeConnection()
+
+			ret = self.networkConnection.makeConnectionWithServer(serverIP, serverPort)
+			if ret != SUCCESS:
+				self.networkConnection.destoryConnection()
+				return
+
 			ret = self.networkConnection.sendMsg(self.readData)
 			if ret < 1:
 				continue
 
 			ret = self.networkConnection.receiveMsg()
+			print ret
 			if ret < 1:
 				continue
 
@@ -84,6 +89,9 @@ class DummyBotProcess:
 			else:
 				timeCount *= 2
 
+			self.networkConnection.destoryConnection()
+
+			print "[Info] Wait for %d seconds" % timeCount
 			time.sleep(timeCount)
 
 def fn_process(*argv):
