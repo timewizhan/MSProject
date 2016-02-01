@@ -15,13 +15,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-interface Type {
+interface ReqType {
 	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, REPLACEMENT = 5;
 }
 
 public class ServiceServer implements Runnable {
 	ServerSocket mServerSocket;
 	Thread[] mThreadArr;
+		
+	private final static int mResident = 1;
+	private final static int mVisitor = 2;
+	private final static int mNumRead = 5;
+	private final static int mNumRand = 10;
 	
 	public static void main(String[] args) {
 		// create threads
@@ -81,6 +86,8 @@ public class ServiceServer implements Runnable {
 				System.out.println("[run]SQLException: " + e.getMessage());
 			} catch (InterruptedException e) {
 				System.out.println("[run]InterruptException: " + e.getMessage());
+			} catch (ParseException e) {
+				System.out.println("[run]ParseException: " + e.getMessage());
 			} finally {
 				if (socket != null)
 					try {
@@ -96,38 +103,42 @@ public class ServiceServer implements Runnable {
 		
 	private String operationHandler(JSONObject request) throws PropertyVetoException, SQLException, IOException {		
 		int uid = -1;
-		String res = null;
-		
+		int reqSize = request.toString().length();
+		String res = null;		
+						
 		int reqType = Integer.parseInt((String) request.get("TYPE"));	
 		String src = (String) request.get("SENDER");		
 		String dst = (String) request.get("RECEIVER");
 		String loc = (String) request.get("LOCATION");
-		String msg = (String) request.get("MSG");									
+		String msg = (String) request.get("MSG");		 
 		
-		switch (reqType) {
-		case Type.TWEET:
-			uid = DBConnection.isThere(src, 1);			
-			res = DBConnection.writeStatus(uid, msg, loc);
+		switch (reqType) {                                                                                                                                                                                                      
+		case ReqType.TWEET:			
+			uid = DBConnection.isThere(src, mResident, loc);			
+			res = DBConnection.writeStatus(uid, msg, reqSize);
 			break;
-		case Type.READ:
-			uid = DBConnection.isThere(src, 2);
+		case ReqType.READ:
+			uid = DBConnection.isThere(src, mVisitor, loc);
+			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
 			break;
-		case Type.REPLY:
-			uid = DBConnection.isThere(src, 2);
+		case ReqType.REPLY:
+			uid = DBConnection.isThere(src, mVisitor, loc);
+			res = DBConnection.writeReply(uid, dst, msg, reqSize, mNumRand);
 			break;
-		case Type.RETWEET:
-			uid = DBConnection.isThere(src, 2);
+		case ReqType.RETWEET:
+			uid = DBConnection.isThere(src, mVisitor, loc);
+			res = DBConnection.readStatus(uid, dst, reqSize, mNumRand);
 			break;
-		case Type.REPLACEMENT:
-			// do replcaement
+		case ReqType.REPLACEMENT:
+			// do data replacement
 			break;													
-	}
+		}
 		
 		return res;
 	}
 
-	private JSONObject msgParser(Socket socket) {		
-		String result = "";				
+	private JSONObject msgParser(Socket socket) throws UnsupportedEncodingException, IOException, ParseException {		
+		String result = "";	
 		BufferedReader input = null;
 		JSONObject msg = null;
 		
@@ -160,7 +171,6 @@ public class ServiceServer implements Runnable {
 		return 0;
 	}
 	
-
 	private String getTime() {
 		String name = Thread.currentThread().getName();
 		SimpleDateFormat f = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]");
