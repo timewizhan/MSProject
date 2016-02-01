@@ -386,20 +386,20 @@ public class DBConnection {
 			
 			conn.commit();			
 		} catch (PropertyVetoException e) {
-			System.out.println("[getStatus]PropertyVetoException: " + e.getMessage());			
+			System.out.println("[storeReply]PropertyVetoException: " + e.getMessage());			
 		} catch (SQLException e) {
-			System.out.println("[getStatus]SQLException: " + e.getMessage());
+			System.out.println("[storeReply]SQLException: " + e.getMessage());
 			System.out.println("Rolling back data...");
 			if (conn != null)
 				conn.rollback();
 		} catch (IOException e) {
-			System.out.println("[getStatus]IOException: " + e.getMessage()); 
+			System.out.println("[storeReply]IOException: " + e.getMessage()); 
 		} finally {
 			if (conn != null)
 				try {
 					conn.close();
 				} catch (SQLException e) {
-					System.out.println("[getStatus/conn]SQLException: " + e.getMessage());					
+					System.out.println("[storeReply/conn]SQLException: " + e.getMessage());					
 				}						
 		}
 		return "Success";
