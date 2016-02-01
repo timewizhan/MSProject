@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Random;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
@@ -176,15 +174,14 @@ public class DBConnection {
 		try {
 			conn = DBConnection.getInstance().getConnection();
 			prepared = conn.prepareStatement("INSERT INTO status "
-					+ "(uid, status, time, traffic) VALUES "
-					+ "(?, ?, ?, ?)");
+					+ "(uid, status, traffic) VALUES "
+					+ "(?, ?, ?)");
 			
 			conn.setAutoCommit(false);
 			
-			prepared.setInt(1, uid);							
+			prepared.setInt(1, uid);					
 			prepared.setString(2, msg);				
-			prepared.setString(3, getTime());
-			prepared.setInt(4, reqSize + mBasicResponseSize);
+			prepared.setInt(3, reqSize + mBasicResponseSize);
 			prepared.executeUpdate();
 			
 			conn.commit();			
@@ -209,21 +206,11 @@ public class DBConnection {
 	}
 	
 	public static String readStatus(int uid, String uname, int reqSize, int num) throws PropertyVetoException, SQLException, IOException {
-		// need to create READ table (bid || uid || sid || time || location)
-		// store in RETWEET table ?
-		// we can think RETWEET consists of READ and WRITE				
-		
-		// get uid of the target
 		int t_uid = getUID(uname);
-		
-		// bring the last five status of target
-		
 		statusInfo result = getStatus(t_uid, num);
 		
 		int [] t_sids = result.getSIDs();
-		String t_status = result.getStatus();
-		
-		// store log to latent	
+		String t_status = result.getStatus();					
 		storeLatent(uid, t_sids, reqSize, t_status.length());
 		
 		return t_status;
@@ -325,7 +312,7 @@ public class DBConnection {
 				prepared.setInt(1, uid);
 				prepared.setInt(2, t_sids[i]);
 				prepared.setInt(3, Math.round((reqSize + slen)/sids.length));
-				prepared.addBatch();				
+				prepared.addBatch();
 			}
 						
 			prepared.executeBatch();
@@ -350,19 +337,12 @@ public class DBConnection {
 	}
 	
 	public static String writeReply(int uid, String uname, String msg, int reqSize, int num) throws PropertyVetoException, SQLException, IOException {
-		
 		int t_uid = getUID(uname);		
-		
 		statusInfo result = getStatus(t_uid, num);
 			
-		int [] t_sids = result.getSIDs();
-		
-		Random rand = new Random();
-		
-		int picked = rand.nextInt(t_sids.length - 1);
-							
-		System.out.println("Picked :" + picked);
-		
+		int [] t_sids = result.getSIDs();		
+		Random rand = new Random();		
+		int picked = rand.nextInt(t_sids.length - 1);											
 		return storeReply(uid, t_sids[picked], msg, reqSize);
 	}
 	
@@ -403,10 +383,5 @@ public class DBConnection {
 				}						
 		}
 		return "Success";
-	}
-	
-	private static String getTime() {
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return f.format(new Date());
-	}
+	}		
 }
