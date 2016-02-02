@@ -7,11 +7,11 @@ public class statusInfo {
 		this.mStatus = status;
 	}
 	
-	public int[] getSIDs () {
+	public int[] getSIDs() {
 		return this.mSIDs;
 	}
 	
-	public String getStatus () {
+	public String getStatus() {
 		return this.mStatus;
 	}
 }

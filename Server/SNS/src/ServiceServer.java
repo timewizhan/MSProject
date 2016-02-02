@@ -68,16 +68,16 @@ public class ServiceServer implements Runnable {
 						+ socket.getInetAddress());														 			
 															
 				String response = msgGenerator(operationHandler(msgParser(socket)));								
+								
 				
 				out = new BufferedWriter(new OutputStreamWriter(
 						socket.getOutputStream(), "UTF-8"));				
-								
+							
 				Thread.sleep(calRTT());
-				
+			
 				out.write(response);
 				out.newLine();
-				out.flush();
-										
+				out.flush();																	
 			} catch (IOException e) {
 				System.out.println("[run]IOException: " + e.getMessage());
 			} catch (PropertyVetoException e) {
@@ -122,7 +122,8 @@ public class ServiceServer implements Runnable {
 			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
 			break;
 		case ReqType.REPLY:
-			uid = DBConnection.isThere(src, mVisitor, loc);
+			DBConnection.getMonitor();
+			uid = DBConnection.isThere(src, mVisitor, loc);			
 			res = DBConnection.writeReply(uid, dst, msg, reqSize, mNumRand);
 			break;
 		case ReqType.RETWEET:
