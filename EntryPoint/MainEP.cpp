@@ -11,8 +11,7 @@
 int main()
 {
 	EP_Test4 et;
-	et.initEntryPoint();
-//	et.sendMessage();
+//	et.initEntryPoint();
 }
 
 
