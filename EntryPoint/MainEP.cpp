@@ -1,8 +1,8 @@
 /*
  * MainEP.cpp
  *
- *  Created on: Jan 13, 2016
- *      Author: ms-dev
+ *  Created on: Jan 23, 2016
+ *      Author: alphahacker
  */
 
 #include "Common.h"
@@ -12,7 +12,7 @@ int main()
 {
 	EP_Test4 et;
 	et.initEntryPoint();
-	et.sendMessage();
+//	et.sendMessage();
 }
 
 

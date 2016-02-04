@@ -1,11 +1,12 @@
 /*
  * EP_Test4.cpp
  *
- *  Created on: Jan 13, 2016
- *      Author: ms-dev
+ *  Created on: Jan 23, 2016
+ *      Author: alphahacker
  */
 
 #include "Common.h"
+#include "database.h"
 #include "EP_Test4.h"
 #include "mysql.h"
 
@@ -14,15 +15,8 @@ EP_Test4::~EP_Test4(){}
 
 void EP_Test4::initEntryPoint()
 {
-
 	//socket
 	entrySockStart();
-
-	//DB
-	initDB();
-
-	//etc..
-
 }
 
 int EP_Test4::entrySockStart()
@@ -52,20 +46,21 @@ int EP_Test4::entrySockStart()
 			return -1;
 		}
 
+		//이부분에 디비연결하고, 디비에서 데이터 읽어서 변수에 저장한다
+		db.initDB();
+		db.extractData();
+
 }
+
 
 void EP_Test4::sendMessage()
 {
-	memset(&write_message,0,sizeof(write_message));
-	strcpy(write_message.user,name);
-	strcpy(write_message.sbuf,"");
-
 	//해당 메시지를 전송한다.
 	if(write(ssock,(struct message*)&write_message,sizeof(write_message))<0){
 		perror("write error : ");
 		exit(1);
 	}
-
+	/*
 	//파일 디스크립트 테이블을 새로 셋팅
 	FD_ZERO(&read_fds);
 	FD_SET(ssock,&read_fds);
@@ -101,6 +96,8 @@ void EP_Test4::sendMessage()
 		}
 		//입력에 대한 변화가 있다는 것을 확인한다.
 		else if(FD_ISSET(0,&tmp_fds)){
+
+
 			memset(&write_message,0,sizeof(write_message));
 			memset(buf,0,MAXBUF);
 
@@ -116,81 +113,12 @@ void EP_Test4::sendMessage()
 			perror("write error : ");
 			exit(1);
 
+
 			}
+
 		}
 	}
 	close(ssock);
+	*/
 }
 
-int EP_Test4::initDB(){
-
-	mysql_init(&conn);
-
-	connection = mysql_real_connect(&conn, DB_HOST,
-									DB_USER, DB_PASS,
-									DB_NAME, 3306,
-									(char *)NULL, 0);
-
-	if (connection == NULL)
-	{
-		fprintf(stderr, "Mysql connection error : %s", mysql_error(&conn));
-		return 1;
-	}
-
-	return 0;
-}
-
-
-int EP_Test4::extractData()
-{
-
-		query_stat = mysql_query(connection, "select * from address");
-	    if (query_stat != 0)
-	    {
-	        fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
-	        return 1;
-	    }
-
-	    sql_result = mysql_store_result(connection);
-
-	    printf("%+11s   %-30s   %-10s", "이름", "주소", "전화번호");
-	    while ( (sql_row = mysql_fetch_row(sql_result)) != NULL )
-	    {
-	        printf("%+11s   %-30s   %-10s", sql_row[0], sql_row[1], sql_row[2]);
-	    }
-
-	    mysql_free_result(sql_result);
-
-	    printf("이름 :");
-	    fgets(_name, 12, stdin);
-	    CHOP(_name);
-
-	    printf("주소 :");
-	    fgets(address, 80, stdin);
-	    CHOP(address);
-
-	    printf("전화 :");
-	    fgets(tel, 12, stdin);
-	    CHOP(tel);
-
-	    sprintf(query, "insert into address values "
-	                   "('%s', '%s', '%s')",
-	                   _name, address, tel);
-
-	    query_stat = mysql_query(connection, query);
-	    if (query_stat != 0)
-	    {
-	        fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
-	        return 1;
-	    }
-
-//	    mysql_close(connection); <-- 이거 적절한 곳에 넣어줘야 함
-
-
-	return 0;
-}
-int EP_Test4::storeData()
-{
-
-	return 0;
-}

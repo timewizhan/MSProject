@@ -1,8 +1,8 @@
 /*
  * Common.h
  *
- *  Created on: Jan 13, 2016
- *      Author: ms-dev
+ *  Created on: Jan 23, 2016
+ *      Author: alphahacker
  */
 
 #ifndef _COMMON_
@@ -18,7 +18,8 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#endif
+#include <iostream>
 
+#endif
 
 
