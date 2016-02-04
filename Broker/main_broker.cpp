@@ -11,7 +11,6 @@
 int main(){
 
 	CBrokerServer server;
-	server.initBroker();
 
 	return 0;
 }

@@ -9,6 +9,8 @@
 #define _QUEUE_
 
 #include "common.h"
+#include "data_queue.h"
+#include "socket.h"
 
 class CDataQueue{
 private:
@@ -34,6 +36,8 @@ public:
 	monitoring_result popDataFromQueue();
 
 };
+
+void* preprocess_insert(void *data);
 
 #endif
 
