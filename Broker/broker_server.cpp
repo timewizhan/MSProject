@@ -7,29 +7,18 @@
 
 #include "common.h"
 #include "broker_server.h"
+#include "data_queue.h"
+#include "database.h"
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CBrokerServer::CBrokerServer(){
 
-//Thread---------------------------------
-//	CBrokerServer::initThread();
-
-
-//SOCKET---------------------------------
-	//socket option value
-	optval = 1;
-
-	//접속이 성공되었는지 여부를 표시
-	greet[0] = 'O';
-	no_greet[0] = 'X';
+	optval = 1;							//socket option value
+	greet[0] = 'O';	no_greet[0] = 'X';	//접속이 성공되었는지 여부를 표시
 }
 
 CBrokerServer::~CBrokerServer(){
 
-}
-
-void CBrokerServer::initBroker(){
-	printf("initBroker \n");
-	CBrokerServer::initThread();
 }
 
 void CBrokerServer::initThread(){
@@ -37,32 +26,22 @@ void CBrokerServer::initThread(){
 	printf("initThread \n");
 
 	int thr_id;
-	pthread_t thread_for_comm;
 	pthread_t thread_for_queue;
 
-	int status; // do we need it?
-	int a = 1;	// do we need it?
-
-	//select를 돌리는 thread
-	thr_id = pthread_create(&thread_for_comm, NULL,	communicateWithEP, (void *)&a); 	//communicateWithEP 부분이 들어가는 부분은 리턴 타입이 void 포인터이기 때문에 반드시 함수의 리턴 타입이 void 포인터이어야 한다.
-	printf("creating communicatWithEP thread completed \n");
-	sleep(1);	// why do we need it?
-
-	//queue를 돌리는 thread
-	thr_id = pthread_create(&thread_for_queue, NULL, startQueue, (void *)&a);
-	printf("creating startQueue thread completed \n");
-
-//	pthread_join(thread_for_select, (void **)&status);
-//	pthread_join(thread_for_queue, (void **)&status);
-
-//	status = pthread_mutex_destroy(&mutex);
-//	printf("code = %d \n", status);
-//	printf("program is end \n");
-
+	thr_id = pthread_create(&thread_for_queue, NULL, preprocess_insert, NULL);
 }
 
+void CBrokerServer::initBroker(){
 
-//SOCKET----------------------------------------------------------------------
+	printf("initBroker \n");
+
+	//여기서 큐를 모니터링? 관리? 하는 스레드를 만들고
+	//메인 스레드에서 데이터를 받으면 바로 거기서 큐에 푸쉬할텐데
+	//여기서 만드는 큐 모니터링 스레드는 큐를 보고있다가 들어오면 바로 디비 처리하는 곳으로 넘긴다
+	initThread();
+	communicateWithEP();
+}
+
 void CBrokerServer::setSocket(){
 
 	printf("setSocket \n");
@@ -112,17 +91,13 @@ void CBrokerServer::acceptEP(){
 
 	maxfd= ssock;
 
-	printf("test \n");
+//	CDatabase::getDatabaseInstance()->initDB();
+	db.initDB();
 
 	while(1)
 	{
-
-		printf("here I am \n");
-
 		//fd_set디스크립터 테이블은 일회성. 그렇기 때문에 해당값을 미리 옮겨 놓고 시작해야 한다. 그렇기 때문에 복사를 먼져 하고 시작해야 한다.
 		tmp_fds=read_fds;
-
-		printf("here I am 2 \n");
 
 		//인터페이스 상에서 디바이스에 들어온 입력에 대한 즉각적인 대응이 필요.
 		if(select(maxfd+1,&tmp_fds,0,0,(struct timeval *)0)<1)
@@ -130,8 +105,6 @@ void CBrokerServer::acceptEP(){
 			perror("select error : ");
 			exit(1);
 		}
-
-		printf("select running... \n");
 
 		for(fd=0;fd<maxfd+1;fd++)
 		{
@@ -156,6 +129,8 @@ void CBrokerServer::acceptEP(){
 							add_num[index].anum=csock;
 							maxfd++;
 
+							printf("(add_num[%d].anum = %d) ", index, csock);
+
 							break;
 						}
 					}
@@ -170,9 +145,30 @@ void CBrokerServer::acceptEP(){
 					memset(&read_message,0,sizeof(read_message));
 
 					//클라이언트로 부터 메세지를 수신받는다.
-					data_len = read(fd,(struct message*)&read_message,sizeof(read_message));
+					data_len = read(fd,(struct message*)&read_message,sizeof(read_message));	//read의 리턴값 뭘까
+
+					if(read_message.ep_num != 0){
+						printf("\n[read test, fd=%d] \n", fd);
+						printf("EP: %d, Side: %c \n",read_message.ep_num, read_message.side_flag);
+						printf("cpu_util: %d, server-side traffic: %d \n",read_message.cpu_util, read_message.server_side_traffic);
+						printf("user: %s, location: %s, timestamp: %d, user traffic: %d \n",read_message.user, read_message.location, read_message.timestamp, read_message.traffic);
+					}
+
+					//여기서 1. 큐 불러서 큐에 쌓으면 된다. 그리고 나서 2. 큐에서 꺼내면서 처리해주고 3. 디비에 저장
+					//문제는 다른 종류의 데이터 두개를 받아야 되는데 어떻게 할것인가..
+				//	printf("when data is queued, the data_queue address is : %x \n", &data_queue);
+				//	data_queue.enqueue(read_message);
+
+					CDataQueue::getDataQueue()->pushDataToQueue(read_message);
+
+					/*
+					스레드가 queue에 갔다가 LP처리까지 다하고 오면, 여기서 합쳐질 수 있게
+					pthread_join을 여기서 호출하면, 다 처리된 LP결과를
+					여기서 write 해줘서 EP들에게 보내줄 수 있겠다.
+					*/
 
 					//클라이언트로부터 메시지가 들어왔다면 메시지 전송
+					/*
 					if(data_len>0)
 					{
 						writeMessage((void*)&read_message,(void*)add_num,fd,maxfd);
@@ -205,12 +201,26 @@ void CBrokerServer::acceptEP(){
 						perror("read error : ");
 						exit(1);
 					}
+					*/
+
 				}
 			}
 		}
 	}
 
 }
+
+
+void CBrokerServer::communicateWithEP()	// parameter에 void 포인터를 넣었다는건, 데이터가 들어가도 안들어가도 된다는 의미?!
+{
+	printf("communicateWithEP \n");
+
+//	bs.setSocket();
+//	bs.acceptEP();
+	setSocket();
+	acceptEP();
+}
+
 
 void CBrokerServer::writeMessage(void *client_message,void *num,int basefd,int maxfd){
 
@@ -279,18 +289,59 @@ void CBrokerServer::writeMessage(void *client_message,void *num,int basefd,int m
 
 }
 
-//Thread---------------------------------------------------------------------
-void* communicateWithEP(void *data)	// parameter에 void 포인터를 넣었다는건, 데이터가 들어가도 안들어가도 된다는 의미?!
+void* preprocess_insert(void *data)
 {
-	printf("communicateWithEP \n");
-	CBrokerServer bs;
+	printf("preprocess_insert \n");
 
-	bs.setSocket();
-	bs.acceptEP();
+	while(1){
 
+
+		if(!CDataQueue::getDataQueue()->getQueue().empty()){	//queue가 비어있지 않으면..
+			//일단 큐에서 꺼내자
+
+			monitoring_result poppedData = CDataQueue::getDataQueue()->popDataFromQueue();
+
+			printf("\n[read test in preprocess of inserting data] \n");
+			printf("EP: %d, Side: %c \n", poppedData.ep_num, poppedData.side_flag);
+			printf("cpu_util: %d, server-side traffic: %d \n",poppedData.cpu_util, poppedData.server_side_traffic);
+			printf("user: %s, location: %s, timestamp: %d, user traffic: %d \n",poppedData.user, poppedData.location
+					,poppedData.timestamp, poppedData.traffic);
+
+			/*
+			//지역 별로 정리...
+			if(strcmp(pop_out_data->location, "NY")){
+				int ny_local_traffic = select * from local_traffic where location = "NY";
+				ny_local_traffic += pop_out_data->traffic;
+				테이블 수정 modify 였던가..
+			}else if(strcmp(pop_out_data->location, "BS")){
+
+			}
+			*/
+
+			//나머지 pop out data 요소들.. ep_num, flag, user, server side traffic, cpu util... 등등은 바로 broker table에 넣는다
+		//	CDatabase::getDatabaseInstance()->initDB();
+		//	CDatabase::getDatabaseInstance()->insertData(poppedData.user, poppedData.location
+		//	,poppedData.timestamp, poppedData.traffic);
+			CDatabase db;
+			db.initDB();
+			db.insertData(poppedData.user, poppedData.location
+						,poppedData.timestamp, poppedData.traffic);
+
+		}
+
+		/*
+		while(1)문을 탈출하는 조건이 있을텐데, 이를테면, 모니터링 한 결과를 EP로 부터 모두 받게되면 가장 마지막 데이터에 특수 기호 같은 걸 넣어서
+		이게 마지막이다. 라는걸 알 수 있게 한다는 등이 될 것이다, 아마도?
+		그러면 반복문을 나와서, local traffic 측정한 값을 여기서 넣는다.
+
+
+		그리고 여기서 LP 알고리즘을 호출해야할듯.
+		*/
+
+	//	printf(". \n");
+	//	sleep(1);
+
+	}
 }
 
-void* startQueue(void *data)
-{
-	printf("startQueue \n");
-}
+
