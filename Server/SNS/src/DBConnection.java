@@ -10,8 +10,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
-import org.json.simple.JSONObject;
-
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class DBConnection {
@@ -20,7 +18,6 @@ public class DBConnection {
 	
 	private final static int mResident = 1;	
 	private final static int mBasicResponseSize = 22;	
-	private final static String [] mTbl = {"status", "reply", "latent"};
 	private final static int mPeriod = -1;
 
 	
@@ -161,23 +158,12 @@ public class DBConnection {
 		}
 	}
 
-	public static JSONObject getMonitor() {		
-		// get uid, uname, loc, and from USERS
+	public static userInfo [] getMonitor() {		
 		userInfo [] uInfo = getUserInfo();
-				
-		
-		getStatusTraffic();
-		// get traffic of each user from STATUS, REPLY, OR LATENT according to the type
-		//getTrafficInfo(uInfo); 
-		
-		// report uname || location || latest time || total traffic
-/*				
-		for (int i = 0; i < uInfo.length; i++) {
-			uInfo[i].getUID();
-		}
-	*/		
-		
-		return null;
+						
+		getTrafficLog(uInfo);
+						
+		return uInfo;
 	}
 	
 	private static userInfo[] getUserInfo () {
@@ -204,7 +190,7 @@ public class DBConnection {
 				uInfo[i] = new userInfo();
 				uInfo[i].setInfo(rs.getInt("uid"), rs.getString("uname"), rs.getString("location"));				
 				i++;
-			}						
+			}				
 		} catch (SQLException e) {
 			System.out.println("[getUserInfo]SQLException: " + e.getMessage());
 		} catch (IOException e) {
@@ -222,16 +208,21 @@ public class DBConnection {
 		return uInfo;
 	}
 	
-	// select same columns from multiple tables with sum(traffic) ?
-	private static void getStatusTraffic() {
+	private static void getTrafficLog(userInfo uInfo []) {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		ResultSet rs = null;		
 		
 		try {
 			conn = DBConnection.getInstance().getConnection();
-			prepared = conn.prepareStatement("SELECT uid,sum(traffic) FROM status WHERE "
-					+ "time BETWEEN ? AND ?");
+			prepared = conn.prepareStatement("SELECT uid, sum(traffic) FROM ("
+					+ "SELECT uid, traffic, time FROM status "
+					+ "UNION ALL "
+					+ "SELECT uid, traffic, time FROM reply "
+					+ "UNION ALL "
+					+ "SELECT uid, traffic, time FROM latent) x "
+					+ "WHERE time BETWEEN ? AND ? "
+					+ "GROUP BY uid");
 						
 			Date date = new Date();			
 			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");						
@@ -241,17 +232,23 @@ public class DBConnection {
 			cal.add(Calendar.HOUR, mPeriod);									
 			String start = f.format(cal.getTime());
 			
-			cal.setTime(date);			
+			cal.setTime(date);
 			String end = f.format(cal.getTime());
 																		
 			prepared.setString(1, start);
 			prepared.setString(2, end);
 			
 			rs = prepared.executeQuery();
-			
+									 
 			while(rs.next()) {
-				System.out.println("UID: " + rs.getInt("uid"));
-				System.out.println("SUM(traffic): " + rs.getInt("sum(traffic)"));
+				int t_uid = rs.getInt("uid");
+				int t_traffic = rs.getInt("sum(traffic)");
+				LoopUpdate : for(int i = 0; i < uInfo.length; i++) {					
+					if (uInfo[i].getUID() == t_uid) {
+						uInfo[i].updateTraffic(t_traffic);						
+						break LoopUpdate;
+					}
+				}				
 			}																				
 		} catch (PropertyVetoException e) {
 			System.out.println("[getStatusTraffic]PropertyVetoException: " + e.getMessage());
