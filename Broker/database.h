@@ -39,7 +39,8 @@ public:
 	void init_thread();
 	int initDB();
 	int extractData();
-	void insertData(string name, string location, int timestamp, int traffic);
+	void insertData(string name, string location, int timestamp, int client_side_traffic, int server_side_traffic, int cpu_util, int ep_num, string side_flag);
+	void updateLocation(int, int, int);
 
 };
 

@@ -120,7 +120,7 @@ void CSocket::comm_socket(){
 
 					if(read_message.ep_num != 0){
 						printf("\n[read test, fd=%d] \n", fd);
-						printf("EP: %d, Side: %c \n",read_message.ep_num, read_message.side_flag);
+						printf("EP: %d, Side: %s \n",read_message.ep_num, read_message.side_flag);
 						printf("cpu_util: %d, server-side traffic: %d \n",read_message.cpu_util, read_message.server_side_traffic);
 						printf("user: %s, location: %s, timestamp: %d, user traffic: %d \n",read_message.user, read_message.location, read_message.timestamp, read_message.traffic);
 					}

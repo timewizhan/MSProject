@@ -31,7 +31,7 @@ struct monitoring_result{
 
 	//flag
 	int ep_num;	//1, 2 or 3
-	char side_flag; //server side: 's', client side: 'c'
+	char side_flag[10]; //server side: 's', client side: 'c'
 
 	//server side monitoring result
 	int cpu_util;
@@ -42,7 +42,6 @@ struct monitoring_result{
 	char location[20];
 	int timestamp;
 	int traffic;
-
 };
 
 class CSocket{
