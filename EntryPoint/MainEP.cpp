@@ -12,6 +12,10 @@ int main()
 {
 	EP_Test4 et;
 //	et.initEntryPoint();
+	while(1){
+
+	}
+	return 0;
 }
 
 
