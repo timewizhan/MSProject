@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -21,6 +17,9 @@
     <Filter Include="Server">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="DataBase">
+      <UniqueIdentifier>{c02585f9-3aae-45dd-bec8-acf3edbacccf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -42,6 +41,9 @@
     <ClCompile Include="..\BGServerMain.cpp">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="..\DataBase\DataBase.cpp">
+      <Filter>DataBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\Common.h">
@@ -56,17 +58,26 @@
     <ClInclude Include="..\HelpTool\HelpTool.h">
       <Filter>HelpTool</Filter>
     </ClInclude>
-    <ClInclude Include="..\Server\BGServer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\DataBase\DataBase.h">
+      <Filter>DataBase</Filter>
     </ClInclude>
-    <ClInclude Include="..\Server\BGServerError.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Server\BGServerStruct.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\DataBase\DataBaseType.h">
+      <Filter>DataBase</Filter>
     </ClInclude>
     <ClInclude Include="..\Server\BGWorkerThread.h">
-      <Filter>Header Files</Filter>
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\BGServer.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\BGServerError.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\BGServerStruct.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\BGWorkerStruct.h">
+      <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

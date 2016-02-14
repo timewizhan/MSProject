@@ -55,10 +55,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Develop\MSProject\BrokerGiver\Lib\jsoncpp\debug\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>json_vc71_libmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Develop\MSProject\BrokerGiver\Lib\jsoncpp\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -81,6 +84,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\Log.cpp" />
+    <ClCompile Include="..\DataBase\DataBase.cpp" />
     <ClCompile Include="..\HelpTool\HelpTool.cpp" />
     <ClCompile Include="..\BGServerMain.cpp" />
     <ClCompile Include="..\Server\BGServer.cpp" />
@@ -91,10 +95,13 @@
     <ClInclude Include="..\Common\Common.h" />
     <ClInclude Include="..\Common\Log.h" />
     <ClInclude Include="..\Common\Type.h" />
+    <ClInclude Include="..\DataBase\DataBase.h" />
+    <ClInclude Include="..\DataBase\DataBaseType.h" />
     <ClInclude Include="..\HelpTool\HelpTool.h" />
     <ClInclude Include="..\Server\BGServer.h" />
     <ClInclude Include="..\Server\BGServerError.h" />
     <ClInclude Include="..\Server\BGServerStruct.h" />
+    <ClInclude Include="..\Server\BGWorkerStruct.h" />
     <ClInclude Include="..\Server\BGWorkerThread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

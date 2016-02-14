@@ -2,6 +2,8 @@
 #include "BGServerError.h"
 
 #include "..\Common\Log.h"
+#include "json\reader.h"
+#include "json\json.h"
 
 
 #define DEFAULT_RECV_DATA 32
@@ -48,11 +50,40 @@ DWORD CBGWorkerThread::SendDataToClient(std::string &refstrSendData)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+void CBGWorkerThread::ReceiveDataFromClient(ST_RECV_DATA &refstRecvData, char *pReceiveBuf)
+{
+	refstRecvData.strRecvData = pReceiveBuf;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+void CBGWorkerThread::ParseReceivedData(ST_RECV_DATA &refstRecvData, ST_REQ_CLIENT &refstReqClient)
+{
+	Json::Value JsonRoot;
+	Json::Reader reader;
+	bool bParsingRet = reader.parse(refstRecvData.strRecvData, JsonRoot);
+	if (!bParsingRet) {
+		ErrorLog("Fail to parse a received data [%s]", reader.getFormatedErrorMessages());
+		std::cout << reader.getFormatedErrorMessages() << std::endl;
+		return ;
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 DWORD CBGWorkerThread::StartWorkerThread(char *pReceiveBuf, DWORD dwByteTransferred)
 {
 	DWORD dwRet;
 	try
 	{
+		ST_RECV_DATA stRecvData;
+		ReceiveDataFromClient(stRecvData, pReceiveBuf);
+
+		ST_REQ_CLIENT stReqClient;
+		ParseReceivedData(stRecvData, stReqClient);
+
+		/*
+			TODO :
+			Implement a communication with Broker (MySQL) and data to send to bot
+		*/
 		std::string strSendData = "hello, I'am Server";
 		dwRet = SendDataToClient(strSendData);
 	}
