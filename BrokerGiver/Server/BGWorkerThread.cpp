@@ -56,7 +56,7 @@ void CBGWorkerThread::ReceiveDataFromClient(ST_RECV_DATA &refstRecvData, char *p
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void CBGWorkerThread::ParseReceivedData(ST_RECV_DATA &refstRecvData, ST_REQ_CLIENT &refstReqClient)
+void CBGWorkerThread::ParseReqData(ST_RECV_DATA &refstRecvData, ST_CLIENT_REQ &refstReqClient)
 {
 	Json::Value JsonRoot;
 	Json::Reader reader;
@@ -66,6 +66,43 @@ void CBGWorkerThread::ParseReceivedData(ST_RECV_DATA &refstRecvData, ST_REQ_CLIE
 		std::cout << reader.getFormatedErrorMessages() << std::endl;
 		return ;
 	}
+
+	refstReqClient.iType	= JsonRoot.get("TYPE", 0).asInt();
+	refstReqClient.strSrc	= JsonRoot.get("SRC", 0).asString();
+	refstReqClient.strDst	= JsonRoot.get("DST", 0).asString();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+void CBGWorkerThread::MakeJsonResData(ST_CLIENT_RES &refstResClient, std::string &refstrSendData)
+{
+	Json::Value JsonRoot;
+	JsonRoot["RESPONSE"] = refstResClient.strIPAddress;
+
+	Json::StyledWriter JsonWriter;
+	std::string strSendData;
+	strSendData = JsonWriter.write(JsonRoot);
+
+	refstrSendData = strSendData;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+void CBGWorkerThread::ExtractResData(ST_DB_RESULT &refstDBResult, ST_CLIENT_RES &refstResClient)
+{
+	Json::Value JsonRoot;
+
+	if (refstDBResult.vecstDBResultLines.size() < 1) {
+		return;
+	}
+
+	ST_DB_RESULT_LINE stDBResultLine;
+	stDBResultLine = refstDBResult.vecstDBResultLines[0];
+
+	if (stDBResultLine.vecstrResult.size() < 1) {
+		return;
+	}
+
+	std::string strIPAddress = stDBResultLine.vecstrResult[0];
+	refstResClient.strIPAddress = strIPAddress;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,14 +114,20 @@ DWORD CBGWorkerThread::StartWorkerThread(char *pReceiveBuf, DWORD dwByteTransfer
 		ST_RECV_DATA stRecvData;
 		ReceiveDataFromClient(stRecvData, pReceiveBuf);
 
-		ST_REQ_CLIENT stReqClient;
-		ParseReceivedData(stRecvData, stReqClient);
+		ST_CLIENT_REQ stReqClient;
+		ParseReqData(stRecvData, stReqClient);
 
 		/*
 			TODO :
 			Implement a communication with Broker (MySQL) and data to send to bot
 		*/
-		std::string strSendData = "hello, I'am Server";
+
+		ST_DB_RESULT stDBResult;
+		ST_CLIENT_RES stResClient;
+		ExtractResData(stDBResult, stResClient);
+
+		std::string strSendData;
+		MakeJsonResData(stResClient, strSendData);
 		dwRet = SendDataToClient(strSendData);
 	}
 	catch (std::exception &e)

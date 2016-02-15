@@ -21,6 +21,9 @@
     <Filter Include="DataBase">
       <UniqueIdentifier>{c02585f9-3aae-45dd-bec8-acf3edbacccf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{55017c49-8fc4-46b2-953d-f7c8550f8978}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\HelpTool\HelpTool.cpp">
@@ -78,6 +81,9 @@
     </ClInclude>
     <ClInclude Include="..\Server\BGWorkerStruct.h">
       <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\Protocol.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

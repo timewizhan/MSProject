@@ -103,6 +103,7 @@
     <ClInclude Include="..\Server\BGServerStruct.h" />
     <ClInclude Include="..\Server\BGWorkerStruct.h" />
     <ClInclude Include="..\Server\BGWorkerThread.h" />
+    <ClInclude Include="..\Server\Protocol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

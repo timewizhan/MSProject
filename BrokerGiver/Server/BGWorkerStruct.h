@@ -8,9 +8,4 @@ struct ST_RECV_DATA
 	std::string strRecvData;
 };
 
-struct ST_REQ_CLIENT
-{
-
-};
-
 #endif
