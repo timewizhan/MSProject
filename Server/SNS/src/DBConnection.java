@@ -239,13 +239,15 @@ public class DBConnection {
 			prepared.setString(2, end);
 			
 			rs = prepared.executeQuery();
-									 
+			
+			int start_point = 0;			
 			while(rs.next()) {
 				int t_uid = rs.getInt("uid");
-				int t_traffic = rs.getInt("sum(traffic)");
-				LoopUpdate : for(int i = 0; i < uInfo.length; i++) {					
+				int t_traffic = rs.getInt("sum(traffic)");				
+				LoopUpdate : for(int i = start_point; i < uInfo.length; i++) {					
 					if (uInfo[i].getUID() == t_uid) {
-						uInfo[i].updateTraffic(t_traffic);						
+						uInfo[i].updateTraffic(t_traffic);
+						//start_point = i;
 						break LoopUpdate;
 					}
 				}				
