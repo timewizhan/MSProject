@@ -68,8 +68,7 @@ public class ServiceServer implements Runnable {
 						+ socket.getInetAddress());														 			
 															
 				String response = msgGenerator(operationHandler(msgParser(socket)));								
-								
-				
+												
 				out = new BufferedWriter(new OutputStreamWriter(
 						socket.getOutputStream(), "UTF-8"));				
 							
@@ -116,6 +115,7 @@ public class ServiceServer implements Runnable {
 		case ReqType.TWEET:			
 			uid = DBConnection.isThere(src, mResident, loc);			
 			res = DBConnection.writeStatus(uid, msg, reqSize);
+			DBConnection.getMonitor();
 			break;
 		case ReqType.READ:
 			uid = DBConnection.isThere(src, mVisitor, loc);

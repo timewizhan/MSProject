@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
@@ -160,9 +161,14 @@ public class DBConnection {
 
 	public static userInfo [] getMonitor() {		
 		userInfo [] uInfo = getUserInfo();
-						
-		getTrafficLog(uInfo);
-						
+		HashMap<Integer, Integer> tInfo = getTrafficLog();						
+		
+		for (int i = 0; i < uInfo.length; i++) {
+			int uid = uInfo[i].getUID();
+			if (tInfo.get(uid) != null)
+				uInfo[i].updateTraffic(tInfo.get(uid));
+		}
+				
 		return uInfo;
 	}
 	
@@ -208,10 +214,11 @@ public class DBConnection {
 		return uInfo;
 	}
 	
-	private static void getTrafficLog(userInfo uInfo []) {
+	private static HashMap<Integer, Integer> getTrafficLog() {
 		Connection conn = null;
 		PreparedStatement prepared = null;
-		ResultSet rs = null;		
+		ResultSet rs = null;				
+		HashMap<Integer, Integer> tMap = new HashMap<Integer, Integer>();
 		
 		try {
 			conn = DBConnection.getInstance().getConnection();
@@ -238,20 +245,13 @@ public class DBConnection {
 			prepared.setString(1, start);
 			prepared.setString(2, end);
 			
-			rs = prepared.executeQuery();
-			
-			int start_point = 0;			
+			rs = prepared.executeQuery();						
+						
 			while(rs.next()) {
 				int t_uid = rs.getInt("uid");
-				int t_traffic = rs.getInt("sum(traffic)");				
-				LoopUpdate : for(int i = start_point; i < uInfo.length; i++) {					
-					if (uInfo[i].getUID() == t_uid) {
-						uInfo[i].updateTraffic(t_traffic);
-						//start_point = i;
-						break LoopUpdate;
-					}
-				}				
-			}																				
+				int t_traffic = rs.getInt("sum(traffic)");					
+				tMap.put(t_uid, t_traffic);				
+			}					
 		} catch (PropertyVetoException e) {
 			System.out.println("[getStatusTraffic]PropertyVetoException: " + e.getMessage());
 		} catch (SQLException e) {
@@ -266,6 +266,7 @@ public class DBConnection {
 					System.out.println("[getStatusTraffic/conn]SQLException: " + e.getMessage());
 				}
 		}
+		return tMap;
 	}
 	
 	private static void updateUser(int uid, int utype) throws PropertyVetoException, SQLException, IOException {
