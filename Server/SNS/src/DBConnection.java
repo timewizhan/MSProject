@@ -159,6 +159,9 @@ public class DBConnection {
 		}
 	}
 
+	// when we store the traffic info into the database
+	// we should check whether the user's traffic info is 0 or not
+	// if the traffic info is 0, we don't need to store the corresponding user
 	public static userInfo [] getMonitor() {		
 		userInfo [] uInfo = getUserInfo();
 		HashMap<Integer, Integer> tInfo = getTrafficLog();						
@@ -168,7 +171,7 @@ public class DBConnection {
 			if (tInfo.get(uid) != null)
 				uInfo[i].updateTraffic(tInfo.get(uid));
 		}
-				
+		
 		return uInfo;
 	}
 	

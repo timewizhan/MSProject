@@ -114,8 +114,7 @@ public class ServiceServer implements Runnable {
 		switch (reqType) {                                                                                                                                                                                                      
 		case ReqType.TWEET:			
 			uid = DBConnection.isThere(src, mResident, loc);			
-			res = DBConnection.writeStatus(uid, msg, reqSize);
-			DBConnection.getMonitor();
+			res = DBConnection.writeStatus(uid, msg, reqSize);			
 			break;
 		case ReqType.READ:
 			uid = DBConnection.isThere(src, mVisitor, loc);
