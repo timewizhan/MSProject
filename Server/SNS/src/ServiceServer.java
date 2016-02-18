@@ -72,7 +72,7 @@ public class ServiceServer implements Runnable {
 				out = new BufferedWriter(new OutputStreamWriter(
 						socket.getOutputStream(), "UTF-8"));				
 							
-				Thread.sleep(calRTT());
+				Thread.sleep(calRTT("KR"));
 			
 				out.write(response);
 				out.newLine();
@@ -82,11 +82,11 @@ public class ServiceServer implements Runnable {
 			} catch (PropertyVetoException e) {
 				System.out.println("[run]PropertyVetoException: " + e.getMessage());
 			} catch (SQLException e) {
-				System.out.println("[run]SQLException: " + e.getMessage());
-			} catch (InterruptedException e) {
-				System.out.println("[run]InterruptException: " + e.getMessage());
+				System.out.println("[run]SQLException: " + e.getMessage()); 
 			} catch (ParseException e) {
 				System.out.println("[run]ParseException: " + e.getMessage());
+			} catch (InterruptedException e) {
+				System.out.println("[run]InterruptedException: " + e.getMessage());
 			} finally {
 				if (socket != null)
 					try {
@@ -166,9 +166,23 @@ public class ServiceServer implements Runnable {
 		return response.toString();
 	}
 	
-	private int calRTT() {
+	private long calRTT(String user_loc) {
+		String server_loc = "KR";
+		long RTT = 0;
+		float distance = 0;
+	
+		// if same region, RTT = 20
+		if (user_loc == server_loc)
+			RTT = 20;
+		// RTT(ms) = 0.02 * Distance(km) + 5
+		else
+			RTT = Math.round(0.02 * distance + 5);
 		
-		return 0;
+		// maximal average response delay = 150
+		// since latency up to 200
+		// will deteriorate the user experience significantly
+
+		return RTT;
 	}
 	
 	private String getTime() {
