@@ -32,7 +32,6 @@ public class ServiceServer implements Runnable {
 		// create threads
 		ServiceServer server = new ServiceServer(4);
 		server.start();
-		
 	}
 	
 	public ServiceServer(int num) {
@@ -181,7 +180,7 @@ public class ServiceServer implements Runnable {
 		// maximal average response delay = 150
 		// since latency up to 200
 		// will deteriorate the user experience significantly
-
+		
 		return RTT;
 	}
 	
