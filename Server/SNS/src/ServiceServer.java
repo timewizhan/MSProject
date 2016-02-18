@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
@@ -14,6 +15,8 @@ import java.util.Date;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import com.sun.management.OperatingSystemMXBean;
 
 interface ReqType {
 	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, REPLACEMENT = 5;
@@ -120,7 +123,6 @@ public class ServiceServer implements Runnable {
 			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
 			break;
 		case ReqType.REPLY:
-			DBConnection.getMonitor();
 			uid = DBConnection.isThere(src, mVisitor, loc);			
 			res = DBConnection.writeReply(uid, dst, msg, reqSize, mNumRand);
 			break;
@@ -132,7 +134,6 @@ public class ServiceServer implements Runnable {
 			// do data replacement
 			break;													
 		}
-		
 		return res;
 	}
 
@@ -182,6 +183,26 @@ public class ServiceServer implements Runnable {
 		// will deteriorate the user experience significantly
 		
 		return RTT;
+	}
+	
+	//OperatingSystemMXBean class = CPU utilization
+	private void getCpuLoad() {
+		final OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
+		double load = 0;
+		
+		while(true) {
+			load = osBean.getSystemCpuLoad();
+			
+			if (load < 0.0)
+				continue;
+			
+			System.out.println("CPU Usage: " + load * 100.0 + "%");
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				System.out.println("[getCpuLoad]InterruptedException e: " + e.getMessage());
+			}
+		}
 	}
 	
 	private String getTime() {
