@@ -1,11 +1,7 @@
 import java.beans.PropertyVetoException;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
@@ -13,10 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import com.sun.management.OperatingSystemMXBean;
 
 interface ReqType {
 	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, REPLACEMENT = 5;
@@ -31,10 +24,13 @@ public class ServiceServer implements Runnable {
 	private final static int mNumRead = 5;
 	private final static int mNumRand = 10;
 	
-	public static void main(String[] args) {
-		// create threads
+	public static void main(String[] args) {								
+		// create server threads
 		ServiceServer server = new ServiceServer(4);
 		server.start();
+		
+		// monitor cpu load
+		Utility.getCpuLoad();
 	}
 	
 	public ServiceServer(int num) {
@@ -69,12 +65,12 @@ public class ServiceServer implements Runnable {
 				System.out.println(getTime() + " received a request from " 
 						+ socket.getInetAddress());														 			
 															
-				String response = msgGenerator(operationHandler(msgParser(socket)));								
+				String response = Utility.msgGenerator(operationHandler(Utility.msgParser(socket)));								
 												
 				out = new BufferedWriter(new OutputStreamWriter(
 						socket.getOutputStream(), "UTF-8"));				
 							
-				Thread.sleep(calRTT("KR"));
+				Thread.sleep(Utility.calRTT("KR"));
 			
 				out.write(response);
 				out.newLine();
@@ -137,74 +133,6 @@ public class ServiceServer implements Runnable {
 		return res;
 	}
 
-	private JSONObject msgParser(Socket socket) throws UnsupportedEncodingException, IOException, ParseException {		
-		String result = "";	
-		BufferedReader input = null;
-		JSONObject msg = null;
-		
-		try {
-			input = new BufferedReader(new InputStreamReader(
-					socket.getInputStream(), "UTF-8"));
-			result = input.readLine();			
-			JSONParser parser = new JSONParser();
-			msg = (JSONObject) parser.parse(result);			
-		} catch (UnsupportedEncodingException e) {
-			System.out.println("[msgParser]UnsupportedEncodingException e: " + e.getMessage());			
-		} catch (IOException e) {
-			System.out.println("[msgParser]IOException e: " + e.getMessage());
-		} catch (ParseException e) {
-			System.out.println("[msgParser]ParseException e: " + e.getMessage());
-		}	
-		return msg;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private String msgGenerator(String result) {
-		JSONObject response = new JSONObject();
-		response.put("RESPONSE", result);
-		
-		return response.toString();
-	}
-	
-	private long calRTT(String user_loc) {
-		String server_loc = "KR";
-		long RTT = 0;
-		float distance = 0;
-	
-		// if same region, RTT = 20
-		if (user_loc == server_loc)
-			RTT = 20;
-		// RTT(ms) = 0.02 * Distance(km) + 5
-		else
-			RTT = Math.round(0.02 * distance + 5);
-		
-		// maximal average response delay = 150
-		// since latency up to 200
-		// will deteriorate the user experience significantly
-		
-		return RTT;
-	}
-	
-	//OperatingSystemMXBean class = CPU utilization
-	private void getCpuLoad() {
-		final OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
-		double load = 0;
-		
-		while(true) {
-			load = osBean.getSystemCpuLoad();
-			
-			if (load < 0.0)
-				continue;
-			
-			System.out.println("CPU Usage: " + load * 100.0 + "%");
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				System.out.println("[getCpuLoad]InterruptedException e: " + e.getMessage());
-			}
-		}
-	}
-	
 	private String getTime() {
 		String name = Thread.currentThread().getName();
 		SimpleDateFormat f = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]");
