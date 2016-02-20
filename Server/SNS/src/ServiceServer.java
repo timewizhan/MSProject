@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.json.simple.JSONObject;
@@ -18,11 +19,15 @@ interface ReqType {
 public class ServiceServer implements Runnable {
 	ServerSocket mServerSocket;
 	Thread[] mThreadArr;
-		
+	
 	private final static int mResident = 1;
 	private final static int mVisitor = 2;
 	private final static int mNumRead = 5;
 	private final static int mNumRand = 10;
+	
+	static ArrayList<Double> cpu_log;
+	
+	final static String mLocation = "KR";
 	
 	public static void main(String[] args) {								
 		// create server threads
@@ -30,7 +35,7 @@ public class ServiceServer implements Runnable {
 		server.start();
 		
 		// monitor cpu load
-		Utility.getCpuLoad();
+		Utility.getCpuLoad(cpu_log);
 	}
 	
 	public ServiceServer(int num) {
@@ -98,10 +103,10 @@ public class ServiceServer implements Runnable {
 		}		
 	}
 		
-	private String operationHandler(JSONObject request) throws PropertyVetoException, SQLException, IOException {		
+	private int operationHandler(JSONObject request) throws PropertyVetoException, SQLException, IOException {		
 		int uid = -1;
 		int reqSize = request.toString().length();
-		String res = null;		
+		int res = 0;		
 						
 		int reqType = Integer.parseInt((String) request.get("TYPE"));	
 		String src = (String) request.get("SENDER");		
