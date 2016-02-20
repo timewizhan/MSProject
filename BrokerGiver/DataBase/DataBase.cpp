@@ -1,4 +1,5 @@
 #include "DataBase.h"
+#include "MySQL.h"
 
 IDataBase::IDataBase()
 {
@@ -17,6 +18,8 @@ HANDLE CreateDBInstance(E_DB_TYPE eDBType)
 	switch (eDBType)
 	{
 	case E_DB_MYSQL:
+		return (HANDLE) new CMySQL();
+		break;
 	case E_DB_ORACLE:
 		/*
 		nothing to implement

@@ -13,6 +13,12 @@ CBGWorkerThread::CBGWorkerThread(SOCKET ClientSocket)
 {
 	::memset(&m_stWorkerThread, 0x00, sizeof(ST_WORKER_THREAD));
 	m_stWorkerThread.hClientSocket = ClientSocket;
+
+	m_stDBLoginToken.strDatabaseName	= "";
+	m_stDBLoginToken.strDatabaseIP		= "";
+	m_stDBLoginToken.strPort			= "";
+	m_stDBLoginToken.strUserName		= "root";
+	m_stDBLoginToken.strPassword		= "cclab";
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,6 +111,35 @@ void CBGWorkerThread::ExtractResData(ST_DB_RESULT &refstDBResult, ST_CLIENT_RES 
 	refstResClient.strIPAddress = strIPAddress;
 }
 
+void CBGWorkerThread::RequestDataBase(ST_CLIENT_REQ &refstReqClient, ST_DB_RESULT &refstDBResult)
+{
+	HANDLE hDataBase = NULL;
+	hDataBase = CreateDBInstance(E_DB_POSTGRES);
+	if (hDataBase == NULL) {
+		ErrorLog("Fail to create DB instance");
+		return ;
+	}
+
+	DWORD dwRet;
+	dwRet = ConnectToDB(hDataBase, m_stDBLoginToken);
+	if (dwRet != E_RET_SUCCESS) {
+		ErrorLog("Fail to connet to DB");
+		return ;
+	}
+
+	ST_DB_SQL stDBSql;
+	stDBSql.strSQL = "SELECT ip from redirection_table WHERE user_id=" + refstReqClient.strDst;
+
+	ST_DB_RESULT stDBResult;
+	dwRet = QueryFromDB(hDataBase, stDBSql, stDBResult);
+	if (dwRet != E_RET_SUCCESS) {
+		ErrorLog("Fail to query data from DataBase");
+		return;
+	}
+
+	refstDBResult = stDBResult;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 DWORD CBGWorkerThread::StartWorkerThread(char *pReceiveBuf, DWORD dwByteTransferred)
 {
@@ -117,12 +152,9 @@ DWORD CBGWorkerThread::StartWorkerThread(char *pReceiveBuf, DWORD dwByteTransfer
 		ST_CLIENT_REQ stReqClient;
 		ParseReqData(stRecvData, stReqClient);
 
-		/*
-			TODO :
-			Implement a communication with Broker (MySQL) and data to send to bot
-		*/
-
 		ST_DB_RESULT stDBResult;
+		RequestDataBase(stReqClient, stDBResult);
+
 		ST_CLIENT_RES stResClient;
 		ExtractResData(stDBResult, stResClient);
 
