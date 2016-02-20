@@ -55,8 +55,18 @@ class NetworkSettingComponent:
 class AbstractNetwork:
 	DEFAULT_RECV_BUF_SIZE = 8192
 
-	def __init__(self):
-		pass
+	def __init__(self, ipAddress, Port):
+		networkSettingComponent = NetworkSettingComponent()
+
+		networkSettingComponent.setIPAddressToConnect(ipAddress)
+		networkSettingComponent.setPortToConnect(Port)
+		networkSettingComponent.setAddressFamily(TYPE_AF_INET)
+		networkSettingComponent.setProtocolType(TYPE_PROTOCOL_TCP)
+
+		self.configureEnviromentAndSocket(networkSettingComponent)
+
+	def __del__(self):
+		close(self.socketToConnect)
 
 	def configureEnviromentAndSocket(self, networkSettingComponent):
 		serverIPAddress = networkSettingComponent.getIPAddressToConnect()
@@ -94,21 +104,10 @@ class AbstractNetwork:
 		return self.socketToConnect.recv(DEFAULT_RECV_BUF_SIZE)
 
 	def startNetworkingWithData(self, data):
-		pass
-
-class Broker(AbstractNetwork):
-	def __init__(self):
-		pass 
-
-	def startNetworkingWithData(self, data):
-		pass
-
-class EntryPoint(AbstractNetwork):
-	def __init__(self):
-		pass 
-
-	def startNetworkingWithData(self, data):
 		recvData = ""
+
+		if not self.connectToServer():
+			return recvData
 
 		try:
 			ret = self.sendDataToServer(data)
@@ -124,5 +123,35 @@ class EntryPoint(AbstractNetwork):
 			pass
 
 		return recvData
+
+class Broker(AbstractNetwork):
+	def __init__(self):
+		'''
+			Broker IP, Port are fixed
+		'''
+		brokerIPAddress = "192.168.0.1"
+		brokerPort = 7777
+		AbstractNetwork.__init__(self, brokerIPAddress, brokerPort)
+
+	def __del(self):
+		AbstractNetwork.__del__()
+
+	def startNetworkingWithData(self, data):
+		AbstractNetwork.startNetworkingWithData(data)
+
+class EntryPoint(AbstractNetwork):
+	def __init__(self, ipAddress):
+		'''
+			EntryPoint Port are fixed
+		'''
+		entrypointPort = 7777
+		AbstractNetwork.__init__(self, ipAddress, entrypointPort)
+
+	def __del(self):
+		AbstractNetwork.__del__()
+
+	def startNetworkingWithData(self, data):
+		AbstractNetwork.startNetworkingWithData(data)
+
 
 

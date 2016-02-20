@@ -27,6 +27,12 @@ class Job:
 	def getWriteType(self):
 		return self.writeType
 
+	def setLocation(self, location):
+		self.location = location
+
+	def getLocation(self):
+		return location
+
 class JobHashMap:
 	TOTAL_TIME_COUNT = 24
 

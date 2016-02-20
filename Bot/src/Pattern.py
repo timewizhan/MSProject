@@ -250,6 +250,9 @@ class PatternDelegator:
 		self.timePattern = TimePattern(self.userID)
 		self.behaviorPattern = BehaviorPattern(self.userID)
 
+		# TODO : decide user's location
+		self.behaviorPattern = LocationPattern()
+
 	def getOneDayList(self):
 		return self.timePattern.startToMakePattern()
 
