@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -34,7 +35,7 @@ public class Utility {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static String msgGenerator(String result) {
+	public static String msgGenerator(int result) {
 		JSONObject response = new JSONObject();
 		response.put("RESPONSE", result);
 		
@@ -61,9 +62,11 @@ public class Utility {
 	}
 	
 	//OperatingSystemMXBean class = CPU utilization
-	public static void getCpuLoad() {
+	public static void getCpuLoad(ArrayList<Double> cpu_log) {
 		final OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
 		double load = 0;
+		
+		cpu_log = new ArrayList<>();
 		
 		while(true) {
 			load = osBean.getSystemCpuLoad();
@@ -71,7 +74,8 @@ public class Utility {
 			if (load < 0.0)
 				continue;
 			
-			System.out.println("CPU Usage: " + load * 100.0 + "%");
+			cpu_log.add(load * 100);						
+			System.out.println("CPU Usage: " + load * 100.0 + "%" + " / " + cpu_log.size());			
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {

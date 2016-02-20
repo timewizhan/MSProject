@@ -20,8 +20,10 @@ public class DBConnection {
 	private final static int mResident = 1;	
 	private final static int mBasicResponseSize = 22;	
 	private final static int mPeriod = -1;
-
 	
+	private final static int mSuccess = 1;
+	private final static int mFail = 0;
+		
 	private DBConnection() throws IOException, SQLException, PropertyVetoException {
 		mCDPS = new ComboPooledDataSource();
 		mCDPS.setDriverClass("com.mysql.jdbc.Driver");
@@ -93,7 +95,7 @@ public class DBConnection {
 		return uid;
 	}
 	
-	public static String writeStatus(int uid, String msg, int reqSize) throws PropertyVetoException, SQLException, IOException {
+	public static int writeStatus(int uid, String msg, int reqSize) throws PropertyVetoException, SQLException, IOException {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		
@@ -128,10 +130,10 @@ public class DBConnection {
 					System.out.println("[writeStatus/conn]SQLException: " + e.getMessage());
 				}						
 		}		
-		return "Success";
+		return mSuccess;
 	}
 	
-	public static String readStatus(int uid, String uname, int reqSize, int num) throws PropertyVetoException, SQLException, IOException {
+	public static int readStatus(int uid, String uname, int reqSize, int num) throws PropertyVetoException, SQLException, IOException {
 		int t_uid = getUID(uname);
 		if (t_uid != -1) {
 			statusInfo result = getStatus(t_uid, num);
@@ -140,12 +142,12 @@ public class DBConnection {
 			String t_status = result.getStatus();					
 			storeLatent(uid, t_sids, reqSize, t_status.length());
 		
-			return t_status;
+			return mSuccess;
 		} else
-			return "Fail";
+			return mFail;
 	}
 	
-	public static String writeReply(int uid, String uname, String msg, int reqSize, int num) throws PropertyVetoException, SQLException, IOException {
+	public static int writeReply(int uid, String uname, String msg, int reqSize, int num) throws PropertyVetoException, SQLException, IOException {
 		int t_uid = getUID(uname);
 		if (t_uid != -1) {
 			statusInfo result = getStatus(t_uid, num);
@@ -155,7 +157,7 @@ public class DBConnection {
 			int picked = rand.nextInt(t_sids.length - 1);											
 			return storeReply(uid, t_sids[picked], msg, reqSize);
 		} else {
-			return "Fail";
+			return mFail;
 		}
 	}
 
@@ -368,7 +370,7 @@ public class DBConnection {
 			prepared.setString(1, uname);
 			rs = prepared.executeQuery();
 			
-			if (rs.next()) {				
+			if (rs.next()) {	
 				uid = rs.getInt("uid");
 				type = rs.getInt("type");
 			}
@@ -385,7 +387,9 @@ public class DBConnection {
 				} catch (SQLException e) {
 					System.out.println("[getUID/conn]SQLException: " + e.getMessage());					
 				}								
-		}			
+		}
+		
+		//is Resident (i.e. actual user of corresponding server)
 		if ((type & mResident) == 1)
 			return uid;
 		else
@@ -479,7 +483,7 @@ public class DBConnection {
 		}
 	}
 	
-	private static String storeReply(int uid, int sid, String msg, int reqSize) throws SQLException {
+	private static int storeReply(int uid, int sid, String msg, int reqSize) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;						
 						
@@ -515,6 +519,6 @@ public class DBConnection {
 					System.out.println("[storeReply/conn]SQLException: " + e.getMessage());					
 				}						
 		}
-		return "Success";
+		return mSuccess;
 	}		
 }
