@@ -8,7 +8,7 @@ def getWriteMsgToSend(number):
 		return "Nice to meet you, Boker"
 	elif number == 4:
 		return "Glad to meet you, Boker"
-	else number == 5:
+	else:
 		return "Good to see you, Boker"
 
 def getReplyMsgToSend(number):		
@@ -20,5 +20,5 @@ def getReplyMsgToSend(number):
 		return "See you later"
 	elif number == 4:
 		return "never come back"
-	else number == 5:
+	else:
 		return "Are you Happy?"
