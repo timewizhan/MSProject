@@ -14,6 +14,7 @@ class PyDatabase:
         except psycopg2.DatabaseError, e:
             if self.connection:
                 self.connection.rollback()
+                self.connection.close()
     
             Log.error("%s" % e)
 

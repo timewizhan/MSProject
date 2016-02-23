@@ -20,7 +20,10 @@ if __name__ == "__main__":
 	from Scheduler import Scheduler
 
 	# sample id
-	userID = "gdenny517"
+	if len(sys.argv) < 2:
+		sys.exit(1)
+
+	userID = sys.argv[1]
 
 	Log.debug("=============================================")
 	Log.debug("================= Start Bot =================")

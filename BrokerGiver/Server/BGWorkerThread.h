@@ -10,6 +10,7 @@
 class CBGWorkerThread
 {
 	ST_WORKER_THREAD	m_stWorkerThread;
+	ST_DB_LOGIN_TOKEN	m_stDBLoginToken;
 
 	DWORD SendDataToClient(std::string &refstrSendData);
 	DWORD GetDataFromDB();
@@ -18,6 +19,7 @@ class CBGWorkerThread
 	void ParseReqData(ST_RECV_DATA &refstRecvData, ST_CLIENT_REQ &refstReqClient);
 	void ExtractResData(ST_DB_RESULT &refstDBResult, ST_CLIENT_RES &refstResClient);
 	void MakeJsonResData(ST_CLIENT_RES &refstResClient, std::string &refstrSendData);
+	void RequestDataBase(ST_CLIENT_REQ &refstReqClient, ST_DB_RESULT &refstDBResult);
 public:
 	CBGWorkerThread(SOCKET ClientSocket);
 	~CBGWorkerThread();

@@ -208,7 +208,9 @@ DWORD CBGServer::InitServerValue(DWORD dwPort, DWORD dwBackLog)
 		return E_RET_FAIL;
 	}
 
-	nRet = ::listen(m_stServerInit.hServerSock, dwBackLog);
+	// backlog value is set to SOMAXCONN
+	// The backlog argument defines the maximum length to which the queue of pending connections for sockfd may grow
+	nRet = ::listen(m_stServerInit.hServerSock, SOMAXCONN);
 	if (nRet == SOCKET_ERROR) {
 		ErrorLog("Fail to operate socket listen");
 		return E_RET_FAIL;

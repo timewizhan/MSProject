@@ -47,6 +47,9 @@
     <ClCompile Include="..\DataBase\DataBase.cpp">
       <Filter>DataBase</Filter>
     </ClCompile>
+    <ClCompile Include="..\DataBase\MySQL.cpp">
+      <Filter>DataBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\Common.h">
@@ -84,6 +87,9 @@
     </ClInclude>
     <ClInclude Include="..\Server\Protocol.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataBase\MySQL.h">
+      <Filter>DataBase</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
