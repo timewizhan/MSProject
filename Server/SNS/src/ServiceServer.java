@@ -27,9 +27,7 @@ public class ServiceServer implements Runnable {
 	private final static int mResident = 1;
 	private final static int mVisitor = 2;
 	
-	private final static int mNumRead = 5;
-	private final static int mNumRand = 10;
-	private final static int mNumShare = 1;
+	private final static int mNumRead = 10;
 	
 	public static ArrayList<Double> mCPU_Log;
 	
@@ -134,11 +132,11 @@ public class ServiceServer implements Runnable {
 			break;
 		case ReqType.REPLY:
 			uid = DBConnection.isThere(src, mVisitor, loc);			
-			res = DBConnection.writeReply(uid, dst, msg, reqSize, mNumRand);
+			res = DBConnection.writeReply(uid, dst, msg, reqSize, mNumRead);
 			break;
 		case ReqType.RETWEET:
 			uid = DBConnection.isThere(src, mVisitor, loc);
-			res = DBConnection.readStatus(uid, dst, reqSize, mNumShare);
+			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
 			break;
 		case ReqType.REPLACEMENT:
 			Utility.stopScheduler(mScheduler);		
