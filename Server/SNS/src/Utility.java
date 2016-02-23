@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -61,12 +63,9 @@ public class Utility {
 		return RTT;
 	}
 	
-	//OperatingSystemMXBean class = CPU utilization
 	public static void getCpuLoad(ArrayList<Double> cpu_log) {
 		final OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
-		double load = 0;
-		
-		cpu_log = new ArrayList<>();
+		double load = 0;				
 		
 		while(true) {
 			load = osBean.getSystemCpuLoad();
@@ -74,7 +73,7 @@ public class Utility {
 			if (load < 0.0)
 				continue;
 			
-			cpu_log.add(load * 100);						
+			cpu_log.add(load * 100);					
 			System.out.println("CPU Usage: " + load * 100.0 + "%" + " / " + cpu_log.size());			
 			try {
 				Thread.sleep(1000);
@@ -82,5 +81,23 @@ public class Utility {
 				System.out.println("[getCpuLoad]InterruptedException e: " + e.getMessage());
 			}
 		}
+	}
+	
+	public static void monitorCpuLoad(ScheduledExecutorService scheduler, ArrayList<Double> cpu_log) throws InterruptedException {
+		final OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();				
+		Runnable monitor = new Runnable() {
+			
+			@Override
+			public void run() {
+				double load = osBean.getSystemCpuLoad();
+				if (load > 0.0)
+					cpu_log.add(load * 100);								
+			}
+		};		
+		scheduler.scheduleAtFixedRate(monitor, 0, 1, TimeUnit.SECONDS);								
+	}
+	
+	public static void stopScheduler(ScheduledExecutorService scheduler) {
+		scheduler.shutdown();
 	}
 }

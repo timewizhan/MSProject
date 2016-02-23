@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -20,22 +22,28 @@ public class ServiceServer implements Runnable {
 	ServerSocket mServerSocket;
 	Thread[] mThreadArr;
 	
+	private final static String mLocation = "KR";
+	
 	private final static int mResident = 1;
 	private final static int mVisitor = 2;
+	
 	private final static int mNumRead = 5;
 	private final static int mNumRand = 10;
+	private final static int mNumShare = 1;
 	
-	static ArrayList<Double> cpu_log;
+	public static ArrayList<Double> mCPU_Log;
 	
-	final static String mLocation = "KR";
+	public static ScheduledExecutorService mScheduler;
 	
-	public static void main(String[] args) {								
+	public static void main(String[] args) throws InterruptedException {								
 		// create server threads
 		ServiceServer server = new ServiceServer(4);
 		server.start();
 		
-		// monitor cpu load
-		Utility.getCpuLoad(cpu_log);
+		// monitor cpu load	
+		mScheduler = Executors.newSingleThreadScheduledExecutor();
+		mCPU_Log = new ArrayList<>();
+		Utility.monitorCpuLoad(mScheduler, mCPU_Log);				
 	}
 	
 	public ServiceServer(int num) {
@@ -74,7 +82,8 @@ public class ServiceServer implements Runnable {
 												
 				out = new BufferedWriter(new OutputStreamWriter(
 						socket.getOutputStream(), "UTF-8"));				
-							
+						
+				// can be replaced by java.util.Timer and java.util.TimerTask classes
 				Thread.sleep(Utility.calRTT("KR"));
 			
 				out.write(response);
@@ -129,10 +138,10 @@ public class ServiceServer implements Runnable {
 			break;
 		case ReqType.RETWEET:
 			uid = DBConnection.isThere(src, mVisitor, loc);
-			res = DBConnection.readStatus(uid, dst, reqSize, mNumRand);
+			res = DBConnection.readStatus(uid, dst, reqSize, mNumShare);
 			break;
 		case ReqType.REPLACEMENT:
-			// do data replacement
+			Utility.stopScheduler(mScheduler);		
 			break;													
 		}
 		return res;
