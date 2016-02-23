@@ -1,13 +1,14 @@
 from socket import *
+import time
 
-TYPE_AF_INET 	= 1
-TYPE_AF_INET6 	= 2
-TYPE_AF_LOCAL 	= 3
+TYPE_AF_INET 	= AF_INET
+TYPE_AF_INET6 	= AF_INET6
+TYPE_AF_LOCAL 	= AF_INET
 
-TYPE_PROTOCOL_TCP	= 1
-TYPE_PROTOCOL_UDP	= 2
+TYPE_PROTOCOL_TCP	= SOCK_STREAM
+TYPE_PROTOCOL_UDP	= SOCK_DGRAM
 
-class NetworkError(Exception)
+class NetworkError(Exception):
 	def __init__(self, type):
 		self.type = type
 
@@ -66,7 +67,7 @@ class AbstractNetwork:
 		self.configureEnviromentAndSocket(networkSettingComponent)
 
 	def __del__(self):
-		close(self.socketToConnect)
+		self.socketToConnect.close()
 
 	def configureEnviromentAndSocket(self, networkSettingComponent):
 		serverIPAddress = networkSettingComponent.getIPAddressToConnect()
@@ -93,7 +94,7 @@ class AbstractNetwork:
 			firstPos = sizeOfDataToSend - remainedSize
 
 			lengthOfDataSent = self.socketToConnect.send(jsonData[firstPos:])
-			lengthOfDataSent += lengthOfDataSent
+			totalSizeOfDataSent += lengthOfDataSent
 
 		if totalSizeOfDataSent > sizeOfDataToSend:
 			pass
@@ -101,6 +102,7 @@ class AbstractNetwork:
 		return 1
 
 	def recvDataFromServer(self):
+		DEFAULT_RECV_BUF_SIZE = 4096
 		return self.socketToConnect.recv(DEFAULT_RECV_BUF_SIZE)
 
 	def startNetworkingWithData(self, data):
@@ -113,6 +115,8 @@ class AbstractNetwork:
 			ret = self.sendDataToServer(data)
 			if ret != 1:
 				raise NetworkError(ret)
+
+			time.sleep(1)
 
 			recvData = self.recvDataFromServer()
 			sizeOfRecvData = len(recvData)
@@ -129,15 +133,15 @@ class Broker(AbstractNetwork):
 		'''
 			Broker IP, Port are fixed
 		'''
-		brokerIPAddress = "192.168.0.1"
-		brokerPort = 7777
+		brokerIPAddress = "192.168.56.1"
+		brokerPort = 7500
 		AbstractNetwork.__init__(self, brokerIPAddress, brokerPort)
 
-	def __del(self):
-		AbstractNetwork.__del__()
+	def __del__(self):
+		AbstractNetwork.__del__(self)
 
 	def startNetworkingWithData(self, data):
-		AbstractNetwork.startNetworkingWithData(data)
+		return AbstractNetwork.startNetworkingWithData(self, data)
 
 class EntryPoint(AbstractNetwork):
 	def __init__(self, ipAddress):
@@ -147,11 +151,11 @@ class EntryPoint(AbstractNetwork):
 		entrypointPort = 7777
 		AbstractNetwork.__init__(self, ipAddress, entrypointPort)
 
-	def __del(self):
-		AbstractNetwork.__del__()
+	def __del__(self):
+		AbstractNetwork.__del__(self)
 
 	def startNetworkingWithData(self, data):
-		AbstractNetwork.startNetworkingWithData(data)
+		return AbstractNetwork.startNetworkingWithData(self, data)
 
 
 

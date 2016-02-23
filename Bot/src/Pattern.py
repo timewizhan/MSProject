@@ -229,6 +229,9 @@ class LocationPattern(AbstractPattern):
 	def __init__(self):
 		pass 
 
+	def startToMakePattern(self):
+		pass
+
 class PatternDelegator:
 	def __init__(self, userID):
 		self.userID = userID
@@ -251,7 +254,7 @@ class PatternDelegator:
 		self.behaviorPattern = BehaviorPattern(self.userID)
 
 		# TODO : decide user's location
-		self.behaviorPattern = LocationPattern()
+		self.LocationPattern = LocationPattern()
 
 	def getOneDayList(self):
 		return self.timePattern.startToMakePattern()

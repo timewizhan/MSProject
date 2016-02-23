@@ -4,6 +4,7 @@ from JsonTools import *
 from Pattern import *
 from DataBase import *
 from MsgSets import *
+from Network import *
 import time
 
 import pdb
@@ -44,7 +45,7 @@ class Scheduler:
 						#time.sleep(self.ONE_MINUTE)
 						time.sleep(1)
 						continue
-
+					pdb.set_trace()
 					Log.debug("Start to communicate with servers")
 					self.startToCommunicateWithServer(nextJobToWork)
 
@@ -76,11 +77,11 @@ class Scheduler:
 		dataToSend = makeBrokerJsonData(self.userID, nextJobToWork)
 		recvDataFromBroker = self.networkingWithBroker(dataToSend)
 
-		self.getResponseData(recvDataFromBroker)
+		dstIPAddress = self.getResponseData(recvDataFromBroker)
 
 		# 2. communicate with Server
 		dataToSend = makeEntryPointJsonData(self.userID, nextJobToWork)
-		recvDataFromBroker = self.networkingWithEntryPoint(dataToSend)
+		recvDataFromBroker = self.networkingWithEntryPoint(dstIPAddress, dataToSend)
 
 		return self.getResponseData(recvDataFromBroker)
 
@@ -102,11 +103,11 @@ class Scheduler:
 
 	def networkingWithBroker(self, dataToSend):
 		brServer = Broker()
-		return brServer.startNetworkingWithData()
+		return brServer.startNetworkingWithData(dataToSend)
 
-	def networkingWithEntryPoint(self, dataToSend):
-		epServer = EntryPoint()
-		return epServer.startNetworkingWithData()
+	def networkingWithEntryPoint(self, dstIPAddress, dataToSend):
+		epServer = EntryPoint(dstIPAddress)
+		return epServer.startNetworkingWithData(dataToSend)
 
 def getCommonType(jobToWork):
 	'''
@@ -135,7 +136,7 @@ def makeEntryPointJsonData(userID, jobToWork):
 	jsonGenerator = JsonGenerator()
 
 	randValue = random.randrange(1, 5)
-	opType = getCommonType()
+	opType = getCommonType(jobToWork)
 	if opType == 1 or opType == 3:
 		msgToSend = getWriteMsgToSend(randValue)
 	else:
@@ -153,8 +154,13 @@ def makeEntryPointJsonData(userID, jobToWork):
 def makeBrokerJsonData(userID, jobToWork):
 	jsonGenerator = JsonGenerator()
 
-	jsonGenerator.appendElement("TYPE", getCommonType())
+	jsonGenerator.appendElement("TYPE", getCommonType(jobToWork))
 	jsonGenerator.appendElement("SRC", userID)
-	jsonGenerator.appendElement("DST", jobToWork.getWhoName())
+
+	if len(jobToWork.getWhoName()) > 0:
+		whoName = jobToWork.getWhoName()[0]
+	else:
+		whoName = ""
+	jsonGenerator.appendElement("DST", whoName)
 
 	return jsonGenerator.toString()
