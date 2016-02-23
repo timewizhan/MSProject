@@ -14,9 +14,9 @@ CBGWorkerThread::CBGWorkerThread(SOCKET ClientSocket)
 	::memset(&m_stWorkerThread, 0x00, sizeof(ST_WORKER_THREAD));
 	m_stWorkerThread.hClientSocket = ClientSocket;
 
-	m_stDBLoginToken.strDatabaseName	= "";
-	m_stDBLoginToken.strDatabaseIP		= "";
-	m_stDBLoginToken.strPort			= "";
+	m_stDBLoginToken.strDatabaseName	= "broker2";
+	m_stDBLoginToken.strDatabaseIP		= "165.132.122.243";
+	m_stDBLoginToken.strPort			= "3306";
 	m_stDBLoginToken.strUserName		= "root";
 	m_stDBLoginToken.strPassword		= "cclab";
 }
@@ -114,7 +114,7 @@ void CBGWorkerThread::ExtractResData(ST_DB_RESULT &refstDBResult, ST_CLIENT_RES 
 void CBGWorkerThread::RequestDataBase(ST_CLIENT_REQ &refstReqClient, ST_DB_RESULT &refstDBResult)
 {
 	HANDLE hDataBase = NULL;
-	hDataBase = CreateDBInstance(E_DB_POSTGRES);
+	hDataBase = CreateDBInstance(E_DB_MYSQL);
 	if (hDataBase == NULL) {
 		ErrorLog("Fail to create DB instance");
 		return ;
