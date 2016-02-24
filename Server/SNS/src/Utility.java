@@ -63,26 +63,6 @@ public class Utility {
 		return RTT;
 	}
 	
-	public static void getCpuLoad(ArrayList<Double> cpu_log) {
-		final OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
-		double load = 0;				
-		
-		while(true) {
-			load = osBean.getSystemCpuLoad();
-			
-			if (load < 0.0)
-				continue;
-			
-			cpu_log.add(load * 100);					
-			System.out.println("CPU Usage: " + load * 100.0 + "%" + " / " + cpu_log.size());			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				System.out.println("[getCpuLoad]InterruptedException e: " + e.getMessage());
-			}
-		}
-	}
-	
 	public static void monitorCpuLoad(ScheduledExecutorService scheduler, ArrayList<Double> cpu_log) throws InterruptedException {
 		final OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();				
 		Runnable monitor = new Runnable() {
@@ -90,8 +70,9 @@ public class Utility {
 			@Override
 			public void run() {
 				double load = osBean.getSystemCpuLoad();
-				if (load > 0.0)
-					cpu_log.add(load * 100);								
+				if (load > 0.0) {
+					cpu_log.add(load * 100);					
+				}
 			}
 		};		
 		scheduler.scheduleAtFixedRate(monitor, 0, 1, TimeUnit.SECONDS);								

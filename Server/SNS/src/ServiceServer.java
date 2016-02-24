@@ -29,7 +29,7 @@ public class ServiceServer implements Runnable {
 	
 	private final static int mNumRead = 10;
 	
-	public static ArrayList<Double> mCPU_Log;
+	public static ArrayList<Double> mCPU_Log;	
 	
 	public static ScheduledExecutorService mScheduler;
 	
@@ -38,13 +38,13 @@ public class ServiceServer implements Runnable {
 		ServiceServer server = new ServiceServer(4);
 		server.start();
 		
-		// monitor cpu load	
-		mScheduler = Executors.newSingleThreadScheduledExecutor();
-		mCPU_Log = new ArrayList<>();
-		Utility.monitorCpuLoad(mScheduler, mCPU_Log);				
+		// monitor cpu load			
+		server.startCpuMonitor();				
 	}
 	
-	public ServiceServer(int num) {
+	public ServiceServer(int num) {		
+		mCPU_Log = new ArrayList<>();
+		
 		try {			
 			// create a server socket binded with 7777 port
 			mServerSocket = new ServerSocket(7777);
@@ -110,7 +110,7 @@ public class ServiceServer implements Runnable {
 		}		
 	}
 		
-	private int operationHandler(JSONObject request) throws PropertyVetoException, SQLException, IOException {		
+	private int operationHandler(JSONObject request) throws PropertyVetoException, SQLException, IOException, InterruptedException {		
 		int uid = -1;
 		int reqSize = request.toString().length();
 		int res = 0;		
@@ -139,7 +139,16 @@ public class ServiceServer implements Runnable {
 			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
 			break;
 		case ReqType.REPLACEMENT:
-			Utility.stopScheduler(mScheduler);		
+			Utility.stopScheduler(mScheduler);
+			double total_cpu = 0;
+			for (int i = 0; i < mCPU_Log.size(); i++) {
+				System.out.println("CPU USAGE LOG: " + mCPU_Log.get(i));
+				total_cpu = total_cpu + mCPU_Log.get(i);
+			}
+			System.out.println("Total: " + total_cpu + "(" + mCPU_Log.size() +")" + " " + "Average: " + total_cpu / mCPU_Log.size());
+			mCPU_Log.clear();
+			
+			this.startCpuMonitor();
 			break;													
 		}
 		return res;
@@ -149,5 +158,10 @@ public class ServiceServer implements Runnable {
 		String name = Thread.currentThread().getName();
 		SimpleDateFormat f = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]");
 		return f.format(new Date()) + name;
-	}	
+	}
+	
+	private void startCpuMonitor() throws InterruptedException {
+		mScheduler = Executors.newSingleThreadScheduledExecutor();
+		Utility.monitorCpuLoad(mScheduler, mCPU_Log);
+	}
 }
