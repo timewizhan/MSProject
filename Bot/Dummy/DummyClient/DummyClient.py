@@ -29,7 +29,7 @@ class NetworkConnection:
 		return SUCCESS
 
 	def sendMsg(self, msg):
-		return self.socketToConnect.send(msg)
+		return self.socketToConnect.sendall(msg)
 
 	def receiveMsg(self):
 		return self.socketToConnect.recv(self.MSG_BUF)
