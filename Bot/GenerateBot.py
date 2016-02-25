@@ -18,7 +18,7 @@ def getUsersFromDB():
 	dataBase.connectToDB()
 	
 	# TODO : find a table to get user's data
-	sql = "SELECT * from "
+	sql = "SELECT userName from completeUserid"
 	userList = self.dataBase.querySQL(sql)
 	
 	dataBase.disconnectFromDB()
@@ -38,7 +38,7 @@ def operateMultiProcess(userList):
 	procList = []
 
 	for i in range(0, len(userList)):
-		procList.append(Process(target = fn_process, args = ("", )))
+		procList.append(Process(target = fn_process, args = (userList[i], )))
 
 	for eachBot in procList:
 		eachBot.start()

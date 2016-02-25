@@ -133,7 +133,7 @@ class Broker(AbstractNetwork):
 		'''
 			Broker IP, Port are fixed
 		'''
-		brokerIPAddress = "192.168.56.1"
+		brokerIPAddress = "165.132.122.243"
 		brokerPort = 7500
 		AbstractNetwork.__init__(self, brokerIPAddress, brokerPort)
 

@@ -145,7 +145,12 @@ def makeEntryPointJsonData(userID, jobToWork):
 
 	jsonGenerator.appendElement("TYPE", opType)
 	jsonGenerator.appendElement("SRC", userID)
-	jsonGenerator.appendElement("DST", jobToWork.getWhoName())
+
+	if len(jobToWork.getWhoName()) > 0:
+		whoName = jobToWork.getWhoName()[0]
+	else:
+		whoName = userID
+	jsonGenerator.appendElement("DST", whoName)
 	jsonGenerator.appendElement("LOC", "")
 	jsonGenerator.appendElement("MSG", msgToSend)
 
@@ -160,7 +165,7 @@ def makeBrokerJsonData(userID, jobToWork):
 	if len(jobToWork.getWhoName()) > 0:
 		whoName = jobToWork.getWhoName()[0]
 	else:
-		whoName = ""
+		whoName = userID
 	jsonGenerator.appendElement("DST", whoName)
 
 	return jsonGenerator.toString()
