@@ -1,6 +1,8 @@
 import java.beans.PropertyVetoException;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -39,7 +41,7 @@ public class ServiceServer implements Runnable {
 		server.start();
 		
 		// monitor cpu load			
-		server.startCpuMonitor();				
+		server.startCpuMonitor();
 	}
 	
 	public ServiceServer(int num) {		
@@ -75,7 +77,7 @@ public class ServiceServer implements Runnable {
 				socket = mServerSocket.accept();
 				System.out.println(getTime() + " received a request from " 
 						+ socket.getInetAddress());														 			
-															
+																										
 				String response = Utility.msgGenerator(operationHandler(Utility.msgParser(socket)));								
 												
 				out = new BufferedWriter(new OutputStreamWriter(
@@ -103,8 +105,7 @@ public class ServiceServer implements Runnable {
 						socket.close();
 					} catch (IOException e) {
 						System.out.println("[run/socket]IOException: " + e.getMessage());
-					}
-								
+					}								
 				System.out.println(getTime() + " has handled the request.");
 			}						
 		}		
@@ -116,13 +117,19 @@ public class ServiceServer implements Runnable {
 		int res = 0;		
 						
 		int reqType = Integer.parseInt((String) request.get("TYPE"));	
-		String src = (String) request.get("SENDER");		
-		String dst = (String) request.get("RECEIVER");
-		String loc = (String) request.get("LOCATION");
+		String src = (String) request.get("SRC");		
+		String dst = (String) request.get("DST");
+		String loc = (String) request.get("LOC");
 		String msg = (String) request.get("MSG");		 
 		
+		System.out.println("TYPE: " + reqType + " " +
+							"SRC: " + src + " " + 
+							"DST: " + dst + " " + 
+							"LOC: " + loc + " " + 
+							"MSG: " + msg);
+		
 		switch (reqType) {                                                                                                                                                                                                      
-		case ReqType.TWEET:			
+		case ReqType.TWEET:				
 			uid = DBConnection.isThere(src, mResident, loc);			
 			res = DBConnection.writeStatus(uid, msg, reqSize);			
 			break;
@@ -156,7 +163,7 @@ public class ServiceServer implements Runnable {
 
 	private String getTime() {
 		String name = Thread.currentThread().getName();
-		SimpleDateFormat f = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]");
+		SimpleDateFormat f = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS]");
 		return f.format(new Date()) + name;
 	}
 	

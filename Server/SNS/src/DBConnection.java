@@ -27,9 +27,9 @@ public class DBConnection {
 	private DBConnection() throws IOException, SQLException, PropertyVetoException {
 		mCDPS = new ComboPooledDataSource();
 		mCDPS.setDriverClass("com.mysql.jdbc.Driver");
-		mCDPS.setJdbcUrl("jdbc:mysql://localhost/snsdb?autoReconnect=true&useSSL=false");
-		mCDPS.setUser("snsuser");
-		mCDPS.setPassword("password");
+		mCDPS.setJdbcUrl("jdbc:mysql://165.132.123.76:3306/snsdb?autoReconnect=true&useSSL=false");
+		mCDPS.setUser("root");
+		mCDPS.setPassword("cclabj0gg00");
 		
 		// the settings below are optional
 		// c3p0 can work with defaults
@@ -153,9 +153,14 @@ public class DBConnection {
 			statusInfo result = getStatus(t_uid, num);
 			
 			int [] t_sids = result.getSIDs();		
-			Random rand = new Random();		
-			int picked = rand.nextInt(t_sids.length - 1);											
-			return storeReply(uid, t_sids[picked], msg, reqSize);
+			Random rand = new Random();
+			if (t_sids.length > 0) {
+				int picked = 0;
+				if (t_sids.length != 1)
+					picked = rand.nextInt(t_sids.length - 1);											
+				return storeReply(uid, t_sids[picked], msg, reqSize);
+			} else
+				return mFail;
 		} else {
 			return mFail;
 		}
@@ -439,6 +444,7 @@ public class DBConnection {
 					System.out.println("[getStatus/conn]SQLException: " + e.getMessage());					
 				}		
 		}
+				
 		return new statusInfo(sids, status);
 	}
 	

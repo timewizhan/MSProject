@@ -19,11 +19,12 @@ public class Utility {
 		String result = "";	
 		BufferedReader input = null;
 		JSONObject msg = null;
-		
+						
 		try {
 			input = new BufferedReader(new InputStreamReader(
-					socket.getInputStream(), "UTF-8"));
-			result = input.readLine();			
+					socket.getInputStream()));
+			result = input.readLine();		
+						
 			JSONParser parser = new JSONParser();
 			msg = (JSONObject) parser.parse(result);			
 		} catch (UnsupportedEncodingException e) {
