@@ -153,7 +153,12 @@ DWORD CBGWorkerThread::StartWorkerThread(char *pReceiveBuf, DWORD dwByteTransfer
 		ParseReqData(stRecvData, stReqClient);
 
 		ST_DB_RESULT stDBResult;
-		RequestDataBase(stReqClient, stDBResult);
+		//RequestDataBase(stReqClient, stDBResult);
+
+		// For simulation test.
+		ST_DB_RESULT_LINE stDBResultLine;
+		stDBResultLine.vecstrResult.push_back("165.132.122.244");
+		stDBResult.vecstDBResultLines.push_back(stDBResultLine);
 
 		ST_CLIENT_RES stResClient;
 		ExtractResData(stDBResult, stResClient);

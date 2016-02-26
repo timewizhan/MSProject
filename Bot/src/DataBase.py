@@ -7,11 +7,11 @@ class PyDatabase:
 
     def connectToDB(self):
         try:
-            self.connection = psycopg2.connect("user='postgres' password='xeros' dbname='postgres' hostaddr='165.132.120.152' port=5432'")   
+            self.connection = psycopg2.connect("user='postgres' password='1111' dbname='import' hostaddr='165.132.123.83' port=5432'")   
             if self.connection:
                 Log.debug("DB connection is initialized")
 
-        except psycopg2.DatabaseError, e:
+        except psycopg2.DatabaseError as e:
             if self.connection:
                 self.connection.rollback()
                 self.connection.close()
@@ -31,7 +31,7 @@ class PyDatabase:
             self.connection.commit()
 
             return rows
-        except psycopg2.DatabaseError, e:
+        except psycopg2.DatabaseError as e:
             if self.connection:
                 self.connection.rollback()
     
@@ -43,7 +43,7 @@ class PyDatabase:
             cur.execute(sql)                
             self.connection.commit()
 
-        except psycopg2.DatabaseError, e:
+        except psycopg2.DatabaseError as e:
             if self.connection:
                 self.connection.rollback()
     
@@ -55,7 +55,7 @@ class PyDatabase:
             cur.execute(sql)                
             self.connection.commit()
 
-        except psycopg2.DatabaseError, e:
+        except psycopg2.DatabaseError as e:
             if self.connection:
                 self.connection.rollback()
     

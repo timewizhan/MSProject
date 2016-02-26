@@ -42,10 +42,10 @@ class Scheduler:
 					nextJobToWork = self.jobHashMap.dequeJobValueByKey(currentHour)
 					if nextJobToWork == 0:
 						Log.debug("Wait for 60 seconds")
-						#time.sleep(self.ONE_MINUTE)
-						time.sleep(1)
+						time.sleep(self.ONE_MINUTE)
+						#time.sleep(1)
 						continue
-					pdb.set_trace()
+					#pdb.set_trace()
 					Log.debug("Start to communicate with servers")
 					self.startToCommunicateWithServer(nextJobToWork)
 
@@ -74,12 +74,14 @@ class Scheduler:
 
 	def startToCommunicateWithServer(self, nextJobToWork):
 		# 1. communicate with Broker
+		Log.debug("Start to send to data to Broker")
 		dataToSend = makeBrokerJsonData(self.userID, nextJobToWork)
 		recvDataFromBroker = self.networkingWithBroker(dataToSend)
 
 		dstIPAddress = self.getResponseData(recvDataFromBroker)
 
 		# 2. communicate with Server
+		Log.debug("Start to send to data to EP")
 		dataToSend = makeEntryPointJsonData(self.userID, nextJobToWork)
 		recvDataFromBroker = self.networkingWithEntryPoint(dstIPAddress, dataToSend)
 
@@ -145,7 +147,12 @@ def makeEntryPointJsonData(userID, jobToWork):
 
 	jsonGenerator.appendElement("TYPE", opType)
 	jsonGenerator.appendElement("SRC", userID)
-	jsonGenerator.appendElement("DST", jobToWork.getWhoName())
+
+	if len(jobToWork.getWhoName()) > 0:
+		whoName = jobToWork.getWhoName()[0]
+	else:
+		whoName = userID
+	jsonGenerator.appendElement("DST", whoName)
 	jsonGenerator.appendElement("LOC", "")
 	jsonGenerator.appendElement("MSG", msgToSend)
 
@@ -160,7 +167,7 @@ def makeBrokerJsonData(userID, jobToWork):
 	if len(jobToWork.getWhoName()) > 0:
 		whoName = jobToWork.getWhoName()[0]
 	else:
-		whoName = ""
+		whoName = userID
 	jsonGenerator.appendElement("DST", whoName)
 
 	return jsonGenerator.toString()

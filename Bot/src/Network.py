@@ -89,15 +89,18 @@ class AbstractNetwork:
 		sizeOfDataToSend = len(jsonData)
 		totalSizeOfDataSent = 0
 
-		while totalSizeOfDataSent < sizeOfDataToSend:
-			remainedSize = sizeOfDataToSend - totalSizeOfDataSent
-			firstPos = sizeOfDataToSend - remainedSize
+		try:
+			while totalSizeOfDataSent < sizeOfDataToSend:
+				remainedSize = sizeOfDataToSend - totalSizeOfDataSent
+				firstPos = sizeOfDataToSend - remainedSize
 
-			lengthOfDataSent = self.socketToConnect.send(jsonData[firstPos:])
-			totalSizeOfDataSent += lengthOfDataSent
+				lengthOfDataSent = self.socketToConnect.send(jsonData[firstPos:])
+				totalSizeOfDataSent += lengthOfDataSent
 
-		if totalSizeOfDataSent > sizeOfDataToSend:
-			pass
+			if totalSizeOfDataSent > sizeOfDataToSend:
+				pass
+		except NetworkError as e:
+			print e	
 
 		return 1
 
@@ -124,7 +127,7 @@ class AbstractNetwork:
 				raise NetworkError(sizeOfRecvData)				
 
 		except NetworkError as e:
-			pass
+			print e
 
 		return recvData
 
@@ -133,7 +136,7 @@ class Broker(AbstractNetwork):
 		'''
 			Broker IP, Port are fixed
 		'''
-		brokerIPAddress = "192.168.56.1"
+		brokerIPAddress = "165.132.122.243"
 		brokerPort = 7500
 		AbstractNetwork.__init__(self, brokerIPAddress, brokerPort)
 
