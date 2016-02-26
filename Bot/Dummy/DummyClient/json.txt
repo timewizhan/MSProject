@@ -1,1 +1,1 @@
-{"LOCATION": "KR", "MSG": "Test for dummy162039", "SENDER": "bokor8888", "TYPE": "1", "RECEIVER": "bokorkim"}
+{"LOC": "KR", "MSG": "Test for dummy162039", "SRC": "bokor8888", "TYPE": "1", "DST": "bokorkim"}
