@@ -41,7 +41,7 @@ class TimePattern(AbstractPattern):
 		return self.getWorkCountByEachHour()
 
 	def getAllDataFromDataBase(self):
-		sql = "SELECT \"TweetTime\" FROM \"UserProperty\" WHERE \"UserName\"=\'" + self.userID +"\'"
+		sql = "SELECT \"TweetTime\" FROM public.\"UserProperty\" WHERE \"UserName\"=\'" + self.userID +"\'"
 		return self.dataBase.querySQL(sql)
 
 	def generalizeAllDataAsOneDay(self, writtenTimeList):
@@ -192,7 +192,7 @@ class BehaviorPattern(AbstractPattern):
 		return selectedFriendList
 
 	def getAllDataFromDataBase(self):
-		sql = "SELECT \"DestinationName\" FROM \"UserLink\" WHERE \"SourceName\"=\'" + self.userID +"\'"
+		sql = "SELECT \"DestinationName\" FROM public.\"UserLink\" WHERE \"SourceName\"=\'" + self.userID +"\'"
 		return self.dataBase.querySQL(sql)
 
 	def selectFriendInRatioList(self, friendListByRatio):

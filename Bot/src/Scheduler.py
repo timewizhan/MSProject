@@ -42,10 +42,10 @@ class Scheduler:
 					nextJobToWork = self.jobHashMap.dequeJobValueByKey(currentHour)
 					if nextJobToWork == 0:
 						Log.debug("Wait for 60 seconds")
-						#time.sleep(self.ONE_MINUTE)
-						time.sleep(1)
+						time.sleep(self.ONE_MINUTE)
+						#time.sleep(1)
 						continue
-					pdb.set_trace()
+					#pdb.set_trace()
 					Log.debug("Start to communicate with servers")
 					self.startToCommunicateWithServer(nextJobToWork)
 
@@ -74,12 +74,14 @@ class Scheduler:
 
 	def startToCommunicateWithServer(self, nextJobToWork):
 		# 1. communicate with Broker
+		Log.debug("Start to send to data to Broker")
 		dataToSend = makeBrokerJsonData(self.userID, nextJobToWork)
 		recvDataFromBroker = self.networkingWithBroker(dataToSend)
 
 		dstIPAddress = self.getResponseData(recvDataFromBroker)
 
 		# 2. communicate with Server
+		Log.debug("Start to send to data to EP")
 		dataToSend = makeEntryPointJsonData(self.userID, nextJobToWork)
 		recvDataFromBroker = self.networkingWithEntryPoint(dstIPAddress, dataToSend)
 

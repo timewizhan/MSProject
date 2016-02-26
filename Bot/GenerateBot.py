@@ -1,7 +1,14 @@
 from multiprocessing import Process
-from DataBase import *
 import os, sys, time
 
+####################################
+def getCurrentDir():
+	return os.getcwd()
+
+def setEnvPath(path):
+	path += "\\src"
+	sys.path.append(path)
+####################################
 
 BOT_FILE="Bot.py"
 
@@ -18,8 +25,8 @@ def getUsersFromDB():
 	dataBase.connectToDB()
 	
 	# TODO : find a table to get user's data
-	sql = "SELECT userName from completeUserid"
-	userList = self.dataBase.querySQL(sql)
+	sql = "SELECT \"userName\" FROM public.\"completeUserid\""
+	userList = dataBase.querySQL(sql)
 	
 	dataBase.disconnectFromDB()
 
@@ -27,12 +34,19 @@ def getUsersFromDB():
 
 def fn_process(*argv):
 	command_argv = argv[0]
+
+	modified_command_argv = ""
+	for i in command_argv:
+		if i == "_":
+			continue
+
+		modified_command_argv += i
 	
 	currentPath = os.getcwd()
 	botFilePath = currentPath + "\\" + BOT_FILE
 
-	completedCommand = botFilePath + " " + command_argv
-	execfile(completedCommand)
+	completedCommand = botFilePath + " " + modified_command_argv
+	os.system(completedCommand)
 
 def operateMultiProcess(userList):
 	procList = []
@@ -66,6 +80,10 @@ def mainStart():
 
 
 if __name__ == "__main__":
+	currentPath = getCurrentDir()
+	setEnvPath(currentPath)
+	from DataBase import *
+
 	print "**************************************"
 	print "*************Generate Bot*************"
 	print "**************************************"
