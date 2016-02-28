@@ -12,16 +12,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <unistd.h>
-#include <pthread.h>
+//thread related headers
+#include <Windows.h>
+#include <process.h>
+	//#include <unistd.h>
+	//#include <pthread.h>
 
-#include <sys/socket.h>
+//socket related headers
+#include <winsock.h>
+#include <WinSock2.h>
+	//#include <sys/socket.h>
 #include <sys/stat.h>
-#include <arpa/inet.h>
+	//#include <arpa/inet.h>
 
 #include <iostream>
 #include <queue>
-
+#include <deque>
 using namespace std;
 
 #endif
