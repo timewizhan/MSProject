@@ -5,10 +5,12 @@
  *      Author: alphahacker
  */
 
+#include "data_queue.h"
 #include "common.h"
+
 #include "mysql.h"
 #include "broker_server.h"
-#include "data_queue.h"
+
 #include "database.h"
 #include "socket.h"
 
@@ -55,7 +57,7 @@ void CDatabase::insertData(string name, string location, int timestamp, int clie
 
 	char query[255];
 
-	sprintf(query, "insert into broker_table values ('%s', '%s', %d, %d, %d, %d, %d, '%s')",
+	sprintf_s(query, sizeof(query), "insert into broker_table values ('%s', '%s', %d, %d, %d, %d, %d, '%s')",
 	                   name.c_str(), location.c_str(), timestamp, client_side_traffic, server_side_traffic, cpu_util, ep_num, side_flag.c_str());
 
 	query_stat = mysql_query(connection, query);
@@ -72,7 +74,7 @@ void CDatabase::updateLocation(int l_ny_traffic, int l_bs_traffic, int l_chi_tra
 	char query[255];
 
 	//NY
-	sprintf(query, "UPDATE broker_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NY'", l_ny_traffic);
+	sprintf_s(query, sizeof(query), "UPDATE broker_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NY'", l_ny_traffic);
 
 	query_stat = mysql_query(connection, query);
 	if (query_stat != 0){
@@ -81,7 +83,7 @@ void CDatabase::updateLocation(int l_ny_traffic, int l_bs_traffic, int l_chi_tra
 	}
 
 	//BS
-	sprintf(query, "UPDATE broker_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'BS'", l_bs_traffic);
+	sprintf_s(query, sizeof(query), "UPDATE broker_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'BS'", l_bs_traffic);
 
 	query_stat = mysql_query(connection, query);
 	if (query_stat != 0){
@@ -90,7 +92,7 @@ void CDatabase::updateLocation(int l_ny_traffic, int l_bs_traffic, int l_chi_tra
 	}
 
 	//CHI
-	sprintf(query, "UPDATE broker_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'CHI'", l_chi_traffic);
+	sprintf_s(query, sizeof(query), "UPDATE broker_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'CHI'", l_chi_traffic);
 
 	query_stat = mysql_query(connection, query);
 	if (query_stat != 0){
@@ -98,8 +100,8 @@ void CDatabase::updateLocation(int l_ny_traffic, int l_bs_traffic, int l_chi_tra
 		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
 	}
 }
-
-void* preprocess_insert(void *data){
+/*
+unsigned WINAPI preprocess_insert(void *data){
 
 	printf("preprocess_insert \n");
 	CDatabase *l_db = (CDatabase *)data;
@@ -163,7 +165,8 @@ void* preprocess_insert(void *data){
 	printf("Total traffic test: NY TT = %d, BS TT = %d, CHI TT = %d", l_ny_traffic, l_bs_traffic, l_chi_traffic);
 	l_db->updateLocation(l_ny_traffic, l_bs_traffic, l_chi_traffic);
 
-	/*
-		여기서 LP 알고리즘을 호출해야할듯.
-	*/
+	
+	//	여기서 LP 알고리즘을 호출해야할듯.
+	
 }
+*/

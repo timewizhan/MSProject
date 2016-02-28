@@ -20,14 +20,16 @@
 
 //socket related headers
 #include <winsock.h>
-#include <WinSock2.h>
+//#include <winsock2.h>
+	//#include <WinSock2.h>
 	//#include <sys/socket.h>
-#include <sys/stat.h>
+	//#include <sys/stat.h>
 	//#include <arpa/inet.h>
 
 #include <iostream>
 #include <queue>
 #include <deque>
+
 using namespace std;
 
 #endif

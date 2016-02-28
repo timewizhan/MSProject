@@ -46,11 +46,12 @@ struct monitoring_result{
 
 class CSocket{
 
+	WSADATA wsaData;
 	int optval;                        					//소켓옵션의 설정값
 	int ssock, csock;                       				//소켓
 	struct sockaddr_in server_addr, client_addr;        //IP와 Port값(즉 주소값)
 
-	unsigned int clen, data_len;
+	int clen, data_len;
 	fd_set read_fds, tmp_fds;   				           //디스크립터 셋트(단일 비트 테이블)
 	int fd;
 

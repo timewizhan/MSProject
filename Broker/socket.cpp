@@ -4,10 +4,11 @@
  *  Created on: Feb 5, 2016
  *      Author: alphahacker
  */
-
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#include "data_queue.h"
 #include "common.h"
 #include "socket.h"
-#include "data_queue.h"
+
 #include "database.h"
 
 CSocket::CSocket(){
@@ -21,6 +22,11 @@ void CSocket::init_socket(){
 
 	printf("init_socket \n");
 
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+	{
+		printf("error\r\n");
+	}
+
 	if((ssock = socket(AF_INET,SOCK_STREAM,IPPROTO_TCP))<0){
 
 		perror("socket error : ");
@@ -28,7 +34,7 @@ void CSocket::init_socket(){
 	}
 
 	//소켓 옵션을 설정(옵션 해석을 위한 커널 내 시스템 코드의 구분, 옵션이름, 옵션의 값 등--SO_SNDBUF,SO_BROADCAST,SO_KEEPALIVE)
-	setsockopt(ssock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+	setsockopt(ssock, SOL_SOCKET, SO_REUSEADDR, (const char*)&optval, sizeof(optval));
 
 	//해당 변수를 초기화, 주소를 저장
 	memset(add_num,0,sizeof(add_num));
@@ -116,7 +122,7 @@ void CSocket::comm_socket(){
 					memset(&read_message,0,sizeof(read_message));
 
 					//클라이언트로 부터 메세지를 수신받는다.
-					data_len = read(fd,(struct message*)&read_message,sizeof(read_message));	//read의 리턴값 뭘까
+					data_len = recv(fd,(char*)&read_message,sizeof(read_message), 0);	//read의 리턴값 뭘까
 
 					if(read_message.ep_num != 0){
 						printf("\n[read test, fd=%d] \n", fd);
@@ -203,11 +209,11 @@ void CSocket::write_message(void *client_message,void *num,int basefd,int maxfd)
 		{
 			if(((index_num+index)->anum)==basefd)
 			{
-				strcpy((index_num+index)->name,(cl_message->user));
+				strcpy_s((index_num+index)->name, 40,(cl_message->user));
 			}
 		}
 
-		write(basefd,greet,sizeof(greet));
+		send(basefd,greet,sizeof(greet),0);
 
 
 	}
@@ -222,7 +228,7 @@ void CSocket::write_message(void *client_message,void *num,int basefd,int maxfd)
 			for(index=0;index<maxfd;index++)
 			{
 				if((index_num+index)->anum!=0)
-					write(((index_num+index)->anum),cl_message->sbuf,MAXBUF);
+					send(((index_num+index)->anum), cl_message->sbuf, MAXBUF, 0);
 			}
 		}
 		//지정된 사용자에게 메시지를 전송한다.
@@ -232,7 +238,7 @@ void CSocket::write_message(void *client_message,void *num,int basefd,int maxfd)
 			{
 				if(strcmp(((index_num+index)->name),cl_message->user)==0)
 				{
-					if(write(((index_num+index)->anum),cl_message->sbuf,MAXBUF)<0)
+					if(send(((index_num+index)->anum),cl_message->sbuf,MAXBUF,0)<0)
 					{
 						perror("write error : ");
 						exit(1);
@@ -243,7 +249,7 @@ void CSocket::write_message(void *client_message,void *num,int basefd,int maxfd)
 
 				//유저가 존재하지 않는다면
 				if(index+1==USER)
-					write(basefd,no_greet,sizeof(no_greet));
+					send(basefd,no_greet,sizeof(no_greet),0);
 
 			}
 		}

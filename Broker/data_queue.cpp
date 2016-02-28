@@ -5,19 +5,20 @@
  *      Author: ms-dev
  */
 
+#include "data_queue.h"
 #include "common.h"
 #include "broker_server.h"
-#include "data_queue.h"
+
 
 CDataQueue* CDataQueue::m_pQueue = NULL;
 
 CDataQueue::CDataQueue(){
-
-	m_mutex = PTHREAD_MUTEX_INITIALIZER;
+	::InitializeCriticalSection(&m_stCriticalSection);
+//	m_mutex = PTHREAD_MUTEX_INITIALIZER;
 }
 
 CDataQueue::~CDataQueue(){
-
+	::DeleteCriticalSection(&m_stCriticalSection);
 }
 
 /*static CDataQueue* CDataQueue::getDataQueue(){
@@ -28,24 +29,25 @@ CDataQueue::~CDataQueue(){
 	return m_pQueue;
 }*/
 
-queue <monitoring_result> CDataQueue::getQueue(){
+::deque <monitoring_result> CDataQueue::getQueue(){
 
 	return m_queue;
 }
 
 void CDataQueue::pushDataToQueue(monitoring_result data){
 
-	pthread_mutex_lock(&m_mutex);
-	m_queue.push(data);
-	pthread_mutex_unlock(&m_mutex);
-}
+	::EnterCriticalSection(&m_stCriticalSection);
+	m_queue.push_back(data);
+	::LeaveCriticalSection(&m_stCriticalSection);
+
+}	
 
 monitoring_result CDataQueue::popDataFromQueue(){
 
-	pthread_mutex_lock(&m_mutex);
+	::EnterCriticalSection(&m_stCriticalSection);
 	monitoring_result data = m_queue.front();
-	m_queue.pop();
-	pthread_mutex_unlock(&m_mutex);
+	m_queue.pop_front();
+	::LeaveCriticalSection(&m_stCriticalSection);
 
 	return data;
 }

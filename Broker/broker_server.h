@@ -12,18 +12,19 @@
 #include "broker_server.h"
 #include "database.h"
 
+unsigned WINAPI preprocess_insert(void *data);
+
 class CBrokerServer{
 
 public:
+		CDatabase	 m_db;
 
-	CDatabase m_db;
+		CBrokerServer();
+		~CBrokerServer();
 
-	CBrokerServer();
-	~CBrokerServer();
-
-	void init_broker();
-	void init_thread();
-	void bridge_socket();
+		void init_broker();
+		void init_thread();
+		void bridge_socket();
 
 };
 
