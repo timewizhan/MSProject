@@ -34,7 +34,7 @@ void CSocket::init_socket(){
 void CSocket::send_message(){
 
 	//send message
-	if(write(ssock,(struct message*)&write_message,sizeof(write_message))<0){
+	if(send(ssock,(char*)&write_message,sizeof(write_message),0)<0){
 		perror("write error : ");
 		exit(1);
 	}

@@ -95,7 +95,7 @@ int CDatabase::extractData()
 
 	    mysql_free_result(sql_result);
 
-	    sleep(1);
+	    ::Sleep(1);
 
 	    printf("\n");
 
@@ -128,11 +128,11 @@ int CDatabase::extractData()
 			m_socket.write_message.server_side_traffic = 0;				//server-side traffic
 
 			m_socket.send_message(); //아니면 이걸 그냥 static으로 선언해버릴까?
-			sleep(1);
+			::Sleep(1);
 		}
 
 	    /////////////////////////////////////////////////////////////////////////////////////////////////////
-	    sleep(1);
+	    ::Sleep(1);
 
 	    memset(&m_socket.write_message, 0, sizeof(m_socket.write_message));
 	    strcpy(m_socket.write_message.side_flag, "e");											//전송할 내용이 더이상 없음을 알리는 플래그 전송(e = end)
