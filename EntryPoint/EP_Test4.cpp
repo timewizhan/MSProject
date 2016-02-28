@@ -1,9 +1,9 @@
 /*
- * EP_Test4.cpp
- *
- *  Created on: Jan 23, 2016
- *      Author: alphahacker
- */
+* EP_Test4.cpp
+*
+*  Created on: Jan 23, 2016
+*      Author: alphahacker
+*/
 
 #include "Common.h"
 #include "database.h"
@@ -21,7 +21,7 @@ EP_Test4::~EP_Test4(){}
 void EP_Test4::initEntryPoint()
 {
 
-//	m_sock.init_socket();		//socket
+	//	m_sock.init_socket();		//socket
 
 	m_db.initDB();				//database
 	m_db.extractData();

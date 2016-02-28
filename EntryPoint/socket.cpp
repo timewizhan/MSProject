@@ -1,9 +1,11 @@
 /*
- * socket.cpp
- *
- *  Created on: Feb 4, 2016
- *      Author: ms-dev
- */
+* socket.cpp
+*
+*  Created on: Feb 4, 2016
+*      Author: ms-dev
+*/
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 #include "Common.h"
 #include "socket.h"
 
@@ -12,21 +14,25 @@ CSocket::~CSocket(){}
 
 void CSocket::init_socket(){
 
-	if((ssock = socket(AF_INET,SOCK_STREAM,0))<0){
-				perror("socket error : ");
-				exit(1);
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0){
+		printf("error\r\n");
 	}
 
-	//ë³€ìˆ˜ ì´ˆê¸°í™”
-	memset(&server_addr,0,sizeof(server_addr));
+	if ((ssock = socket(AF_INET, SOCK_STREAM, 0))<0){
+		perror("socket error : ");
+		exit(1);
+	}
+
+	//º¯¼ö ÃÊ±âÈ­
+	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	server_addr.sin_port = htons(3333);
 
 	clen = sizeof(server_addr);
 
-	//socketì´ë¼ëŠ” íŒŒì¼ ì„œìˆ ìžë¥¼ ì´ìš©í•˜ì—¬ ì†Œì¼“ì— ì—°ê²°ì„ í•˜ê²Œ ëœë‹¤.
-	if(connect(ssock,(struct sockaddr *)&server_addr, clen)<0){
+	//socketÀÌ¶ó´Â ÆÄÀÏ ¼­¼úÀÚ¸¦ ÀÌ¿ëÇÏ¿© ¼ÒÄÏ¿¡ ¿¬°áÀ» ÇÏ°Ô µÈ´Ù.
+	if (connect(ssock, (struct sockaddr *)&server_addr, clen)<0){
 		perror("connect error : ");
 	}
 }
@@ -34,13 +40,13 @@ void CSocket::init_socket(){
 void CSocket::send_message(){
 
 	//send message
-	if(send(ssock,(char*)&write_message,sizeof(write_message),0)<0){
+	if (send(ssock, (char*)&write_message, sizeof(write_message), 0)<0){
 		perror("write error : ");
 		exit(1);
 	}
 
 	/*
-	//íŒŒì¼ ë””ìŠ¤í¬ë¦½íŠ¸ í…Œì´ë¸”ì„ ìƒˆë¡œ ì…‹íŒ…
+	//ÆÄÀÏ µð½ºÅ©¸³Æ® Å×ÀÌºíÀ» »õ·Î ¼ÂÆÃ
 	FD_ZERO(&read_fds);
 	FD_SET(ssock,&read_fds);
 	FD_SET(0,&read_fds);
@@ -48,54 +54,54 @@ void CSocket::send_message(){
 	fd=ssock;
 
 	while(1){
-		//ì¼íšŒì„± ë³µì‚¬
-		tmp_fds=read_fds;
+	//ÀÏÈ¸¼º º¹»ç
+	tmp_fds=read_fds;
 
-		//ë³€í™”ë¥¼ ê°ì§€í•œë‹¤.
-		if(select(fd+1,&tmp_fds,0,0,0)<0){
-			perror("select error : ");
-			exit(1);
-		}
+	//º¯È­¸¦ °¨ÁöÇÑ´Ù.
+	if(select(fd+1,&tmp_fds,0,0,0)<0){
+	perror("select error : ");
+	exit(1);
+	}
 
-		//í´ë¼ì´ì–¸íŠ¸ ì†Œì¼“ì— ë³€í™”ê°€ ìžˆë‹¤ëŠ” ê²ƒì„ í™•ì¸í•œë‹¤.
-		if(FD_ISSET(ssock,&tmp_fds)){
-			memset(buf,0,MAXBUF);
-			re = read(ssock,buf,MAXBUF);
-			if(re<0){
-				perror("read error : ");
-				exit(1);
-			}
-			//í´ë¼ì´ì–¸íŠ¸ ì„œë²„ê°€ ì ‘ì†ì´ ëŠì¼°ë‹¤ëŠ” ê²ƒì„ í™•ì¸í•œë‹¤.
-			else if(re==0){
-				printf("ì„œë²„ì™€ì˜ ì ‘ì†ì´ ëŠì¼°ìŠµë‹ˆë‹¤.\n");
-				break;
-			}
-			printf("%s\n",buf);
-			//printf("ì „ì†¡í•  ë©”ì‹œì§€ë¥¼ ìž…ë ¥í•´ ì£¼ì„¸ìš” : ");
-		}
-		//ìž…ë ¥ì— ëŒ€í•œ ë³€í™”ê°€ ìžˆë‹¤ëŠ” ê²ƒì„ í™•ì¸í•œë‹¤.
-		else if(FD_ISSET(0,&tmp_fds)){
-
-
-			memset(&write_message,0,sizeof(write_message));
-			memset(buf,0,MAXBUF);
-
-			//ë³´ë‚¼ userë¥¼ ìž…ë ¥
-			fgets(write_message.user,USER,stdin);
-			*(write_message.user+(strlen(write_message.user)-1))='\0';
-			//ë³´ë‚¼ ë©”ì‹œì§€ë¥¼ ìž…ë ¥
-			printf("ì „ì†¡í•  ë©”ì‹œì§€ë¥¼ ìž…ë ¥í•´ ì£¼ì„¸ìš” : ");
-			fgets(buf,MAXBUF,stdin);
-			*(buf +(strlen(buf)-1))='\0';
-			sprintf(write_message.sbuf,"[%s]:%s",name,buf);
-			if(write(ssock,(struct message*)&write_message,sizeof(write_message))<0){
-			perror("write error : ");
-			exit(1);
+	//Å¬¶óÀÌ¾ðÆ® ¼ÒÄÏ¿¡ º¯È­°¡ ÀÖ´Ù´Â °ÍÀ» È®ÀÎÇÑ´Ù.
+	if(FD_ISSET(ssock,&tmp_fds)){
+	memset(buf,0,MAXBUF);
+	re = read(ssock,buf,MAXBUF);
+	if(re<0){
+	perror("read error : ");
+	exit(1);
+	}
+	//Å¬¶óÀÌ¾ðÆ® ¼­¹ö°¡ Á¢¼ÓÀÌ ²÷Ä×´Ù´Â °ÍÀ» È®ÀÎÇÑ´Ù.
+	else if(re==0){
+	printf("¼­¹ö¿ÍÀÇ Á¢¼ÓÀÌ ²÷Ä×½À´Ï´Ù.\n");
+	break;
+	}
+	printf("%s\n",buf);
+	//printf("Àü¼ÛÇÒ ¸Þ½ÃÁö¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä : ");
+	}
+	//ÀÔ·Â¿¡ ´ëÇÑ º¯È­°¡ ÀÖ´Ù´Â °ÍÀ» È®ÀÎÇÑ´Ù.
+	else if(FD_ISSET(0,&tmp_fds)){
 
 
-			}
+	memset(&write_message,0,sizeof(write_message));
+	memset(buf,0,MAXBUF);
 
-		}
+	//º¸³¾ user¸¦ ÀÔ·Â
+	fgets(write_message.user,USER,stdin);
+	*(write_message.user+(strlen(write_message.user)-1))='\0';
+	//º¸³¾ ¸Þ½ÃÁö¸¦ ÀÔ·Â
+	printf("Àü¼ÛÇÒ ¸Þ½ÃÁö¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä : ");
+	fgets(buf,MAXBUF,stdin);
+	*(buf +(strlen(buf)-1))='\0';
+	sprintf(write_message.sbuf,"[%s]:%s",name,buf);
+	if(write(ssock,(struct message*)&write_message,sizeof(write_message))<0){
+	perror("write error : ");
+	exit(1);
+
+
+	}
+
+	}
 	}
 
 	close(ssock);

@@ -1,9 +1,9 @@
 /*
- * database.h
- *
- *  Created on: Feb 4, 2016
- *      Author: ms-dev
- */
+* database.h
+*
+*  Created on: Feb 4, 2016
+*      Author: ms-dev
+*/
 
 #ifndef _DB_
 #define _DB_
@@ -22,7 +22,7 @@ class CDatabase{
 
 private:
 
-	MYSQL       *connection=NULL, conn;
+	MYSQL       *connection = NULL, conn;
 	MYSQL_RES   *sql_result;
 	MYSQL_ROW   sql_row;
 	MYSQL_FIELD	*field;
@@ -37,7 +37,7 @@ public:
 	~CDatabase();
 	int initDB();
 	int extractData();
-//	void insertData(string name, string location, int timestamp, int traffic);
+	//	void insertData(string name, string location, int timestamp, int traffic);
 
 };
 
