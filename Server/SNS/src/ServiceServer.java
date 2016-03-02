@@ -1,8 +1,6 @@
 import java.beans.PropertyVetoException;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -35,10 +33,10 @@ public class ServiceServer implements Runnable {
 	
 	public static ScheduledExecutorService mScheduler;
 	
-	public static void main(String[] args) throws InterruptedException {								
+	public static void main(String[] args) throws InterruptedException {																		
 		// create server threads
 		ServiceServer server = new ServiceServer(4);
-		server.start();
+		server.start();		
 		
 		// monitor cpu load			
 		server.startCpuMonitor();
@@ -120,13 +118,7 @@ public class ServiceServer implements Runnable {
 		String src = (String) request.get("SRC");		
 		String dst = (String) request.get("DST");
 		String loc = (String) request.get("LOC");
-		String msg = (String) request.get("MSG");		 
-		
-		System.out.println("TYPE: " + reqType + " " +
-							"SRC: " + src + " " + 
-							"DST: " + dst + " " + 
-							"LOC: " + loc + " " + 
-							"MSG: " + msg);
+		String msg = (String) request.get("MSG");
 		
 		switch (reqType) {                                                                                                                                                                                                      
 		case ReqType.TWEET:				
@@ -136,7 +128,7 @@ public class ServiceServer implements Runnable {
 		case ReqType.READ:
 			uid = DBConnection.isThere(src, mVisitor, loc);
 			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
-			break;
+			break; 
 		case ReqType.REPLY:
 			uid = DBConnection.isThere(src, mVisitor, loc);			
 			res = DBConnection.writeReply(uid, dst, msg, reqSize, mNumRead);

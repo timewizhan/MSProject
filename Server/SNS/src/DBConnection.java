@@ -36,7 +36,7 @@ public class DBConnection {
 		mCDPS.setMinPoolSize(5);
 		mCDPS.setAcquireIncrement(5);
 		mCDPS.setMaxPoolSize(10);
-		mCDPS.setMaxStatements(180);
+		mCDPS.setMaxStatements(180);				
 	}
 	
 	public Connection getConnection() throws SQLException {
