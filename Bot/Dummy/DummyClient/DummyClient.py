@@ -76,9 +76,7 @@ class DummyBotProcess:
 				return
 
 			ret = self.networkConnection.sendMsg(self.readData)
-			if ret < 1:
-				continue
-
+			
 			ret = self.networkConnection.receiveMsg()
 			print ret
 			if ret < 1:
