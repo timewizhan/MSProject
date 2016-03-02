@@ -24,6 +24,7 @@ if __name__ == "__main__":
 		sys.exit(1)
 
 	userID = sys.argv[1]
+	Log(userID)
 
 	Log.debug("=============================================")
 	Log.debug("================= Start Bot =================")

@@ -5,6 +5,7 @@ from Pattern import *
 from DataBase import *
 from MsgSets import *
 from Network import *
+from Recorder import *
 import time
 
 import pdb
@@ -73,9 +74,13 @@ class Scheduler:
 			timer.setCurrentDateAndTime()
 
 	def startToCommunicateWithServer(self, nextJobToWork):
+		recorder = CRecorder()
+
 		# 1. communicate with Broker
 		Log.debug("Start to send to data to Broker")
 		dataToSend = makeBrokerJsonData(self.userID, nextJobToWork)
+
+		recorder.startRecord()
 		recvDataFromBroker = self.networkingWithBroker(dataToSend)
 
 		dstIPAddress = self.getResponseData(recvDataFromBroker)
@@ -84,6 +89,11 @@ class Scheduler:
 		Log.debug("Start to send to data to EP")
 		dataToSend = makeEntryPointJsonData(self.userID, nextJobToWork)
 		recvDataFromBroker = self.networkingWithEntryPoint(dstIPAddress, dataToSend)
+		networkTimeMsg = "NetworkTime " + str(recorder.endRecord())
+
+		Log.debug(networkTimeMsg)
+
+		recorder.gerResultTime()
 
 		return self.getResponseData(recvDataFromBroker)
 
