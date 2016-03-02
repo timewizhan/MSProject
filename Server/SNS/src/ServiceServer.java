@@ -23,6 +23,8 @@ public class ServiceServer implements Runnable {
 	ServerSocket mServerSocket;
 	Thread[] mThreadArr;
 	
+	private final int SOMAXCONN = 2147483647;
+	
 	private final static String mLocation = "KR";
 	
 	private final static int mResident = 1;
@@ -56,8 +58,8 @@ public class ServiceServer implements Runnable {
 		
 		try {			
 			// create a server socket binded with 7777 port
-			// set # backlog as 10,000
-			mServerSocket = new ServerSocket(7777, 10000);
+			// set # backlog as Maximum
+			mServerSocket = new ServerSocket(7777, SOMAXCONN);
 			System.out.println(getTime() + " SNS Server is ready.");
 			
 			mThreadArr = new Thread[num];
