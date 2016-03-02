@@ -56,7 +56,8 @@ public class ServiceServer implements Runnable {
 		
 		try {			
 			// create a server socket binded with 7777 port
-			mServerSocket = new ServerSocket(7777);
+			// set # backlog as 10,000
+			mServerSocket = new ServerSocket(7777, 10000);
 			System.out.println(getTime() + " SNS Server is ready.");
 			
 			mThreadArr = new Thread[num];
