@@ -1,8 +1,6 @@
 import java.beans.PropertyVetoException;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,11 +8,14 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+
+import com.sun.javafx.jmx.MXNodeAlgorithmContext;
 
 interface ReqType {
 	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, REPLACEMENT = 5;
@@ -31,9 +32,12 @@ public class ServiceServer implements Runnable {
 	
 	private final static int mNumRead = 10;
 	
-	public static ArrayList<Double> mCPU_Log;	
+	private ArrayList<Double> mCPU_Log;	
 	
-	public static ScheduledExecutorService mScheduler;
+	private ScheduledExecutorService mScheduler;
+
+	private HashMap<String, Double> mXcoord;
+	private HashMap<String, Double> mYcoord;
 	
 	public static void main(String[] args) throws InterruptedException {								
 		// create server threads
@@ -47,6 +51,11 @@ public class ServiceServer implements Runnable {
 	public ServiceServer(int num) {		
 		mCPU_Log = new ArrayList<>();
 		
+		mXcoord = new HashMap<String, Double>();
+		mYcoord = new HashMap<String, Double>();
+		
+		Utility.readCord(mXcoord, mYcoord);
+		
 		try {			
 			// create a server socket binded with 7777 port
 			mServerSocket = new ServerSocket(7777);
@@ -58,7 +67,7 @@ public class ServiceServer implements Runnable {
 		}
 	}
 	
-	public void start() {
+	private void start() {
 		for (int i = 0; i < mThreadArr.length; i++) {
 			mThreadArr[i] = new Thread(this);
 			mThreadArr[i].start();
