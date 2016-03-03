@@ -1,3 +1,4 @@
+package utility;
 public class statusInfo {	
 	private int[] mSIDs;
 	private String mStatus;

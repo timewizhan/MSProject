@@ -1,3 +1,4 @@
+package main;
 import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,6 +16,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.simple.JSONObject;
+
+import connector.DBConnection;
+import utility.Utility;
+import utility.userInfo;
 
 interface ReqType {
 	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, REPLACEMENT = 5;
@@ -75,8 +80,7 @@ public class ServiceServer implements Runnable {
 			mThreadArr = new Thread[num];			
 		} catch (IOException e) {
 			System.out.println("[ServiceServer]IOException e: " + e.getMessage());
-		}
-		
+		}	
 	}
 	
 	private void start() {
@@ -175,6 +179,13 @@ public class ServiceServer implements Runnable {
 			mCPU_Log.clear();
 			
 			this.startCpuMonitor();
+			userInfo[] result = DBConnection.getMonitor();
+			
+			System.out.println(result.length);
+			
+			for (int i = 0; i < result.length; i++)
+				System.out.println(result[i].getName() + " " + result[i].getTraffic() + " " + result[i].getLoc());
+			
 			break;													
 		}
 		return res;

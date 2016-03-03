@@ -1,3 +1,4 @@
+package connector;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -12,6 +13,9 @@ import java.util.HashMap;
 import java.util.Random;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+import utility.statusInfo;
+import utility.userInfo;
 
 public class DBConnection {
 	private static DBConnection mDS;
@@ -177,6 +181,7 @@ public class DBConnection {
 			int uid = uInfo[i].getUID();
 			if (tInfo.get(uid) != null)
 				uInfo[i].updateTraffic(tInfo.get(uid));
+			
 		}
 		
 		return uInfo;
@@ -246,7 +251,7 @@ public class DBConnection {
 			Calendar cal = Calendar.getInstance();
 			
 			cal.setTime(date);			
-			cal.add(Calendar.HOUR, mPeriod);									
+			cal.add(Calendar.HOUR, mPeriod);			
 			String start = f.format(cal.getTime());
 			
 			cal.setTime(date);
@@ -259,7 +264,7 @@ public class DBConnection {
 						
 			while(rs.next()) {
 				int t_uid = rs.getInt("uid");
-				int t_traffic = rs.getInt("sum(traffic)");					
+				int t_traffic = rs.getInt("sum(traffic)");				
 				tMap.put(t_uid, t_traffic);				
 			}					
 		} catch (PropertyVetoException e) {
