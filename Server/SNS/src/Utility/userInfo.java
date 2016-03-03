@@ -1,4 +1,4 @@
-package utility;
+package Utility;
 
 public class userInfo {
 	private int mUID;

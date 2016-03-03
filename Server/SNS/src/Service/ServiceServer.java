@@ -1,4 +1,4 @@
-package main;
+package Service;
 import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,9 +17,9 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.simple.JSONObject;
 
-import connector.DBConnection;
-import utility.Utility;
-import utility.userInfo;
+import DBConnector.DBConnection;
+import Utility.Utility;
+import Utility.userInfo;
 
 interface ReqType {
 	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, REPLACEMENT = 5;
@@ -46,13 +46,13 @@ public class ServiceServer implements Runnable {
 	private HashMap<String, Double> mYcoord;
 	
 	public static void main(String[] args) throws InterruptedException {		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		System.out.print("Enter the location: ");
 		
 		String get_loc = null;
 		
 		try {
-			get_loc = reader.readLine();
+			get_loc = in.readLine();
 		} catch (IOException e) {
 			System.out.println("[main]IOException e: " + e.getMessage());
 		}		
@@ -110,6 +110,9 @@ public class ServiceServer implements Runnable {
 									
 				JSONObject request  = Utility.msgParser(socket);
 				
+				// need to figure out whether the request is about the service or not
+				// and do proper operation according to the request
+				// there should be an additional method to handle the data replacement
 				String response = Utility.msgGenerator(operationHandler(request));								
 												
 				out = new BufferedWriter(new OutputStreamWriter(
@@ -146,6 +149,7 @@ public class ServiceServer implements Runnable {
 		int res = 0;		
 						
 		int reqType = Integer.parseInt((String) request.get("TYPE"));	
+		
 		String src = (String) request.get("SRC");		
 		String dst = (String) request.get("DST");
 		String loc = (String) request.get("LOC");
