@@ -1,6 +1,8 @@
 import java.beans.PropertyVetoException;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -24,7 +26,7 @@ public class ServiceServer implements Runnable {
 	
 	private final static int SOMAXCONN = 2147483647;
 	
-	private final static String mLocation = "NEW YORK";
+	private static String mLocation = null;
 	
 	private final static int mResident = 1;
 	private final static int mVisitor = 2;
@@ -38,13 +40,25 @@ public class ServiceServer implements Runnable {
 	private HashMap<String, Double> mXcoord;
 	private HashMap<String, Double> mYcoord;
 	
-	public static void main(String[] args) throws InterruptedException {																		
+	public static void main(String[] args) throws InterruptedException {		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Enter the location: ");
+		
+		String get_loc = null;
+		
+		try {
+			get_loc = reader.readLine();
+		} catch (IOException e) {
+			System.out.println("[main]IOException e: " + e.getMessage());
+		}		
 		// create server threads
-		ServiceServer server = new ServiceServer(4);
+		ServiceServer server = new ServiceServer(4, get_loc);
 		server.start();				
 	}
 	
-	public ServiceServer(int num) {		
+	public ServiceServer(int num, String loc) {				
+		mLocation = loc;
+		
 		mCPU_Log = new ArrayList<>();
 		
 		mXcoord = new HashMap<String, Double>();
