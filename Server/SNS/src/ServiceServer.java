@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 
 interface ReqType {
 	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, REPLACEMENT = 5;
@@ -23,9 +22,9 @@ public class ServiceServer implements Runnable {
 	ServerSocket mServerSocket;
 	Thread[] mThreadArr;
 	
-	private final int SOMAXCONN = 2147483647;
+	private final static int SOMAXCONN = 2147483647;
 	
-	private final static String mLocation = "KR";
+	private final static String mLocation = "NEW YORK";
 	
 	private final static int mResident = 1;
 	private final static int mVisitor = 2;
@@ -42,10 +41,7 @@ public class ServiceServer implements Runnable {
 	public static void main(String[] args) throws InterruptedException {																		
 		// create server threads
 		ServiceServer server = new ServiceServer(4);
-		server.start();		
-		
-		// monitor cpu load			
-		server.startCpuMonitor();
+		server.start();				
 	}
 	
 	public ServiceServer(int num) {		
@@ -54,24 +50,30 @@ public class ServiceServer implements Runnable {
 		mXcoord = new HashMap<String, Double>();
 		mYcoord = new HashMap<String, Double>();
 		
-		Utility.readCord(mXcoord, mYcoord);
-		
+		Utility.readCoord(mXcoord, mYcoord);
+						
 		try {			
 			// create a server socket binded with 7777 port
 			// set # backlog as Maximum
 			mServerSocket = new ServerSocket(7777, SOMAXCONN);
 			System.out.println(getTime() + " SNS Server is ready.");
-			
-			mThreadArr = new Thread[num];
+						
+			mThreadArr = new Thread[num];			
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("[ServiceServer]IOException e: " + e.getMessage());
 		}
+		
 	}
 	
 	private void start() {
 		for (int i = 0; i < mThreadArr.length; i++) {
 			mThreadArr[i] = new Thread(this);
 			mThreadArr[i].start();
+		}
+		try {
+			startCpuMonitor();
+		} catch (InterruptedException e) {
+			System.out.println("[ServiceServer:start]InterruptedException e: " + e.getMessage());
 		}
 	}
 
@@ -87,14 +89,15 @@ public class ServiceServer implements Runnable {
 				socket = mServerSocket.accept();
 				System.out.println(getTime() + " received a request from " 
 						+ socket.getInetAddress());														 			
-																										
-				String response = Utility.msgGenerator(operationHandler(Utility.msgParser(socket)));								
+									
+				JSONObject request  = Utility.msgParser(socket);
+				
+				String response = Utility.msgGenerator(operationHandler(request));								
 												
 				out = new BufferedWriter(new OutputStreamWriter(
 						socket.getOutputStream(), "UTF-8"));				
 						
-				// can be replaced by java.util.Timer and java.util.TimerTask classes
-				Thread.sleep(Utility.calRTT("KR"));
+				Thread.sleep(Utility.calRTT(mLocation, (String) request.get("LOC"), mXcoord, mYcoord));
 			
 				out.write(response);
 				out.newLine();
@@ -105,8 +108,6 @@ public class ServiceServer implements Runnable {
 				System.out.println("[run]PropertyVetoException: " + e.getMessage());
 			} catch (SQLException e) {
 				System.out.println("[run]SQLException: " + e.getMessage()); 
-			} catch (ParseException e) {
-				System.out.println("[run]ParseException: " + e.getMessage());
 			} catch (InterruptedException e) {
 				System.out.println("[run]InterruptedException: " + e.getMessage());
 			} finally {
