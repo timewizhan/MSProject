@@ -15,8 +15,11 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.simple.JSONObject;
 
+import com.mysql.jdbc.Util;
+
 import DBConnector.DBConnection;
 import Utility.Utility;
+import Utility.coordInfo;
 import Utility.userInfo;
 
 interface ReqType {
@@ -24,23 +27,24 @@ interface ReqType {
 }
 
 public class ServiceServer implements Runnable {
+	private final static int SOMAXCONN = 2147483647;
+	private final static int mResident = 1;
+	private final static int mVisitor = 2;
+	private final static int mNumRead = 10;
+	
 	ServerSocket mServerSocket;
 	Thread[] mThreadArr;
 	
-	private final static int SOMAXCONN = 2147483647;
+	private ScheduledExecutorService mScheduler;
 	
-	private static String mLocation = null;
-	
-	private final static int mResident = 1;
-	private final static int mVisitor = 2;
-	
-	private final static int mNumRead = 10;
+	private String mLocation;
+	private double mLat;
+	private double mLong;
 	
 	private ArrayList<Double> mCPU_Log;
 	private ArrayList<Double> mAVG_CPU_Log;
 	
-	private ScheduledExecutorService mScheduler;
-
+	private coordInfo mCoord;
 	private HashMap<String, Double> mXcoord;
 	private HashMap<String, Double> mYcoord;
 	
@@ -61,11 +65,17 @@ public class ServiceServer implements Runnable {
 		mCPU_Log = new ArrayList<Double>();
 		mAVG_CPU_Log = new ArrayList<Double>();
 		
+		mCoord = new coordInfo();
 		mXcoord = new HashMap<String, Double>();
 		mYcoord = new HashMap<String, Double>();
+
+		/*
+		 * 03050205
+		 */
+		Utility.readCoord(mCoord);
+		//Utility.readCoord(mXcoord, mYcoord);
+
 		
-		Utility.readCoord(mXcoord, mYcoord);
-						
 		try {			
 			// create a server socket binded with 7777 port
 			// set # backlog as Maximum
@@ -108,7 +118,10 @@ public class ServiceServer implements Runnable {
 												
 				out = new BufferedWriter(new OutputStreamWriter(
 						socket.getOutputStream(), "UTF-8"));			
-						
+				
+				/*
+				 * 03050205
+				 */
 				Thread.sleep(Utility.calRTT(mLocation, (String) request.get("LOC"), mXcoord, mYcoord));
 				
 				out.write(response);
