@@ -93,10 +93,12 @@ public class ServiceServer implements Runnable {
 				System.out.println(getTime() + " is waiting for requests.");				
 				
 				socket = mServerSocket.accept();
-				System.out.println(getTime() + " received a request from " 
+				System.out.print(getTime() + " received a request from " 
 						+ socket.getInetAddress());														 			
 									
 				JSONObject request  = Utility.msgParser(socket);
+				
+				System.out.println(" / " + request.get("SRC"));
 				
 				// need to figure out whether the request is about the service or not
 				// and do proper operation according to the request
@@ -107,7 +109,7 @@ public class ServiceServer implements Runnable {
 						socket.getOutputStream(), "UTF-8"));				
 						
 				Thread.sleep(Utility.calRTT(mLocation, (String) request.get("LOC"), mXcoord, mYcoord));
-			
+				
 				out.write(response);
 				out.newLine();
 				out.flush();																	

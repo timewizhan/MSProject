@@ -31,14 +31,14 @@ public class DBConnection {
 	private DBConnection() throws IOException, SQLException, PropertyVetoException {
 		mCDPS = new ComboPooledDataSource();
 		mCDPS.setDriverClass("com.mysql.jdbc.Driver");
-		mCDPS.setJdbcUrl("jdbc:mysql://165.132.123.76:3306/snsdb?autoReconnect=true&useSSL=false");
+		mCDPS.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/snsdb?autoReconnect=true&useSSL=false");
 		mCDPS.setUser("root");
 		mCDPS.setPassword("cclabj0gg00");
 		
 		// the settings below are optional
 		// c3p0 can work with defaults
-		mCDPS.setMinPoolSize(5);
-		mCDPS.setAcquireIncrement(5);
+		mCDPS.setMinPoolSize(3);
+		mCDPS.setAcquireIncrement(3);
 		mCDPS.setMaxPoolSize(15);
 		mCDPS.setMaxStatements(180);				
 	}
