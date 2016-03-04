@@ -98,7 +98,7 @@ public class ServiceServer implements Runnable {
 									
 				JSONObject request  = Utility.msgParser(socket);
 				
-				System.out.println(" / " + request.get("SRC"));
+				System.out.println(" / " + (String) request.get("SRC"));
 				
 				// need to figure out whether the request is about the service or not
 				// and do proper operation according to the request

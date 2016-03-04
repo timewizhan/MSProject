@@ -72,11 +72,14 @@ public class Utility {
 		double distance = (Math.sqrt(x*x + y*y) * R) / 1000;
 									
 		// if same region, RTT = 20
-		if (user_loc == "KR")
+		if (server_loc.equals(user_loc))
 			RTT = 20;
 		// RTT(ms) = 0.02 * Distance(km) + 5
-		else
-			RTT = Math.round(0.02 * distance + 5);
+		else {
+			RTT = Math.round(0.02 * distance + 5);			
+			if (RTT < 20)
+				RTT = 20;
+		}
 		
 		// maximal average response delay = 150
 		// since latency up to 200
@@ -135,14 +138,16 @@ public class Utility {
 			String inline = "";		
 			while ((inline = in.readLine()) != null) {
 				String[] token = inline.split(",", -1);				
-				if(loc.equals(token[0]))
+				if(loc.equals(token[0])) {
 					isValid = true;
+					break;
+				}
 			}
 			in.close();			
 		} catch (FileNotFoundException e) {
-			System.out.println("[readCoord]FileNotFoundException e: " + e.getMessage());			
+			System.out.println("[checkCoord]FileNotFoundException e: " + e.getMessage());			
 		} catch (IOException e) {
-			System.out.println("[readCoord]IOException e: " + e.getMessage());
+			System.out.println("[checkCoord]IOException e: " + e.getMessage());
 		}
 		return isValid;
 	}
