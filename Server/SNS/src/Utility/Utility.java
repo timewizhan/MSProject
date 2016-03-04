@@ -50,14 +50,13 @@ public class Utility {
 		return response.toString();
 	}	
 
-	// http://www.movable-type.co.uk/scripts/latlong.html
 	public static long calRTT(String server_loc, String user_loc, 
 			HashMap<String, Double> xcoord, HashMap<String, Double> ycoord) {		
 		long RTT = 0;
 		double R = 6371000;
 		
 		double server_lat = xcoord.get(server_loc);
-		double server_long = ycoord.get(server_loc);
+		double server_long = ycoord.get(server_loc);				
 		
 		double user_lat = xcoord.get(user_loc);
 		double user_long = ycoord.get(user_loc);
@@ -90,7 +89,7 @@ public class Utility {
 		return RTT;
 	}
 	
-	public static void monitorCpuLoad(ScheduledExecutorService scheduler, ArrayList<Double> cpu_log) throws InterruptedException {
+	public static void monitorCpuLoad(ScheduledExecutorService scheduler, ArrayList<Double> cpu_log, ArrayList<Double> avg_cpu_log) throws InterruptedException {
 		final OperatingSystemMXBean osBean = 
 				(com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();				
 		Runnable monitor = new Runnable() {
@@ -99,7 +98,17 @@ public class Utility {
 			public void run() {
 				double load = osBean.getSystemCpuLoad();
 				if (load > 0.0) {
-					cpu_log.add(load * 100);					
+					if (cpu_log.size() < Integer.MAX_VALUE)
+						cpu_log.add(load * 100);
+					else {
+						double total = 0;
+						for (int i = 0; i < cpu_log.size(); i ++)
+							total = total + cpu_log.get(i);
+						
+						avg_cpu_log.add(total / cpu_log.size());
+						cpu_log.clear();
+						cpu_log.add(load);
+					}
 				}
 			}
 		};		

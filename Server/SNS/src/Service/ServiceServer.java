@@ -36,7 +36,8 @@ public class ServiceServer implements Runnable {
 	
 	private final static int mNumRead = 10;
 	
-	private ArrayList<Double> mCPU_Log;	
+	private ArrayList<Double> mCPU_Log;
+	private ArrayList<Double> mAVG_CPU_Log;
 	
 	private ScheduledExecutorService mScheduler;
 
@@ -58,6 +59,7 @@ public class ServiceServer implements Runnable {
 		mLocation = loc;
 		
 		mCPU_Log = new ArrayList<Double>();
+		mAVG_CPU_Log = new ArrayList<Double>();
 		
 		mXcoord = new HashMap<String, Double>();
 		mYcoord = new HashMap<String, Double>();
@@ -93,12 +95,11 @@ public class ServiceServer implements Runnable {
 				System.out.println(getTime() + " is waiting for requests.");				
 				
 				socket = mServerSocket.accept();
-				System.out.print(getTime() + " received a request from " 
-						+ socket.getInetAddress());														 			
+				System.out.print(getTime() + " received a request from ");														 			
 									
 				JSONObject request  = Utility.msgParser(socket);
 				
-				System.out.println(" / " + (String) request.get("SRC"));
+				System.out.println("[" + (String) request.get("SRC") + "]");
 				
 				// need to figure out whether the request is about the service or not
 				// and do proper operation according to the request
@@ -106,7 +107,7 @@ public class ServiceServer implements Runnable {
 				String response = Utility.msgGenerator(operationHandler(request));								
 												
 				out = new BufferedWriter(new OutputStreamWriter(
-						socket.getOutputStream(), "UTF-8"));				
+						socket.getOutputStream(), "UTF-8"));			
 						
 				Thread.sleep(Utility.calRTT(mLocation, (String) request.get("LOC"), mXcoord, mYcoord));
 				
@@ -193,6 +194,6 @@ public class ServiceServer implements Runnable {
 	
 	private void startCpuMonitor() throws InterruptedException {
 		mScheduler = Executors.newSingleThreadScheduledExecutor();
-		Utility.monitorCpuLoad(mScheduler, mCPU_Log);
+		Utility.monitorCpuLoad(mScheduler, mCPU_Log, mAVG_CPU_Log);
 	}
 }
