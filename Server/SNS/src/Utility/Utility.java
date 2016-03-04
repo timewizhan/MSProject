@@ -125,4 +125,47 @@ public class Utility {
 			System.out.println("[readCoord]IOException e: " + e.getMessage());
 		}
 	}
+	
+	public static boolean checkCoord(String loc) {
+		boolean isValid = false;		
+		try {
+			File csv = new File("rsc/coord_list.csv");
+			BufferedReader in = new BufferedReader(new FileReader(csv));
+			
+			String inline = "";		
+			while ((inline = in.readLine()) != null) {
+				String[] token = inline.split(",", -1);				
+				if(loc.equals(token[0]))
+					isValid = true;
+			}
+			in.close();			
+		} catch (FileNotFoundException e) {
+			System.out.println("[readCoord]FileNotFoundException e: " + e.getMessage());			
+		} catch (IOException e) {
+			System.out.println("[readCoord]IOException e: " + e.getMessage());
+		}
+		return isValid;
+	}
+	
+	public static String setLocation() {				
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));		
+		String loc = null;
+		boolean isValid = false;		
+		try {
+			do {
+				System.out.print("Enter a location: ");											
+				loc = in.readLine();
+								
+				if (Utility.checkCoord(loc.toUpperCase()))
+					isValid = true;
+				else
+					System.out.println("Please enter a correct location!");
+				
+			} while (!isValid);
+			in.close();
+		} catch (IOException e) {
+			System.out.println("[setLocation]IOException e: " + e.getMessage());
+		}		
+		return loc.toUpperCase();
+	}
 }

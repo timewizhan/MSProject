@@ -39,7 +39,7 @@ public class DBConnection {
 		// c3p0 can work with defaults
 		mCDPS.setMinPoolSize(5);
 		mCDPS.setAcquireIncrement(5);
-		mCDPS.setMaxPoolSize(10);
+		mCDPS.setMaxPoolSize(15);
 		mCDPS.setMaxStatements(180);				
 	}
 	

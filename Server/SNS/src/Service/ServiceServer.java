@@ -1,9 +1,7 @@
 package Service;
 import java.beans.PropertyVetoException;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -45,26 +43,21 @@ public class ServiceServer implements Runnable {
 	private HashMap<String, Double> mXcoord;
 	private HashMap<String, Double> mYcoord;
 	
-	public static void main(String[] args) throws InterruptedException {		
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("Enter the location: ");
+	public static void main(String[] args) throws InterruptedException {																		
+		// disable c3p0 logging
+		System.setProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "WARNING");
+		System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");				
 		
-		String get_loc = null;
-		
-		try {
-			get_loc = in.readLine();
-		} catch (IOException e) {
-			System.out.println("[main]IOException e: " + e.getMessage());
-		}		
 		// create server threads
-		ServiceServer server = new ServiceServer(4, get_loc);
-		server.start();				
+		ServiceServer server = new ServiceServer(10, Utility.setLocation());
+		server.start();
+		//server.startCpuMonitor();
 	}
 	
 	public ServiceServer(int num, String loc) {				
 		mLocation = loc;
 		
-		mCPU_Log = new ArrayList<>();
+		mCPU_Log = new ArrayList<Double>();
 		
 		mXcoord = new HashMap<String, Double>();
 		mYcoord = new HashMap<String, Double>();
@@ -87,12 +80,7 @@ public class ServiceServer implements Runnable {
 		for (int i = 0; i < mThreadArr.length; i++) {
 			mThreadArr[i] = new Thread(this);
 			mThreadArr[i].start();
-		}
-		try {
-			startCpuMonitor();
-		} catch (InterruptedException e) {
-			System.out.println("[ServiceServer:start]InterruptedException e: " + e.getMessage());
-		}
+		}		
 	}
 
 	@Override
