@@ -9,13 +9,10 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.simple.JSONObject;
-
-import com.mysql.jdbc.Util;
 
 import DBConnector.DBConnection;
 import Utility.Utility;
@@ -32,21 +29,14 @@ public class ServiceServer implements Runnable {
 	private final static int mVisitor = 2;
 	private final static int mNumRead = 10;
 	
-	ServerSocket mServerSocket;
-	Thread[] mThreadArr;
+	private coordInfo mCoord;
 	
-	private ScheduledExecutorService mScheduler;
-	
-	private String mLocation;
-	private double mLat;
-	private double mLong;
-	
+	private ScheduledExecutorService mScheduler;	
 	private ArrayList<Double> mCPU_Log;
 	private ArrayList<Double> mAVG_CPU_Log;
-	
-	private coordInfo mCoord;
-	private HashMap<String, Double> mXcoord;
-	private HashMap<String, Double> mYcoord;
+		
+	ServerSocket mServerSocket;
+	Thread[] mThreadArr;
 	
 	public static void main(String[] args) throws InterruptedException {																		
 		// disable c3p0 logging
@@ -56,26 +46,16 @@ public class ServiceServer implements Runnable {
 		// create server threads
 		ServiceServer server = new ServiceServer(10, Utility.setLocation());
 		server.start();
-		//server.startCpuMonitor();
+		server.startCpuMonitor();
 	}
 	
-	public ServiceServer(int num, String loc) {				
-		mLocation = loc;
+	public ServiceServer(int num, String loc) {								
+		mCoord = new coordInfo();		
+		Utility.readCoord(mCoord, loc);
 		
 		mCPU_Log = new ArrayList<Double>();
 		mAVG_CPU_Log = new ArrayList<Double>();
-		
-		mCoord = new coordInfo();
-		mXcoord = new HashMap<String, Double>();
-		mYcoord = new HashMap<String, Double>();
-
-		/*
-		 * 03050205
-		 */
-		Utility.readCoord(mCoord);
-		//Utility.readCoord(mXcoord, mYcoord);
-
-		
+				
 		try {			
 			// create a server socket binded with 7777 port
 			// set # backlog as Maximum
@@ -118,11 +98,8 @@ public class ServiceServer implements Runnable {
 												
 				out = new BufferedWriter(new OutputStreamWriter(
 						socket.getOutputStream(), "UTF-8"));			
-				
-				/*
-				 * 03050205
-				 */
-				Thread.sleep(Utility.calRTT(mLocation, (String) request.get("LOC"), mXcoord, mYcoord));
+								
+				Thread.sleep(Utility.calRTT((String) request.get("LOC"), mCoord));
 				
 				out.write(response);
 				out.newLine();

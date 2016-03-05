@@ -9,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -50,54 +49,12 @@ public class Utility {
 		return response.toString();
 	}	
 
-	public static long calRTT(String server_loc, String user_loc, 
-			HashMap<String, Double> xcoord, HashMap<String, Double> ycoord) {		
+	public static long calRTT(String user_loc, coordInfo coord) {		
 		long RTT = 0;
 		double R = 6371000;
 		
-		double server_lat = xcoord.get(server_loc);
-		double server_long = ycoord.get(server_loc);				
-		
-		double user_lat = xcoord.get(user_loc);
-		double user_long = ycoord.get(user_loc);
-		
-		double server_rx = Math.toRadians(server_lat);
-		double server_ry = Math.toRadians(server_long);
-		double user_rx = Math.toRadians(user_lat);
-		double user_ry = Math.toRadians(user_long);
-		
-		double x = (server_ry - user_ry) * Math.cos((server_rx + user_rx)/2);
-		double y = server_rx - user_rx;
-		double distance = (Math.sqrt(x*x + y*y) * R) / 1000;
-									
-		// if same region, RTT = 20
-		if (server_loc.equals(user_loc))
-			RTT = 20;
-		// RTT(ms) = 0.02 * Distance(km) + 5
-		else {
-			RTT = Math.round(0.02 * distance + 5);			
-			if (RTT < 20)
-				RTT = 20;
-		}
-		
-		// maximal average response delay = 150
-		// since latency up to 200
-		// will deteriorate the user experience significantly		
-		if (RTT > 150)
-			System.out.println("[WARNING]RTT is over 150, this will deteriorate the user experience significantly!");
-		
-		return RTT;
-	}
-	
-	/*
-	 * 03050205
-	 */
-	public static long calRTT(String server_loc, String user_loc, coordInfo coord) {		
-		long RTT = 0;
-		double R = 6371000;
-		
-		double server_lat = coord.getLat(server_loc);
-		double server_long = coord.getLong(server_loc);				
+		double server_lat = coord.getServerLat();
+		double server_long = coord.getServerLong();				
 		
 		double user_lat = coord.getLat(user_loc);
 		double user_long = coord.getLong(user_loc);
@@ -112,7 +69,7 @@ public class Utility {
 		double distance = (Math.sqrt(x*x + y*y) * R) / 1000;
 									
 		// if same region, RTT = 20
-		if (server_loc.equals(user_loc))
+		if (coord.getServerLoc().equals(user_loc))
 			RTT = 20;
 		// RTT(ms) = 0.02 * Distance(km) + 5
 		else {
@@ -120,6 +77,8 @@ public class Utility {
 			if (RTT < 20)
 				RTT = 20;
 		}
+		
+		System.out.println("Injected RTT: " + RTT);
 		
 		// maximal average response delay = 150
 		// since latency up to 200
@@ -159,38 +118,15 @@ public class Utility {
 	public static void stopScheduler(ScheduledExecutorService scheduler) {
 		scheduler.shutdown();
 	}
-	
-	public static void readCoord(HashMap<String, Double> xcoord, HashMap<String, Double> ycoord) {
+		
+	public static void readCoord(coordInfo coord, String loc) {
 		try {
 			File csv = new File("rsc/coord_list.csv");
 			BufferedReader in = new BufferedReader(new FileReader(csv));
 			
 			String inline = "";		
 			while ((inline = in.readLine()) != null) {
-				String[] token = inline.split(",", -1);				
-				xcoord.put(token[0], Double.parseDouble(token[1]));
-				ycoord.put(token[0], Double.parseDouble(token[2]));								
-			}
-			in.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("[readCoord]FileNotFoundException e: " + e.getMessage());			
-		} catch (IOException e) {
-			System.out.println("[readCoord]IOException e: " + e.getMessage());
-		}
-	}
-	
-	/*
-	 * 03050205
-	 */
-	public static void readCoord(coordInfo coord) {
-		try {
-			File csv = new File("rsc/coord_list.csv");
-			BufferedReader in = new BufferedReader(new FileReader(csv));
-			
-			String inline = "";		
-			while ((inline = in.readLine()) != null) {
-				String[] token = inline.split(",", -1);				
-				
+				String[] token = inline.split(",", -1);					
 				coord.setCoord(token[0], Double.parseDouble(token[1]), Double.parseDouble(token[2]));								
 			}
 			in.close();
@@ -199,6 +135,7 @@ public class Utility {
 		} catch (IOException e) {
 			System.out.println("[readCoord]IOException e: " + e.getMessage());
 		}
+		coord.setServerCoord(loc);
 	}
 	
 	public static boolean checkCoord(String loc) {
