@@ -1,4 +1,4 @@
-package Utility;
+package Wrapper;
 
 public class userInfo {
 	private int mUID;
