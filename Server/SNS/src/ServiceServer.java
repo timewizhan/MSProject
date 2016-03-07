@@ -1,4 +1,3 @@
-
 import java.beans.PropertyVetoException;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,14 +16,18 @@ import org.json.simple.JSONObject;
 import Wrapper.coordInfo;
 import Wrapper.userInfo;
 
-interface ReqType {
-	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, REPLACEMENT = 5;
-}
-
 public class ServiceServer implements Runnable {
 	private final static int SOMAXCONN = 2147483647;
+	
+	private final static int mTweet = 1;
+	private final static int mRead = 2;
+	private final static int mReply = 3;
+	private final static int mRetweet = 4;
+	private final static int mReplacement = 5;
+	
 	private final static int mResident = 1;
 	private final static int mVisitor = 2;
+	
 	private final static int mNumRead = 10;
 	
 	private coordInfo mCoord;
@@ -146,23 +149,23 @@ public class ServiceServer implements Runnable {
 		String msg = (String) request.get("MSG");
 		
 		switch (reqType) {                                                                                                                                                                                                      
-		case ReqType.TWEET:				
+		case mTweet:				
 			uid = DBConnection.isThere(src, mResident, loc);			
 			res = DBConnection.writeStatus(uid, msg, reqSize);			
 			break;
-		case ReqType.READ:
+		case mRead:
 			uid = DBConnection.isThere(src, mVisitor, loc);
 			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
 			break; 
-		case ReqType.REPLY:
+		case mReply:
 			uid = DBConnection.isThere(src, mVisitor, loc);			
 			res = DBConnection.writeReply(uid, dst, msg, reqSize, mNumRead);
 			break;
-		case ReqType.RETWEET:
+		case mRetweet:
 			uid = DBConnection.isThere(src, mVisitor, loc);
 			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
 			break;
-		case ReqType.REPLACEMENT:
+		case mReplacement:
 			Utility.stopScheduler(mScheduler);
 			double total_cpu = 0;
 			for (int i = 0; i < mCPU_Log.size(); i++) {
