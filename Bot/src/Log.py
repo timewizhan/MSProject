@@ -1,28 +1,29 @@
 import logging
 
 class Log:
-	def __init__(self):
-		pass
+	def __init__(self, userID):
+		filePath = "./Log/" + userID + ".log"
+		logging.basicConfig(filename=filePath, level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %p %I:%M:%S')
 
 	@staticmethod
 	def debug(message):
-		print "DEBUG : %s" % message
+		logging.debug('%s', message)
 	
 	@staticmethod
 	def info(message):
-		print "INFO : %s" % message
+		logging.info('%s', message)
 
 	@staticmethod
 	def warning(message):
-		print "WARNING : %s" % message
+		logging.warning('%s', message)
 
 	@staticmethod
 	def error(message):
-		print "ERROR : %s" % message
+		logging.error('%s', message)
 
 	@staticmethod
 	def critical(message):
-		print "CRITICAL : %s" % message
+		logging.critical('%s', message)
 
 
 

@@ -1,8 +1,6 @@
 import java.beans.PropertyVetoException;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,55 +12,68 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 
-interface ReqType {
-	int TWEET = 1, READ = 2, REPLY = 3, RETWEET = 4, REPLACEMENT = 5;
-}
+import Wrapper.coordInfo;
+import Wrapper.userInfo;
 
 public class ServiceServer implements Runnable {
-	ServerSocket mServerSocket;
-	Thread[] mThreadArr;
+	private final static int SOMAXCONN = 2147483647;
 	
-	private final static String mLocation = "KR";
+	private final static int mTweet = 1;
+	private final static int mRead = 2;
+	private final static int mReply = 3;
+	private final static int mRetweet = 4;
+	private final static int mReplacement = 5;
 	
 	private final static int mResident = 1;
 	private final static int mVisitor = 2;
 	
 	private final static int mNumRead = 10;
 	
-	public static ArrayList<Double> mCPU_Log;	
+	private coordInfo mCoord;
 	
-	public static ScheduledExecutorService mScheduler;
-	
-	public static void main(String[] args) throws InterruptedException {								
-		// create server threads
-		ServiceServer server = new ServiceServer(4);
-		server.start();
+	private ScheduledExecutorService mScheduler;	
+	private ArrayList<Double> mCPU_Log;
+	private ArrayList<Double> mAVG_CPU_Log;
 		
-		// monitor cpu load			
+	ServerSocket mServerSocket;
+	Thread[] mThreadArr;
+	
+	public static void main(String[] args) throws InterruptedException {																		
+		// disable c3p0 logging
+		System.setProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "WARNING");
+		System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");				
+		
+		// create server threads
+		ServiceServer server = new ServiceServer(10, Utility.setLocation());
+		server.start();
 		server.startCpuMonitor();
 	}
 	
-	public ServiceServer(int num) {		
-		mCPU_Log = new ArrayList<>();
+	public ServiceServer(int num, String loc) {								
+		mCoord = new coordInfo();		
+		Utility.readCoord(mCoord, loc);
 		
+		mCPU_Log = new ArrayList<Double>();
+		mAVG_CPU_Log = new ArrayList<Double>();
+				
 		try {			
 			// create a server socket binded with 7777 port
-			mServerSocket = new ServerSocket(7777);
+			// set # backlog as Maximum
+			mServerSocket = new ServerSocket(7777, SOMAXCONN);
 			System.out.println(getTime() + " SNS Server is ready.");
-			
-			mThreadArr = new Thread[num];
+						
+			mThreadArr = new Thread[num];			
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			System.out.println("[ServiceServer]IOException e: " + e.getMessage());
+		}	
 	}
 	
-	public void start() {
+	private void start() {
 		for (int i = 0; i < mThreadArr.length; i++) {
 			mThreadArr[i] = new Thread(this);
 			mThreadArr[i].start();
-		}
+		}		
 	}
 
 	@Override
@@ -75,17 +86,33 @@ public class ServiceServer implements Runnable {
 				System.out.println(getTime() + " is waiting for requests.");				
 				
 				socket = mServerSocket.accept();
-				System.out.println(getTime() + " received a request from " 
-						+ socket.getInetAddress());														 			
-																										
-				String response = Utility.msgGenerator(operationHandler(Utility.msgParser(socket)));								
+				System.out.print(getTime() + " received a request from ");														 			
+									
+				JSONObject request  = Utility.msgParser(socket);
+				
+				System.out.println("[" + (String) request.get("SRC") + "]");
+				
+				// check the request type
+				
+				// For the service
+				// need to figure out whether the request is about the service or not
+				// and do proper operation according to the request
+				// there should be an additional method to handle the data replacement
+				String response = Utility.msgGenerator(operationHandler(request));								
 												
 				out = new BufferedWriter(new OutputStreamWriter(
-						socket.getOutputStream(), "UTF-8"));				
-						
-				// can be replaced by java.util.Timer and java.util.TimerTask classes
-				Thread.sleep(Utility.calRTT("KR"));
-			
+						socket.getOutputStream(), "UTF-8"));			
+								
+				Thread.sleep(Utility.calRTT(mCoord, (String) request.get("LOC")));
+				
+				// For the monitoring result report
+				// need an additional msgGenerator
+				
+				// For the data replacement
+				// need an additional msgGenerator
+					// sending data
+					// receiving data
+				
 				out.write(response);
 				out.newLine();
 				out.flush();																	
@@ -95,8 +122,6 @@ public class ServiceServer implements Runnable {
 				System.out.println("[run]PropertyVetoException: " + e.getMessage());
 			} catch (SQLException e) {
 				System.out.println("[run]SQLException: " + e.getMessage()); 
-			} catch (ParseException e) {
-				System.out.println("[run]ParseException: " + e.getMessage());
 			} catch (InterruptedException e) {
 				System.out.println("[run]InterruptedException: " + e.getMessage());
 			} finally {
@@ -117,35 +142,30 @@ public class ServiceServer implements Runnable {
 		int res = 0;		
 						
 		int reqType = Integer.parseInt((String) request.get("TYPE"));	
+		
 		String src = (String) request.get("SRC");		
 		String dst = (String) request.get("DST");
 		String loc = (String) request.get("LOC");
-		String msg = (String) request.get("MSG");		 
-		
-		System.out.println("TYPE: " + reqType + " " +
-							"SRC: " + src + " " + 
-							"DST: " + dst + " " + 
-							"LOC: " + loc + " " + 
-							"MSG: " + msg);
+		String msg = (String) request.get("MSG");
 		
 		switch (reqType) {                                                                                                                                                                                                      
-		case ReqType.TWEET:				
+		case mTweet:				
 			uid = DBConnection.isThere(src, mResident, loc);			
 			res = DBConnection.writeStatus(uid, msg, reqSize);			
 			break;
-		case ReqType.READ:
+		case mRead:
 			uid = DBConnection.isThere(src, mVisitor, loc);
 			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
-			break;
-		case ReqType.REPLY:
+			break; 
+		case mReply:
 			uid = DBConnection.isThere(src, mVisitor, loc);			
 			res = DBConnection.writeReply(uid, dst, msg, reqSize, mNumRead);
 			break;
-		case ReqType.RETWEET:
+		case mRetweet:
 			uid = DBConnection.isThere(src, mVisitor, loc);
 			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
 			break;
-		case ReqType.REPLACEMENT:
+		case mReplacement:
 			Utility.stopScheduler(mScheduler);
 			double total_cpu = 0;
 			for (int i = 0; i < mCPU_Log.size(); i++) {
@@ -156,6 +176,13 @@ public class ServiceServer implements Runnable {
 			mCPU_Log.clear();
 			
 			this.startCpuMonitor();
+			userInfo[] result = DBConnection.getMonitor();
+			
+			System.out.println(result.length);
+			
+			for (int i = 0; i < result.length; i++)
+				System.out.println(result[i].getName() + " " + result[i].getTraffic() + " " + result[i].getLoc());
+			
 			break;													
 		}
 		return res;
@@ -169,6 +196,6 @@ public class ServiceServer implements Runnable {
 	
 	private void startCpuMonitor() throws InterruptedException {
 		mScheduler = Executors.newSingleThreadScheduledExecutor();
-		Utility.monitorCpuLoad(mScheduler, mCPU_Log);
+		Utility.monitorCpuLoad(mScheduler, mCPU_Log, mAVG_CPU_Log);
 	}
 }

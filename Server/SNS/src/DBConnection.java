@@ -1,3 +1,4 @@
+
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -13,6 +14,9 @@ import java.util.Random;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
+import Wrapper.statusInfo;
+import Wrapper.userInfo;
+
 public class DBConnection {
 	private static DBConnection mDS;
 	private ComboPooledDataSource mCDPS;
@@ -27,16 +31,16 @@ public class DBConnection {
 	private DBConnection() throws IOException, SQLException, PropertyVetoException {
 		mCDPS = new ComboPooledDataSource();
 		mCDPS.setDriverClass("com.mysql.jdbc.Driver");
-		mCDPS.setJdbcUrl("jdbc:mysql://165.132.123.76:3306/snsdb?autoReconnect=true&useSSL=false");
+		mCDPS.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/snsdb?autoReconnect=true&useSSL=false");
 		mCDPS.setUser("root");
 		mCDPS.setPassword("cclabj0gg00");
 		
 		// the settings below are optional
 		// c3p0 can work with defaults
-		mCDPS.setMinPoolSize(5);
-		mCDPS.setAcquireIncrement(5);
-		mCDPS.setMaxPoolSize(10);
-		mCDPS.setMaxStatements(180);
+		mCDPS.setMinPoolSize(3);
+		mCDPS.setAcquireIncrement(3);
+		mCDPS.setMaxPoolSize(15);
+		mCDPS.setMaxStatements(180);				
 	}
 	
 	public Connection getConnection() throws SQLException {
@@ -177,106 +181,10 @@ public class DBConnection {
 			int uid = uInfo[i].getUID();
 			if (tInfo.get(uid) != null)
 				uInfo[i].updateTraffic(tInfo.get(uid));
+			
 		}
 		
 		return uInfo;
-	}
-	
-	private static userInfo[] getUserInfo () {
-		Connection conn = null;
-		PreparedStatement prepared = null;
-		ResultSet rs = null;
-
-		userInfo [] uInfo = null;
-		
-		try {
-			conn = DBConnection.getInstance().getConnection();
-			prepared = conn.prepareStatement("SELECT uid,uname,location FROM users",
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-						
-			rs = prepared.executeQuery();
-			
-			int i = 0;
-			rs.last();
-			int rowCnt = rs.getRow();			
-			uInfo = new userInfo [rowCnt];			
-			rs.beforeFirst();
-			while (rs.next()) {
-				uInfo[i] = new userInfo();
-				uInfo[i].setInfo(rs.getInt("uid"), rs.getString("uname"), rs.getString("location"));				
-				i++;
-			}				
-		} catch (SQLException e) {
-			System.out.println("[getUserInfo]SQLException: " + e.getMessage());
-		} catch (IOException e) {
-			System.out.println("[getUserInfo]IOException: " + e.getMessage());			
-		} catch (PropertyVetoException e) {
-			System.out.println("[getUserInfo]PropertyVetoException: " + e.getMessage());
-		} finally {
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					System.out.println("[getUserInfo/conn]SQLException: " + e.getMessage());					
-				}								
-		}		
-		return uInfo;
-	}
-	
-	private static HashMap<Integer, Integer> getTrafficLog() {
-		Connection conn = null;
-		PreparedStatement prepared = null;
-		ResultSet rs = null;				
-		HashMap<Integer, Integer> tMap = new HashMap<Integer, Integer>();
-		
-		try {
-			conn = DBConnection.getInstance().getConnection();
-			prepared = conn.prepareStatement("SELECT uid, sum(traffic) FROM ("
-					+ "SELECT uid, traffic, time FROM status "
-					+ "UNION ALL "
-					+ "SELECT uid, traffic, time FROM reply "
-					+ "UNION ALL "
-					+ "SELECT uid, traffic, time FROM latent) x "
-					+ "WHERE time BETWEEN ? AND ? "
-					+ "GROUP BY uid");
-						
-			Date date = new Date();			
-			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");						
-			Calendar cal = Calendar.getInstance();
-			
-			cal.setTime(date);			
-			cal.add(Calendar.HOUR, mPeriod);									
-			String start = f.format(cal.getTime());
-			
-			cal.setTime(date);
-			String end = f.format(cal.getTime());
-																		
-			prepared.setString(1, start);
-			prepared.setString(2, end);
-			
-			rs = prepared.executeQuery();						
-						
-			while(rs.next()) {
-				int t_uid = rs.getInt("uid");
-				int t_traffic = rs.getInt("sum(traffic)");					
-				tMap.put(t_uid, t_traffic);				
-			}					
-		} catch (PropertyVetoException e) {
-			System.out.println("[getStatusTraffic]PropertyVetoException: " + e.getMessage());
-		} catch (SQLException e) {
-			System.out.println("[getStatusTraffic]SQLException: " + e.getMessage());
-		} catch (IOException e) {
-			System.out.println("[getStatusTraffic]IOException: " + e.getMessage());
-		} finally {						
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					System.out.println("[getStatusTraffic/conn]SQLException: " + e.getMessage());
-				}
-		}
-		return tMap;
 	}
 	
 	private static void updateUser(int uid, int utype) throws PropertyVetoException, SQLException, IOException {
@@ -527,4 +435,101 @@ public class DBConnection {
 		}
 		return mSuccess;
 	}		
+	
+	private static userInfo[] getUserInfo () {
+		Connection conn = null;
+		PreparedStatement prepared = null;
+		ResultSet rs = null;
+
+		userInfo [] uInfo = null;
+		
+		try {
+			conn = DBConnection.getInstance().getConnection();
+			prepared = conn.prepareStatement("SELECT uid,uname,location FROM users",
+					ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
+						
+			rs = prepared.executeQuery();
+			
+			int i = 0;
+			rs.last();
+			int rowCnt = rs.getRow();			
+			uInfo = new userInfo [rowCnt];			
+			rs.beforeFirst();
+			while (rs.next()) {
+				uInfo[i] = new userInfo();
+				uInfo[i].setInfo(rs.getInt("uid"), rs.getString("uname"), rs.getString("location"));				
+				i++;
+			}				
+		} catch (SQLException e) {
+			System.out.println("[getUserInfo]SQLException: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("[getUserInfo]IOException: " + e.getMessage());			
+		} catch (PropertyVetoException e) {
+			System.out.println("[getUserInfo]PropertyVetoException: " + e.getMessage());
+		} finally {
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					System.out.println("[getUserInfo/conn]SQLException: " + e.getMessage());					
+				}								
+		}		
+		return uInfo;
+	}
+	
+	private static HashMap<Integer, Integer> getTrafficLog() {
+		Connection conn = null;
+		PreparedStatement prepared = null;
+		ResultSet rs = null;				
+		HashMap<Integer, Integer> tMap = new HashMap<Integer, Integer>();
+		
+		try {
+			conn = DBConnection.getInstance().getConnection();
+			prepared = conn.prepareStatement("SELECT uid, sum(traffic) FROM ("
+					+ "SELECT uid, traffic, time FROM status "
+					+ "UNION ALL "
+					+ "SELECT uid, traffic, time FROM reply "
+					+ "UNION ALL "
+					+ "SELECT uid, traffic, time FROM latent) x "
+					+ "WHERE time BETWEEN ? AND ? "
+					+ "GROUP BY uid");
+						
+			Date date = new Date();			
+			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");						
+			Calendar cal = Calendar.getInstance();
+			
+			cal.setTime(date);			
+			cal.add(Calendar.HOUR, mPeriod);			
+			String start = f.format(cal.getTime());
+			
+			cal.setTime(date);
+			String end = f.format(cal.getTime());
+																		
+			prepared.setString(1, start);
+			prepared.setString(2, end);
+			
+			rs = prepared.executeQuery();						
+						
+			while(rs.next()) {
+				int t_uid = rs.getInt("uid");
+				int t_traffic = rs.getInt("sum(traffic)");				
+				tMap.put(t_uid, t_traffic);				
+			}					
+		} catch (PropertyVetoException e) {
+			System.out.println("[getStatusTraffic]PropertyVetoException: " + e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("[getStatusTraffic]SQLException: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("[getStatusTraffic]IOException: " + e.getMessage());
+		} finally {						
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					System.out.println("[getStatusTraffic/conn]SQLException: " + e.getMessage());
+				}
+		}
+		return tMap;
+	}
 }
