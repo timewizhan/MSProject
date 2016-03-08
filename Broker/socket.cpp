@@ -1,109 +1,111 @@
 /*
- * socket.cpp
- *
- *  Created on: Feb 5, 2016
- *      Author: alphahacker
- */
+* socket.cpp
+*
+*  Created on: Feb 5, 2016
+*      Author: alphahacker
+*/
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
-#include "data_queue.h"
-#include "common.h"
-#include "socket.h"
 
-#include "database.h"
+#include "DataQueue.h"
+#include "Socket.h"
+#include "Matching.h"
 
 CSocket::CSocket(){
 
 	optval = 1;
-	init_socket();
+	InitSocket();
 }
 CSocket::~CSocket(){}
 
-void CSocket::init_socket(){
+void CSocket::InitSocket(){
 
 	printf("init_socket \n");
 
-	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-	{
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
 		printf("error\r\n");
 	}
 
-	if((ssock = socket(AF_INET,SOCK_STREAM,IPPROTO_TCP))<0){
+	if ((ssock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP))<0) {
 
 		perror("socket error : ");
 		exit(1);
 	}
+	printf("socket ¹İÈ¯°ª(ssock): %d \n", ssock);
 
-	//ì†Œì¼“ ì˜µì…˜ì„ ì„¤ì •(ì˜µì…˜ í•´ì„ì„ ìœ„í•œ ì»¤ë„ ë‚´ ì‹œìŠ¤í…œ ì½”ë“œì˜ êµ¬ë¶„, ì˜µì…˜ì´ë¦„, ì˜µì…˜ì˜ ê°’ ë“±--SO_SNDBUF,SO_BROADCAST,SO_KEEPALIVE)
+	//¼ÒÄÏ ¿É¼ÇÀ» ¼³Á¤(¿É¼Ç ÇØ¼®À» À§ÇÑ Ä¿³Î ³» ½Ã½ºÅÛ ÄÚµåÀÇ ±¸ºĞ, ¿É¼ÇÀÌ¸§, ¿É¼ÇÀÇ °ª µî--SO_SNDBUF,SO_BROADCAST,SO_KEEPALIVE)
 	setsockopt(ssock, SOL_SOCKET, SO_REUSEADDR, (const char*)&optval, sizeof(optval));
 
-	//í•´ë‹¹ ë³€ìˆ˜ë¥¼ ì´ˆê¸°í™”, ì£¼ì†Œë¥¼ ì €ì¥
-	memset(add_num,0,sizeof(add_num));
+	//ÇØ´ç º¯¼ö¸¦ ÃÊ±âÈ­, ÁÖ¼Ò¸¦ ÀúÀå
+	memset(add_num, 0, sizeof(add_num));
 	memset(&server_addr, 0, sizeof(server_addr));
 
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	server_addr.sin_port = htons(3333);
 
-	//ì†Œì¼“ì„ í•´ë‹¹ ì£¼ì†Œë¡œ ì—°ê²°
-	if(bind(ssock,(struct sockaddr *)&server_addr,sizeof(server_addr))<0)
+	//¼ÒÄÏÀ» ÇØ´ç ÁÖ¼Ò·Î ¿¬°á
+	if (bind(ssock, (struct sockaddr *)&server_addr, sizeof(server_addr))<0)
 	{
 		perror("bind error: ");
 		exit(1);
 	}
 
-	//í´ë¼ì´ì–¸íŠ¸ì˜ ì ‘ì†ì„ ê¸°ë‹¤ë¦¼
-	if(listen(ssock,5)<0)
+	//Å¬¶óÀÌ¾ğÆ®ÀÇ Á¢¼ÓÀ» ±â´Ù¸²
+	if (listen(ssock, 5)<0)
 	{
 		perror("listen error : ");
 		exit(1);
 	}
 }
 
-void CSocket::comm_socket(){
+void CSocket::CommSocket(){
 
 	printf("comm_socket \n");
 
-	clen=sizeof(client_addr);
+	clen = sizeof(client_addr);
 
-	//FD_SET ë””ìŠ¤í¬ë¦½í„°ì˜ ì„¸íŒ…
+	//FD_SET µğ½ºÅ©¸³ÅÍÀÇ ¼¼ÆÃ
 	FD_ZERO(&read_fds);
-	FD_SET(ssock,&read_fds);
+	FD_SET(ssock, &read_fds);
 
-	maxfd= ssock;
+	maxfd = ssock;
 
-	while(1)
+	int iECount = 0;
+	
+	while (1)
 	{
-		//fd_setë””ìŠ¤í¬ë¦½í„° í…Œì´ë¸”ì€ ì¼íšŒì„±. ê·¸ë ‡ê¸° ë•Œë¬¸ì— í•´ë‹¹ê°’ì„ ë¯¸ë¦¬ ì˜®ê²¨ ë†“ê³  ì‹œì‘í•´ì•¼ í•œë‹¤. ê·¸ë ‡ê¸° ë•Œë¬¸ì— ë³µì‚¬ë¥¼ ë¨¼ì ¸ í•˜ê³  ì‹œì‘í•´ì•¼ í•œë‹¤.
-		tmp_fds=read_fds;
+		printf("1"); Sleep(1000);
+		//fd_setµğ½ºÅ©¸³ÅÍ Å×ÀÌºíÀº ÀÏÈ¸¼º. ±×·¸±â ¶§¹®¿¡ ÇØ´ç°ªÀ» ¹Ì¸® ¿Å°Ü ³õ°í ½ÃÀÛÇØ¾ß ÇÑ´Ù. ±×·¸±â ¶§¹®¿¡ º¹»ç¸¦ ¸ÕÁ® ÇÏ°í ½ÃÀÛÇØ¾ß ÇÑ´Ù.
+		tmp_fds = read_fds;
 
-		//ì¸í„°í˜ì´ìŠ¤ ìƒì—ì„œ ë””ë°”ì´ìŠ¤ì— ë“¤ì–´ì˜¨ ì…ë ¥ì— ëŒ€í•œ ì¦‰ê°ì ì¸ ëŒ€ì‘ì´ í•„ìš”.
-		if(select(maxfd+1,&tmp_fds,0,0,(struct timeval *)0)<1)
+		//ÀÎÅÍÆäÀÌ½º »ó¿¡¼­ µğ¹ÙÀÌ½º¿¡ µé¾î¿Â ÀÔ·Â¿¡ ´ëÇÑ Áï°¢ÀûÀÎ ´ëÀÀÀÌ ÇÊ¿ä.
+		if (select(maxfd + 1, &tmp_fds, 0, 0, (struct timeval *)0)<1)
 		{
 			perror("select error : ");
 			exit(1);
 		}
 
-		for(fd=0;fd<maxfd+1;fd++)
+		for (fd = 0; fd<maxfd + 1; fd++)
 		{
-			if(FD_ISSET(fd,&tmp_fds))
+			if (FD_ISSET(fd, &tmp_fds))
 			{
-				if(fd==ssock)
+				if (fd == ssock)
 				{
-					if((csock = accept(ssock,(struct sockaddr *)&client_addr,&clen))<0)
+					if ((csock = accept(ssock, (struct sockaddr *)&client_addr, &clen))<0)
 					{
 						perror("accept error : ");
 						exit(0);
 					}
 
-					FD_SET(csock,&read_fds);
+					FD_SET(csock, &read_fds);
 
-					printf("ìƒˆë¡œìš´ í´ë¼ì´ì–¸íŠ¸ %dë²ˆ íŒŒì¼ ë””ìŠ¤í¬ë¦½í„° ì ‘ì†\n",csock);
+					printf("»õ·Î¿î Å¬¶óÀÌ¾ğÆ® %d¹ø ÆÄÀÏ µğ½ºÅ©¸³ÅÍ Á¢¼Ó\n", csock);
 
-					for(index=0;index<MAX;index++)
+					for (index = 0; index<MAX; index++)
 					{
-						if(add_num[index].anum==0)
+						if (add_num[index].anum == 0)
 						{
-							add_num[index].anum=csock;
+							add_num[index].anum = csock;
 							maxfd++;
 
 							printf("(add_num[%d].anum = %d) ", index, csock);
@@ -112,133 +114,144 @@ void CSocket::comm_socket(){
 						}
 					}
 
-					if(csock>maxfd)
+					if (csock>maxfd)
 					{
 						maxfd = csock;
 					}
 				}
 				else
 				{
-					memset(&read_message,0,sizeof(read_message));
+					memset(&read_message, 0, sizeof(read_message));
 
-					//í´ë¼ì´ì–¸íŠ¸ë¡œ ë¶€í„° ë©”ì„¸ì§€ë¥¼ ìˆ˜ì‹ ë°›ëŠ”ë‹¤.
-					data_len = recv(fd,(char*)&read_message,sizeof(read_message), 0);	//readì˜ ë¦¬í„´ê°’ ë­˜ê¹Œ
+					//Å¬¶óÀÌ¾ğÆ®·Î ºÎÅÍ ¸Ş¼¼Áö¸¦ ¼ö½Å¹Ş´Â´Ù.
+					data_len = recv(fd, (char*)&read_message, sizeof(read_message), 0);	//readÀÇ ¸®ÅÏ°ª ¹»±î
 
-					if(read_message.ep_num != 0){
+					if (read_message.ep_num != 0){
 						printf("\n[read test, fd=%d] \n", fd);
-						printf("EP: %d, Side: %s \n",read_message.ep_num, read_message.side_flag);
-						printf("cpu_util: %d, server-side traffic: %d \n",read_message.cpu_util, read_message.server_side_traffic);
-						printf("user: %s, location: %s, timestamp: %d, user traffic: %d \n",read_message.user, read_message.location, read_message.timestamp, read_message.traffic);
+						printf("EP: %d, Side: %s \n", read_message.ep_num, read_message.side_flag);
+						printf("cpu_util: %d, server-side traffic: %d \n", read_message.cpu_util, read_message.server_side_traffic);
+						printf("user: %s, location: %s, timestamp: %d, user traffic: %d \n", read_message.user, read_message.location, read_message.timestamp, read_message.traffic);
 					}
 
-					//ì—¬ê¸°ì„œ 1. í ë¶ˆëŸ¬ì„œ íì— ìŒ“ìœ¼ë©´ ëœë‹¤. ê·¸ë¦¬ê³  ë‚˜ì„œ 2. íì—ì„œ êº¼ë‚´ë©´ì„œ ì²˜ë¦¬í•´ì£¼ê³  3. ë””ë¹„ì— ì €ì¥
-					//ë¬¸ì œëŠ” ë‹¤ë¥¸ ì¢…ë¥˜ì˜ ë°ì´í„° ë‘ê°œë¥¼ ë°›ì•„ì•¼ ë˜ëŠ”ë° ì–´ë–»ê²Œ í• ê²ƒì¸ê°€..
-				//	printf("when data is queued, the data_queue address is : %x \n", &data_queue);
-				//	data_queue.enqueue(read_message);
-
+					//¿©±â¼­ 1. Å¥ ºÒ·¯¼­ Å¥¿¡ ½×À¸¸é µÈ´Ù. ±×¸®°í ³ª¼­ 2. Å¥¿¡¼­ ²¨³»¸é¼­ Ã³¸®ÇØÁÖ°í 3. µğºñ¿¡ ÀúÀå
+					//°¢ EP·Î ºÎÅÍ µ¥ÀÌÅÍ Àü¼Û Á¾·á ¸Ş¼¼Áö¸¦ ¹ŞÀ¸¸é(ÇüÅÂ´Â ¹¹...Æ¯Á¤ ÇÃ·¡±×¸¦ º¸³»ÁØ´Ùµç°¡..), Å¥·Î µ¥ÀÌÅÍ º¸³»´Â °É Áß´ÜÇÏ°í
+					//±×µ¿¾È ½×ÀÎ µ¥ÀÌÅÍ·Î LP °è»êÀ» ÇÏ°Ô ÇÑ´Ù.
+					
 					CDataQueue::getDataQueue()->pushDataToQueue(read_message);
+				//	int iECount = 0;
+					if (!strcmp(read_message.side_flag, "e")){		
+						iECount++;
+						if (iECount == 1){		//3°³ÀÇ EP¿¡¼­ º¸³½ µ¥ÀÌÅÍ Broker Å×ÀÌºí ÀÔ·Â ¿Ï·á
+							//¿©±â¼­ LP °è»ê ÇÔ¼ö È£Ãâ
+							CMatch match;
+							match.NormalizeFactor();
 
+						}
+					}
+			//		WaitForSingleObject(hThread, INFINITE);
 					/*
-					ìŠ¤ë ˆë“œê°€ queueì— ê°”ë‹¤ê°€ LPì²˜ë¦¬ê¹Œì§€ ë‹¤í•˜ê³  ì˜¤ë©´, ì—¬ê¸°ì„œ í•©ì³ì§ˆ ìˆ˜ ìˆê²Œ
-					pthread_joinì„ ì—¬ê¸°ì„œ í˜¸ì¶œí•˜ë©´, ë‹¤ ì²˜ë¦¬ëœ LPê²°ê³¼ë¥¼
-					ì—¬ê¸°ì„œ write í•´ì¤˜ì„œ EPë“¤ì—ê²Œ ë³´ë‚´ì¤„ ìˆ˜ ìˆê² ë‹¤.
+					½º·¹µå°¡ queue¿¡ °¬´Ù°¡ LPÃ³¸®±îÁö ´ÙÇÏ°í ¿À¸é, ¿©±â¼­ ÇÕÃÄÁú ¼ö ÀÖ°Ô
+					pthread_joinÀ» ¿©±â¼­ È£ÃâÇÏ¸é, ´Ù Ã³¸®µÈ LP°á°ú¸¦
+					¿©±â¼­ write ÇØÁà¼­ EPµé¿¡°Ô º¸³»ÁÙ ¼ö ÀÖ°Ú´Ù.
 					*/
 
-					//í´ë¼ì´ì–¸íŠ¸ë¡œë¶€í„° ë©”ì‹œì§€ê°€ ë“¤ì–´ì™”ë‹¤ë©´ ë©”ì‹œì§€ ì „ì†¡
+					//Å¬¶óÀÌ¾ğÆ®·ÎºÎÅÍ ¸Ş½ÃÁö°¡ µé¾î¿Ô´Ù¸é ¸Ş½ÃÁö Àü¼Û
 					/*
 					if(data_len>0)
 					{
-						writeMessage((void*)&read_message,(void*)add_num,fd,maxfd);
+					writeMessage((void*)&read_message,(void*)add_num,fd,maxfd);
 
 					}
 					else if(data_len==0)
 					{
-						for(index=0;index<USER;index++)
-						{
-							if(add_num[index].anum==fd)
-							{
-								add_num[index].anum=0;
-								strcpy(add_num[index].name,"");
-								break;
-							}
-						}
+					for(index=0;index<USER;index++)
+					{
+					if(add_num[index].anum==fd)
+					{
+					add_num[index].anum=0;
+					strcpy(add_num[index].name,"");
+					break;
+					}
+					}
 
-						close(fd);
+					close(fd);
 
-						FD_CLR(fd,&read_fds);
+					FD_CLR(fd,&read_fds);
 
-						if(maxfd==fd)
-							maxfd--;
+					if(maxfd==fd)
+					maxfd--;
 
-						printf("í´ë¼ì´ì–¸íŠ¸ %dë²ˆ íŒŒì¼ ë””ìŠ¤í¬ë¦½í„° í•´ì œ\n",fd);
+					printf("Å¬¶óÀÌ¾ğÆ® %d¹ø ÆÄÀÏ µğ½ºÅ©¸³ÅÍ ÇØÁ¦\n",fd);
 
 					}
 					else if(data_len<0)
 					{
-						perror("read error : ");
-						exit(1);
+					perror("read error : ");
+					exit(1);
 					}
 					*/
 
 				}
 			}
 		}
+
+
+
+
 	}
 }
 
-void CSocket::send_message(){
+//void CSocket::send_message(){}
 
-}
-
-void CSocket::write_message(void *client_message,void *num,int basefd,int maxfd){
+void CSocket::WriteMessage(void *client_message, void *num, int basefd, int maxfd){
 
 	int index;
 	struct message *cl_message;
 	struct add_num *index_num;
-	char all[]="ALL";
+	char all[] = "ALL";
 
 	cl_message = (struct message*)client_message;
 	index_num = (struct add_num*)num;
 
-	//í´ë¼ì´ì–¸íŠ¸ê°€ ì ‘ì†í–ˆë‹¤ê³  ë©”ì‹œì§€ë¥¼ ë³´ëƒˆì„ë•Œ
-	if(strcmp(cl_message->sbuf,"")==0)
+	//Å¬¶óÀÌ¾ğÆ®°¡ Á¢¼ÓÇß´Ù°í ¸Ş½ÃÁö¸¦ º¸³ÂÀ»¶§
+	if (strcmp(cl_message->sbuf, "") == 0)
 	{
-		printf("ë“±ë¡ í•˜ê² ìŠµë‹ˆë‹¤.\n");
+		printf("µî·Ï ÇÏ°Ú½À´Ï´Ù.\n");
 
-		for(index=0;index<USER;index++)
+		for (index = 0; index<USER; index++)
 		{
-			if(((index_num+index)->anum)==basefd)
+			if (((index_num + index)->anum) == basefd)
 			{
-				strcpy_s((index_num+index)->name, 40,(cl_message->user));
+				strcpy_s((index_num + index)->name, 40, (cl_message->user));
 			}
 		}
 
-		send(basefd,greet,sizeof(greet),0);
+		send(basefd, greet, sizeof(greet), 0);
 
 
 	}
-	//í´ë¼ì´ì–¸íŠ¸ê°€ ë‹¤ë¥¸ í´ë¼ì´ì–¸íŠ¸ì— ë©”ì‹œì§€ë¥¼ ì „ì†¡ í•  ë•Œ
+	//Å¬¶óÀÌ¾ğÆ®°¡ ´Ù¸¥ Å¬¶óÀÌ¾ğÆ®¿¡ ¸Ş½ÃÁö¸¦ Àü¼Û ÇÒ ¶§
 	else
 	{
-		//ëª¨ë“  ì‚¬ìš©ìì—ê²Œ ë©”ì‹œì§€ë¥¼ ì „ì†¡í•œë‹¤.
-		all[strlen(all)]='\0';
+		//¸ğµç »ç¿ëÀÚ¿¡°Ô ¸Ş½ÃÁö¸¦ Àü¼ÛÇÑ´Ù.
+		all[strlen(all)] = '\0';
 
-		if(strcmp(cl_message->user,all)==0)
+		if (strcmp(cl_message->user, all) == 0)
 		{
-			for(index=0;index<maxfd;index++)
+			for (index = 0; index<maxfd; index++)
 			{
-				if((index_num+index)->anum!=0)
-					send(((index_num+index)->anum), cl_message->sbuf, MAXBUF, 0);
+				if ((index_num + index)->anum != 0)
+					send(((index_num + index)->anum), cl_message->sbuf, MAXBUF, 0);
 			}
 		}
-		//ì§€ì •ëœ ì‚¬ìš©ìì—ê²Œ ë©”ì‹œì§€ë¥¼ ì „ì†¡í•œë‹¤.
+		//ÁöÁ¤µÈ »ç¿ëÀÚ¿¡°Ô ¸Ş½ÃÁö¸¦ Àü¼ÛÇÑ´Ù.
 		else
 		{
-			for(index=0;index<USER;index++)
+			for (index = 0; index<USER; index++)
 			{
-				if(strcmp(((index_num+index)->name),cl_message->user)==0)
+				if (strcmp(((index_num + index)->name), cl_message->user) == 0)
 				{
-					if(send(((index_num+index)->anum),cl_message->sbuf,MAXBUF,0)<0)
+					if (send(((index_num + index)->anum), cl_message->sbuf, MAXBUF, 0)<0)
 					{
 						perror("write error : ");
 						exit(1);
@@ -247,9 +260,9 @@ void CSocket::write_message(void *client_message,void *num,int basefd,int maxfd)
 					break;
 				}
 
-				//ìœ ì €ê°€ ì¡´ì¬í•˜ì§€ ì•ŠëŠ”ë‹¤ë©´
-				if(index+1==USER)
-					send(basefd,no_greet,sizeof(no_greet),0);
+				//À¯Àú°¡ Á¸ÀçÇÏÁö ¾Ê´Â´Ù¸é
+				if (index + 1 == USER)
+					send(basefd, no_greet, sizeof(no_greet), 0);
 
 			}
 		}

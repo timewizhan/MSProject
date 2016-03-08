@@ -1,51 +1,36 @@
-/*
- * broker_server.cpp
- *
- *  Created on: Jan 20, 2016
- *      Author: ms-dev
- */
+#include "Broker.h"
 
-#include "data_queue.h"
-#include "common.h"
-#include "broker_server.h"
+CBroker::CBroker(){
 
-
-CBrokerServer::CBrokerServer(){
-
-	init_broker();
+	InitBroker();
 }
 
-CBrokerServer::~CBrokerServer(){}
-
-void CBrokerServer::init_broker(){
+void CBroker::InitBroker(){
 
 	printf("init_broker \n");
 
-	init_thread();
-	bridge_socket();
+	InitThread();
+	BridgeSocket();
 }
 
-void CBrokerServer::init_thread(){
+void CBroker::InitThread(){
 
 	printf("init_thread \n");
 
-	HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, preprocess_insert, &m_db, CREATE_SUSPENDED, NULL);
+	hThread = (HANDLE)_beginthreadex(NULL, 0, PreprocessInsert, &m_cDatabase, NULL, NULL);
 	if (!hThread)
 	{
 		printf(" Error Thread \r\n");
 		return;
 	}
-
-//	pthread_t thread_for_queue;
-//	int thr_id = pthread_create(&thread_for_queue, NULL, preprocess_insert, &m_db);
 }
 
-void CBrokerServer::bridge_socket(){
+void CBroker::BridgeSocket(){
 
-	m_db.m_socket.comm_socket();
+	m_cDatabase.m_cSocket.CommSocket();
 }
 
-unsigned WINAPI preprocess_insert(void *data){
+unsigned WINAPI PreprocessInsert(void *data){
 
 	printf("preprocess_insert \n");
 	CDatabase *l_db = (CDatabase *)data;
@@ -54,11 +39,17 @@ unsigned WINAPI preprocess_insert(void *data){
 	int l_bs_traffic = 0;
 	int l_chi_traffic = 0;
 
+	int cnt = 0;
 	while (1){
+		cnt++;
+		if (cnt % 31 == 0){ printf("\n"); }
+		printf(".");
 
 		if (!CDataQueue::getDataQueue()->getQueue().empty()){															//queue가 비어있지 않으면
+			//이부분에 큐가 비어있는걸로 체크하면 안되고,
+			//EP로 부터 데이터를 다 받았다는 메세지를 따로 받아야함
 
-			monitoring_result poppedData = CDataQueue::getDataQueue()->popDataFromQueue();
+			ST_MONITORING_RESULT poppedData = CDataQueue::getDataQueue()->popDataFromQueue();
 
 			printf("\n[read test in preprocess of inserting data] \n");
 			printf("EP: %d, Side: %s \n", poppedData.ep_num, poppedData.side_flag);
@@ -105,7 +96,7 @@ unsigned WINAPI preprocess_insert(void *data){
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		}
 
-		::Sleep(1);
+		::Sleep(1000);
 	}
 
 
@@ -114,8 +105,9 @@ unsigned WINAPI preprocess_insert(void *data){
 	l_db->updateLocation(l_ny_traffic, l_bs_traffic, l_chi_traffic);
 
 
-	//	여기서 LP 알고리즘을 호출해야할듯.
+	// 데이터 값들 정규화 하는 함수 호출
 
+	//	여기서 LP 알고리즘을 호출해야할듯.
 
 	return 0;
 }
