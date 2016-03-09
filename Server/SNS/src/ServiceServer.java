@@ -1,22 +1,11 @@
-import java.beans.PropertyVetoException;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.json.simple.JSONObject;
-
-import Type.opType;
-import Type.userType;
 import Wrapper.coordInfo;
-import Wrapper.userInfo;
 
 public class ServiceServer implements Runnable {
 	private final static int SOMAXCONN = 2147483647;
@@ -27,162 +16,75 @@ public class ServiceServer implements Runnable {
 	private ArrayList<Double> mCPU_Log;
 	private ArrayList<Double> mAVG_CPU_Log;
 		
-	ServerSocket mServerSocket;
+	ServerSocket mServerSocket2;
 	Thread[] mThreadArr;
+	
+	protected int mServerPort = 7777;
+	protected ServerSocket mServerSocket = null;
+	protected boolean mStopped = false;
+	protected Thread mRunningThread = null;
 	
 	public static void main(String[] args) throws InterruptedException, IOException {																		
 		// disable c3p0 logging
 		System.setProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "WARNING");
 		System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");				
 		
-		// create server threads
-		ServiceServer server = new ServiceServer(10, Utility.setLocation());
-		server.start();
-		server.startCpuMonitor();				
+		// create server
+		ServiceServer server = new ServiceServer(0, Utility.setLocation());
+		new Thread(server).start();
 	}
 	
 	public ServiceServer(int num, String loc) throws IOException {								
 		mCoord = new coordInfo();		
 		Utility.readCoord(mCoord, loc);
-		
+					
 		mCPU_Log = new ArrayList<Double>();
-		mAVG_CPU_Log = new ArrayList<Double>();								
-		
-		try {			
-			// create a server socket binded with 7777 port
-			// set # backlog as Maximum
-			mServerSocket = new ServerSocket(7777, SOMAXCONN);
-			System.out.println(getTime() + " SNS Server is ready.");
-						
-			mThreadArr = new Thread[num];			
-		} catch (IOException e) {
-			System.out.println("[ServiceServer]IOException e: " + e.getMessage());
-		}	
-	}
-	
-	private void start() {
-		for (int i = 0; i < mThreadArr.length; i++) {
-			mThreadArr[i] = new Thread(this);
-			mThreadArr[i].start();
-		}		
+		mAVG_CPU_Log = new ArrayList<Double>();	
 	}
 
 	@Override
 	public void run() {
-		while (true) {			
-			Socket socket = null;			
-			BufferedWriter out = null;
-			
-			try {						
-				System.out.println(getTime() + " is waiting for requests.");				
-				
-				socket = mServerSocket.accept();
-				System.out.print(getTime() + " received a request from ");																					
-				
-				JSONObject request  = Utility.msgParser(socket);
-				
-				System.out.println("[" + (String) request.get("SRC") + "]");
-				
-				// check the request type
-				
-				// For the service
-				// need to figure out whether the request is about the service or not
-				// and do proper operation according to the request
-				// there should be an additional method to handle the data replacement
-				String response = Utility.msgGenerator(operationHandler(request));								
-												
-				out = new BufferedWriter(new OutputStreamWriter(
-						socket.getOutputStream(), "UTF-8"));			
-								
-				Thread.sleep(Utility.calRTT(mCoord, (String) request.get("LOC")));
-				
-				// For the monitoring result report
-				// need an additional msgGenerator
-				
-				// For the data replacement
-				// need an additional msgGenerator
-					// sending data
-					// receiving data
-				
-				out.write(response);
-				out.newLine();
-				out.flush();																	
-			} catch (IOException e) {
-				System.out.println("[run]IOException: " + e.getMessage());
-			} catch (PropertyVetoException e) {
-				System.out.println("[run]PropertyVetoException: " + e.getMessage());
-			} catch (SQLException e) {
-				System.out.println("[run]SQLException: " + e.getMessage()); 
-			} catch (InterruptedException e) {
-				System.out.println("[run]InterruptedException: " + e.getMessage());
-			} finally {
-				if (socket != null)
-					try {
-						socket.close();
-					} catch (IOException e) {
-						System.out.println("[run/socket]IOException: " + e.getMessage());
-					}								
-				System.out.println(getTime() + " has handled the request.");
-			}						
-		}		
-	}
-		
-	private int operationHandler(JSONObject request) throws PropertyVetoException, SQLException, IOException, InterruptedException {		
-		int uid = -1;
-		int reqSize = request.toString().length();
-		int res = 0;		
-						
-		int reqType = Integer.parseInt((String) request.get("TYPE"));	
-		
-		String src = (String) request.get("SRC");		
-		String dst = (String) request.get("DST");
-		String loc = (String) request.get("LOC");
-		String msg = (String) request.get("MSG");
-		
-		switch (reqType) {                                                                                                                                                                                                      
-		case opType.tweet:				
-			uid = DBConnection.isThere(src, userType.resident, loc);			
-			res = DBConnection.writeStatus(uid, msg, reqSize);			
-			break;
-		case opType.read:
-			uid = DBConnection.isThere(src, userType.visitor, loc);
-			res = DBConnection.readStatus(uid, dst, reqSize, opType.num_read);
-			break; 
-		case opType.reply:
-			uid = DBConnection.isThere(src, userType.visitor, loc);			
-			res = DBConnection.writeReply(uid, dst, msg, reqSize, opType.num_read);
-			break;
-		case opType.retweet:
-			uid = DBConnection.isThere(src, userType.visitor, loc);
-			res = DBConnection.readStatus(uid, dst, reqSize, opType.num_share);
-			break;
-		case opType.replacement:
-			Utility.stopScheduler(mScheduler);
-			double total_cpu = 0;
-			for (int i = 0; i < mCPU_Log.size(); i++) {
-				System.out.println("CPU USAGE LOG: " + mCPU_Log.get(i));
-				total_cpu = total_cpu + mCPU_Log.get(i);
-			}
-			System.out.println("Total: " + total_cpu + "(" + mCPU_Log.size() +")" + " " + "Average: " + total_cpu / mCPU_Log.size());
-			mCPU_Log.clear();
-			
-			this.startCpuMonitor();
-			userInfo[] result = DBConnection.getMonitor();
-			
-			System.out.println(result.length);
-			
-			for (int i = 0; i < result.length; i++)
-				System.out.println(result[i].getName() + " " + result[i].getTraffic() + " " + result[i].getLoc());
-			
-			break;													
+		synchronized(this) {
+			this.mRunningThread = Thread.currentThread();
 		}
-		return res;
+		
+		openServerSocket();
+		
+		while(! isStopped()) {
+			Socket clientSocket = null;
+			try {
+				clientSocket = this.mServerSocket.accept();
+			} catch (IOException e) {
+				if(isStopped()) {
+					System.out.println("Server Stopped.");
+					return;
+				}
+				System.out.println("[run]e: " + e.getMessage());
+			}			
+			new Thread(new WorkerRunnable(clientSocket)).start();
+			System.out.println("Server Stopped.");
+		}
 	}
-
-	private String getTime() {
-		String name = Thread.currentThread().getName();
-		SimpleDateFormat f = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS]");
-		return f.format(new Date()) + name;
+		
+	private synchronized boolean isStopped() {
+		return this.mStopped;
+	}
+	
+	public synchronized void stop() {
+		this.mStopped = true;
+		try {
+			this.mServerSocket.close();
+		} catch(IOException e) {
+			System.out.println("[stop]e: " + e.getMessage());
+		}
+	}
+	
+	private void openServerSocket() {
+		try {
+			this.mServerSocket = new ServerSocket(mServerPort, SOMAXCONN);
+		} catch (IOException e) {
+			System.out.println("[openServerSocket]e: " + e.getMessage());
+		}
 	}
 	
 	private void startCpuMonitor() throws InterruptedException {
