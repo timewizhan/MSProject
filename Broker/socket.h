@@ -1,75 +1,39 @@
-/*
- * socket.h
- *
- *  Created on: Feb 5, 2016
- *      Author: alphahacker
- */
-
 #ifndef _SOCKET_
 #define	_SOCKET_
 
-#include "common.h"
+#include "DataQueue.h"
+#include "Common.h"
+#include "SocketStruct.h"
 
-#define MAXBUF 1024
 #define MAX 100
 #define ALL 1
-#define USER 20
-
-//í´ë¼ì´ì–¸íŠ¸ê°€ ë³´ë‚¸ ë©”ì„¸ì§€ì™€ ì „ì†¡ë°›ì„ í´ë¼ì´ì–¸íŠ¸ì˜ ì´ë¦„ì„ ì €ì¥
-typedef struct message {
-	char user[USER];
-	char sbuf[MAXBUF];
-};
-
-//ì„œë²„ì— ì ‘ì†í•œ í´ë¼ì´ì–¸íŠ¸ì˜ ë””ìŠ¤í¬ë¦½í„°ì™€ ê±°ê¸°ì— ë§¤ì¹˜ë˜ëŠ” í•´ë‹¹ í´ë¼ì´ì–¸íŠ¸ì˜ ì´ë¦„ì„ ì €ì¥
-struct add_num {
-	int anum;
-	char name[MAXBUF];
-};
-
-struct monitoring_result{
-
-	//flag
-	int ep_num;	//1, 2 or 3
-	char side_flag[10]; //server side: 's', client side: 'c'
-
-	//server side monitoring result
-	int cpu_util;
-	int server_side_traffic;
-
-	//client side monitoring result
-	char user[20];
-	char location[20];
-	int timestamp;
-	int traffic;
-};
 
 class CSocket{
 
-	WSADATA wsaData;
-	int optval;                        					//ì†Œì¼“ì˜µì…˜ì˜ ì„¤ì •ê°’
-	int ssock, csock;                       				//ì†Œì¼“
-	struct sockaddr_in server_addr, client_addr;        //IPì™€ Portê°’(ì¦‰ ì£¼ì†Œê°’)
+	WSADATA						wsaData;
+	int							optval;                        					//¼ÒÄÏ¿É¼ÇÀÇ ¼³Á¤°ª
+	int							ssock, csock;                       				//¼ÒÄÏ
+	struct sockaddr_in			server_addr, client_addr;        //IP¿Í Port°ª(Áï ÁÖ¼Ò°ª)
 
-	int clen, data_len;
-	fd_set read_fds, tmp_fds;   				           //ë””ìŠ¤í¬ë¦½í„° ì…‹íŠ¸(ë‹¨ì¼ ë¹„íŠ¸ í…Œì´ë¸”)
-	int fd;
+	int							clen, data_len;
+	fd_set						read_fds, tmp_fds;   				           //µğ½ºÅ©¸³ÅÍ ¼ÂÆ®(´ÜÀÏ ºñÆ® Å×ÀÌºí)
+	int							fd;
 
-	struct add_num add_num[USER]; 				    //ì„œë²„ì—ì ‘ì†í•˜ëŠ” í´ë¼ì´ì–¸íŠ¸ì˜ ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” ê°ì²´
-	int index, maxfd;
-	struct monitoring_result read_message;				//í´ë¼ì´ì–¸íŠ¸ë¡œ ë¶€í„° ë°›ì€ ë©”ì„¸ì§€ êµ¬ì¡°ì²´
-	char greet[1];
-	char no_greet[1];
+	struct add_num				add_num[USER]; 				    //¼­¹ö¿¡Á¢¼ÓÇÏ´Â Å¬¶óÀÌ¾ğÆ®ÀÇ Á¤º¸¸¦ ÀúÀåÇÏ´Â °´Ã¼
+	int							index, maxfd;
+	struct ST_MONITORING_RESULT read_message;				//Å¬¶óÀÌ¾ğÆ®·Î ºÎÅÍ ¹ŞÀº ¸Ş¼¼Áö ±¸Á¶Ã¼
+	char						greet[1];
+	char						no_greet[1];
 
 public:
 
 	CSocket();
 	~CSocket();
 
-	void init_socket();
-	void comm_socket();
-	void send_message();
-	void write_message(void *client_message,void *num,int basefd,int maxfd);
+	void InitSocket();
+	void CommSocket();
+//	void SendMessage();
+	void WriteMessage(void *client_message, void *num, int basefd, int maxfd);
 };
 
 #endif

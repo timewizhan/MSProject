@@ -13,22 +13,13 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.simple.JSONObject;
 
+import Type.opType;
+import Type.userType;
 import Wrapper.coordInfo;
 import Wrapper.userInfo;
 
 public class ServiceServer implements Runnable {
 	private final static int SOMAXCONN = 2147483647;
-	
-	private final static int mTweet = 1;
-	private final static int mRead = 2;
-	private final static int mReply = 3;
-	private final static int mRetweet = 4;
-	private final static int mReplacement = 5;
-	
-	private final static int mResident = 1;
-	private final static int mVisitor = 2;
-	
-	private final static int mNumRead = 10;
 	
 	private coordInfo mCoord;
 	
@@ -149,23 +140,23 @@ public class ServiceServer implements Runnable {
 		String msg = (String) request.get("MSG");
 		
 		switch (reqType) {                                                                                                                                                                                                      
-		case mTweet:				
-			uid = DBConnection.isThere(src, mResident, loc);			
+		case opType.tweet:				
+			uid = DBConnection.isThere(src, userType.resident, loc);			
 			res = DBConnection.writeStatus(uid, msg, reqSize);			
 			break;
-		case mRead:
-			uid = DBConnection.isThere(src, mVisitor, loc);
-			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
+		case opType.read:
+			uid = DBConnection.isThere(src, userType.visitor, loc);
+			res = DBConnection.readStatus(uid, dst, reqSize, opType.num_read);
 			break; 
-		case mReply:
-			uid = DBConnection.isThere(src, mVisitor, loc);			
-			res = DBConnection.writeReply(uid, dst, msg, reqSize, mNumRead);
+		case opType.reply:
+			uid = DBConnection.isThere(src, userType.visitor, loc);			
+			res = DBConnection.writeReply(uid, dst, msg, reqSize, opType.num_read);
 			break;
-		case mRetweet:
-			uid = DBConnection.isThere(src, mVisitor, loc);
-			res = DBConnection.readStatus(uid, dst, reqSize, mNumRead);
+		case opType.retweet:
+			uid = DBConnection.isThere(src, userType.visitor, loc);
+			res = DBConnection.readStatus(uid, dst, reqSize, opType.num_share);
 			break;
-		case mReplacement:
+		case opType.replacement:
 			Utility.stopScheduler(mScheduler);
 			double total_cpu = 0;
 			for (int i = 0; i < mCPU_Log.size(); i++) {
