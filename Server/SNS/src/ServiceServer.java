@@ -39,7 +39,7 @@ public class ServiceServer implements Runnable {
 	ServerSocket mServerSocket;
 	Thread[] mThreadArr;
 	
-	public static void main(String[] args) throws InterruptedException {																		
+	public static void main(String[] args) throws InterruptedException, IOException {																		
 		// disable c3p0 logging
 		System.setProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "WARNING");
 		System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");				
@@ -47,16 +47,16 @@ public class ServiceServer implements Runnable {
 		// create server threads
 		ServiceServer server = new ServiceServer(10, Utility.setLocation());
 		server.start();
-		server.startCpuMonitor();
+		server.startCpuMonitor();				
 	}
 	
-	public ServiceServer(int num, String loc) {								
+	public ServiceServer(int num, String loc) throws IOException {								
 		mCoord = new coordInfo();		
 		Utility.readCoord(mCoord, loc);
 		
 		mCPU_Log = new ArrayList<Double>();
-		mAVG_CPU_Log = new ArrayList<Double>();
-				
+		mAVG_CPU_Log = new ArrayList<Double>();								
+		
 		try {			
 			// create a server socket binded with 7777 port
 			// set # backlog as Maximum
@@ -86,8 +86,8 @@ public class ServiceServer implements Runnable {
 				System.out.println(getTime() + " is waiting for requests.");				
 				
 				socket = mServerSocket.accept();
-				System.out.print(getTime() + " received a request from ");														 			
-									
+				System.out.print(getTime() + " received a request from ");																					
+				
 				JSONObject request  = Utility.msgParser(socket);
 				
 				System.out.println("[" + (String) request.get("SRC") + "]");

@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -135,6 +134,8 @@ public class Utility {
 						cpu_log.clear();
 						cpu_log.add(load);
 					}
+					
+					//System.out.println("[CPU Usage] " + load * 100);
 				}
 			}
 		};		
