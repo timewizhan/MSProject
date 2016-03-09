@@ -1,4 +1,5 @@
 package Wrapper;
+
 public class statusInfo {	
 	private int[] mSIDs;
 	private String mStatus;
