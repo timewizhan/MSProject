@@ -2,8 +2,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
+import javax.swing.JTextArea;
 
 import Wrapper.coordInfo;
 
@@ -23,6 +26,7 @@ public class ServiceServer implements Runnable {
 	protected ServerSocket mServerSocket = null;
 	protected boolean mStopped = false;
 	protected Thread mRunningThread = null;
+	protected ExecutorService mThreadPool = Executors.newFixedThreadPool(10);
 	
 	public static void main(String[] args) throws InterruptedException, IOException {																		
 		// disable c3p0 logging
@@ -30,11 +34,11 @@ public class ServiceServer implements Runnable {
 		System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");				
 		
 		// create server
-		ServiceServer server = new ServiceServer(0, Utility.setLocation());
+		ServiceServer server = new ServiceServer(Utility.setLocation());
 		new Thread(server).start();
 	}
 	
-	public ServiceServer(int num, String loc) throws IOException {								
+	public ServiceServer(String loc) throws IOException {								
 		mCoord = new coordInfo();		
 		Utility.readCoord(mCoord, loc);
 					
@@ -61,7 +65,7 @@ public class ServiceServer implements Runnable {
 				}
 				System.out.println("[run]e: " + e.getMessage());
 			}			
-			new Thread(new WorkerRunnable(clientSocket)).start();
+			this.mThreadPool.execute(new WorkerRunnable(clientSocket));
 			System.out.println("Server Stopped.");
 		}
 	}
@@ -74,6 +78,7 @@ public class ServiceServer implements Runnable {
 		this.mStopped = true;
 		try {
 			this.mServerSocket.close();
+			System.out.println("Socket is closed!");
 		} catch(IOException e) {
 			System.out.println("[stop]e: " + e.getMessage());
 		}
