@@ -30,6 +30,42 @@ struct server_data{
 	int				iCpuUtil;
 };
 
+struct norm_server_data{
+
+	string			sEpNum;
+	double			dServerSideTraffic;
+	double			dCpuUtil;
+};
+
+struct norm_cst_data{
+
+	string			sUser;
+	double			dCst;
+};
+
+struct norm_dist_data{
+
+	string			sUser;
+	double			dEp1;
+	double			dEp2;
+	double			dEp3;
+};
+
+struct coord_value{
+
+	double latitude;
+	double longitude;
+};
+
+struct weight_data{
+
+	string sUser;
+	int iUserNo;
+	double dEp1;
+	double dEp2;
+	double dEp3;
+};
+
 class CDatabase{
 
 private:
@@ -50,11 +86,19 @@ public:
 	vector<server_data> extractServerData(string sQuery, int iNumOfColumn);
 	vector<client_data> ExtractCstData(string sQuery);
 	vector<string>		ExtractCstLocation();
+	coord_value			ExtractCoordValue(string sLocation);
+	vector<norm_server_data> ExtractNormServerData();
+	vector<norm_cst_data> ExtractNormCstData();
+	vector<norm_dist_data> ExtractNormDistData();
+	vector<weight_data> ExtractWeightData();
 	void DeleteDuplicateValues(string sQuery);
 	void insertData(string name, string location, int timestamp, int client_side_traffic, int server_side_traffic, int cpu_util, int ep_num, string side_flag);
 	void InsertNormServerTable(vector <double> vecNormalizedSST, string sFlag);
 	void InsertNormCstTable(vector <double> vecNormalizedCST, vector <string> vecNormalizedCSTLocation);
+	void InsertNormDistTable(string sUser, double dNormDistEp1, double dNormDistEp2, double dNormDistEp3);
+	void InsertWeightTable(string sUser, int iUserNo, double dWeightEp1, double dWeightEp2, double dWeightEp3);
 	void updateLocation(int, int, int);
+	void DeleteTables();
 };
 
 #endif

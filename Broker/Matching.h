@@ -1,6 +1,7 @@
 #ifndef _MATCH_
 #define _MATCH_
 
+#define _USE_MATH_DEFINES
 #include "Common.h"
 #include "Database.h"
 #include "lp_lib.h"
@@ -22,10 +23,17 @@ public:
 		~CMatch();
 
 		void NormalizeFactor();
+		void InsertWeightTable();
 		void CalculateLP();
-
+		double CalculateDistEp1(coord_value stUserCoordValue);
+		double CalculateDistEp2(coord_value stUserCoordValue);
+		double CalculateDistEp3(coord_value stUserCoordValue);
 		int FindMax(vector <int> vec);
 		int FindMin(vector <int> vec);
+		double FindMaxDist(double *arrDists);
+		double FindMinDist(double *arrDists);
+		double DegToRad(double dDeg);
+		double RadToDeg(double dRad);
 };
 
 #endif
