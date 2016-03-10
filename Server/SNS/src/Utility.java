@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -133,8 +135,7 @@ public class Utility {
 						avg_cpu_log.add(total / cpu_log.size());
 						cpu_log.clear();
 						cpu_log.add(load);
-					}
-					
+					}					
 					//System.out.println("[CPU Usage] " + load * 100);
 				}
 			}
@@ -177,5 +178,10 @@ public class Utility {
 				RTT = 20;
 		}
 		return RTT;
+	}
+	
+	public static String getTime() {		
+		SimpleDateFormat f = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS]");
+		return f.format(new Date());
 	}
 }

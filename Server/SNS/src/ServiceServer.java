@@ -8,19 +8,17 @@ import java.util.concurrent.ScheduledExecutorService;
 import Wrapper.coordInfo;
 
 public class ServiceServer {
-	private final static int SOMAXCONN = 2147483647;
+	private int mServerPort = 7777;
+	private final static int mMaxCon = 2147483647;
+	
+	private ServerSocket mServerSocket = null;	
+	private ExecutorService mThreadPool = Executors.newFixedThreadPool(10);
 	
 	private coordInfo mCoord;
 	
 	private ScheduledExecutorService mScheduler;	
 	private ArrayList<Double> mCPU_Log;
 	private ArrayList<Double> mAVG_CPU_Log;
-			
-	protected int mServerPort = 7777;
-	protected ServerSocket mServerSocket = null;
-	protected boolean mStopped = false;
-	protected Thread mRunningThread = null;
-	protected ExecutorService mThreadPool = Executors.newFixedThreadPool(10);
 	
 	public static void main(String[] args) throws InterruptedException, IOException {																		
 		// disable c3p0 logging
@@ -35,33 +33,42 @@ public class ServiceServer {
 	public ServiceServer(String loc) throws IOException {								
 		mCoord = new coordInfo();		
 		Utility.readCoord(mCoord, loc);
-					
+		
 		mCPU_Log = new ArrayList<Double>();
 		mAVG_CPU_Log = new ArrayList<Double>();	
 	}
 	
-	public void listenSocket() {
-		openServerSocket();
+	private void listenSocket() {
+		openServerSocket();		
+		startCpuMonitor();
 		
 		while(true) {
 			try {
-				this.mThreadPool.execute(new WorkerRunnable(mServerSocket.accept()));				
+				WorkerRunnable work = new WorkerRunnable(mServerSocket.accept(), mCoord);
+				this.mThreadPool.execute(work);				
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-		
-		System.out.println("Handled!");
+			}		
 		}
 	}
 	
 	private void openServerSocket() {
 		try {
-			this.mServerSocket = new ServerSocket(mServerPort, SOMAXCONN);
+			this.mServerSocket = new ServerSocket(mServerPort, mMaxCon);
 		} catch (IOException e) {
 			System.out.println("[openServerSocket]e: " + e.getMessage());
 		}
+	}	
+	
+	private void startCpuMonitor() {
+		mScheduler = Executors.newSingleThreadScheduledExecutor();
+		try {
+			Utility.monitorCpuLoad(mScheduler, mCPU_Log, mAVG_CPU_Log);
+		} catch (InterruptedException e) {
+			System.out.println("[startCpuMonitor]e: " + e.getMessage());
+		}
 	}
-
+	
 	protected void finalize() {
 		try {
 			mServerSocket.close();			
@@ -69,9 +76,4 @@ public class ServiceServer {
 			System.out.println("[finalize]e: " + e.getMessage());
 		}
     }
-	
-	private void startCpuMonitor() throws InterruptedException {
-		mScheduler = Executors.newSingleThreadScheduledExecutor();
-		Utility.monitorCpuLoad(mScheduler, mCPU_Log, mAVG_CPU_Log);
-	}
 }

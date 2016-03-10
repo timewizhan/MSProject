@@ -9,30 +9,34 @@ import org.json.simple.JSONObject;
 
 import Type.opType;
 import Type.userType;
+import Wrapper.coordInfo;
 
 public class WorkerRunnable implements Runnable {
-    protected Socket clientSocket = null;
+    private Socket mClientSocket = null;
+    private coordInfo mCoord = null;
 
-    public WorkerRunnable(Socket clientSocket) {
-        this.clientSocket = clientSocket;
-        
+    public WorkerRunnable(Socket clientSocket, coordInfo coord) {
+    	this.mClientSocket = clientSocket;
+        this.mCoord = coord;        
     }
 
     public void run() {
-        JSONObject request  = Utility.msgParser(this.clientSocket);
+        JSONObject request  = Utility.msgParser(this.mClientSocket);
+        System.out.println(Utility.getTime() + mCoord.getServerLoc() + " received a request from " + "[" + request.get("SRC") + "]");
         
-        String response = null;
-        
-        try {
-			response = Utility.msgGenerator(operationHandler(request));
+        try {        	
+        	int result = operationHandler(request);
+			String response = Utility.msgGenerator(result);
 			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-					this.clientSocket.getOutputStream(), "UTF-8"));	
+					this.mClientSocket.getOutputStream(), "UTF-8"));	
 			
-			//Thread.sleep(Utility.calRTT(mCoord, (String) request.get("LOC")));
+			Thread.sleep(Utility.calRTT(this.mCoord, (String) request.get("LOC")));
 			
 			out.write(response);
 			out.newLine();
 			out.flush();
+			
+			System.out.println(Utility.getTime() + mCoord.getServerLoc() + " handled a request from " + "[" + request.get("SRC") + "]");
 		} catch (PropertyVetoException e) {			
 			e.printStackTrace();
 		} catch (SQLException e) {			
@@ -75,8 +79,12 @@ public class WorkerRunnable implements Runnable {
 			break;
 		case opType.replacement:
 			
-			break;													
+			break;
+		default:
+			System.out.println("[ERROR] Invalid Operation Type: " + reqType);
+			res = 0;
+			break;
 		}
 		return res;
-	}        
+	}
 }
