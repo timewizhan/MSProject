@@ -1,16 +1,13 @@
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import javax.swing.JTextArea;
-
 import Wrapper.coordInfo;
 
-public class ServiceServer implements Runnable {
+public class ServiceServer {
 	private final static int SOMAXCONN = 2147483647;
 	
 	private coordInfo mCoord;
@@ -18,10 +15,7 @@ public class ServiceServer implements Runnable {
 	private ScheduledExecutorService mScheduler;	
 	private ArrayList<Double> mCPU_Log;
 	private ArrayList<Double> mAVG_CPU_Log;
-		
-	ServerSocket mServerSocket2;
-	Thread[] mThreadArr;
-	
+			
 	protected int mServerPort = 7777;
 	protected ServerSocket mServerSocket = null;
 	protected boolean mStopped = false;
@@ -35,7 +29,7 @@ public class ServiceServer implements Runnable {
 		
 		// create server
 		ServiceServer server = new ServiceServer(Utility.setLocation());
-		new Thread(server).start();
+		server.listenSocket();
 	}
 	
 	public ServiceServer(String loc) throws IOException {								
@@ -45,42 +39,18 @@ public class ServiceServer implements Runnable {
 		mCPU_Log = new ArrayList<Double>();
 		mAVG_CPU_Log = new ArrayList<Double>();	
 	}
-
-	@Override
-	public void run() {
-		synchronized(this) {
-			this.mRunningThread = Thread.currentThread();
-		}
-		
+	
+	public void listenSocket() {
 		openServerSocket();
 		
-		while(! isStopped()) {
-			Socket clientSocket = null;
+		while(true) {
 			try {
-				clientSocket = this.mServerSocket.accept();
+				this.mThreadPool.execute(new WorkerRunnable(mServerSocket.accept()));				
 			} catch (IOException e) {
-				if(isStopped()) {
-					System.out.println("Server Stopped.");
-					return;
-				}
-				System.out.println("[run]e: " + e.getMessage());
-			}			
-			this.mThreadPool.execute(new WorkerRunnable(clientSocket));
-			System.out.println("Server Stopped.");
-		}
-	}
+				e.printStackTrace();
+			}
 		
-	private synchronized boolean isStopped() {
-		return this.mStopped;
-	}
-	
-	public synchronized void stop() {
-		this.mStopped = true;
-		try {
-			this.mServerSocket.close();
-			System.out.println("Socket is closed!");
-		} catch(IOException e) {
-			System.out.println("[stop]e: " + e.getMessage());
+		System.out.println("Handled!");
 		}
 	}
 	
@@ -91,6 +61,14 @@ public class ServiceServer implements Runnable {
 			System.out.println("[openServerSocket]e: " + e.getMessage());
 		}
 	}
+
+	protected void finalize() {
+		try {
+			mServerSocket.close();			
+		} catch (IOException e) {
+			System.out.println("[finalize]e: " + e.getMessage());
+		}
+    }
 	
 	private void startCpuMonitor() throws InterruptedException {
 		mScheduler = Executors.newSingleThreadScheduledExecutor();
