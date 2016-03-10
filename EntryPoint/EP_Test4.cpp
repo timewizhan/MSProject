@@ -25,5 +25,6 @@ void EP_Test4::initEntryPoint()
 
 	m_db.initDB();				//database
 	m_db.extractData();
+	m_db.StoreData();
 }
 

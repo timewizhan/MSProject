@@ -44,66 +44,12 @@ void CSocket::send_message(){
 		perror("write error : ");
 		exit(1);
 	}
+}
 
-	/*
-	//파일 디스크립트 테이블을 새로 셋팅
-	FD_ZERO(&read_fds);
-	FD_SET(ssock,&read_fds);
-	FD_SET(0,&read_fds);
+void CSocket::recv_message(){
 
-	fd=ssock;
-
-	while(1){
-	//일회성 복사
-	tmp_fds=read_fds;
-
-	//변화를 감지한다.
-	if(select(fd+1,&tmp_fds,0,0,0)<0){
-	perror("select error : ");
-	exit(1);
-	}
-
-	//클라이언트 소켓에 변화가 있다는 것을 확인한다.
-	if(FD_ISSET(ssock,&tmp_fds)){
-	memset(buf,0,MAXBUF);
-	re = read(ssock,buf,MAXBUF);
-	if(re<0){
-	perror("read error : ");
-	exit(1);
-	}
-	//클라이언트 서버가 접속이 끊켰다는 것을 확인한다.
-	else if(re==0){
-	printf("서버와의 접속이 끊켰습니다.\n");
-	break;
-	}
-	printf("%s\n",buf);
-	//printf("전송할 메시지를 입력해 주세요 : ");
-	}
-	//입력에 대한 변화가 있다는 것을 확인한다.
-	else if(FD_ISSET(0,&tmp_fds)){
-
-
-	memset(&write_message,0,sizeof(write_message));
-	memset(buf,0,MAXBUF);
-
-	//보낼 user를 입력
-	fgets(write_message.user,USER,stdin);
-	*(write_message.user+(strlen(write_message.user)-1))='\0';
-	//보낼 메시지를 입력
-	printf("전송할 메시지를 입력해 주세요 : ");
-	fgets(buf,MAXBUF,stdin);
-	*(buf +(strlen(buf)-1))='\0';
-	sprintf(write_message.sbuf,"[%s]:%s",name,buf);
-	if(write(ssock,(struct message*)&write_message,sizeof(write_message))<0){
-	perror("write error : ");
-	exit(1);
-
-
-	}
-
-	}
-	}
-
-	close(ssock);
-	*/
+	//recv
+	memset(&read_message, 0, sizeof(read_message));
+	int data_len = recv(ssock, (char*)&read_message, sizeof(read_message), 0);
+	printf("EP: %d, Side: %s \n", read_message.ep_num, read_message.side_flag);
 }
