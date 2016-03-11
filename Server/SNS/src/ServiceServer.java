@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import Utility.CoordHandler;
 import Wrapper.coordInfo;
 
 public class ServiceServer {
@@ -14,9 +15,10 @@ public class ServiceServer {
 	private ServerSocket mServerSocket;
 	private ExecutorService mThreadPool = Executors.newFixedThreadPool(800);
 //	private ExecutorService mThreadPool = Executors.newCachedThreadPool();
-	private coordInfo mCoord;
 	
-	private ScheduledExecutorService mScheduler;	
+	public static coordInfo mCoord;
+	public static ScheduledExecutorService mScheduler;	
+	
 	public static ArrayList<Double> mCPU_Log;
 	public static ArrayList<Double> mAVG_CPU_Log;
 	
@@ -26,26 +28,26 @@ public class ServiceServer {
 		System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");				
 						
 		// create server
-		ServiceServer server = new ServiceServer(Utility.setLocation());
+		ServiceServer server = new ServiceServer(CoordHandler.setLocation());
 		server.listenSocket();
 	}
 	
 	public ServiceServer(String loc) throws IOException {		
 		mCoord = new coordInfo();		
-		Utility.readCoord(mCoord, loc);
+		CoordHandler.readCoord(mCoord, loc);
 		
 		mCPU_Log = new ArrayList<Double>();
-		mAVG_CPU_Log = new ArrayList<Double>();	
+		mAVG_CPU_Log = new ArrayList<Double>();
 	}
 	
 	private void listenSocket() {
 		openServerSocket();		
 		
-		startCpuMonitor();
+		CpuMonitor.startCpuMonitor();
 		
 		while(true) {
 			try {
-				WorkerRunnable work = new WorkerRunnable(mServerSocket.accept(), mCoord);
+				WorkerRunnable work = new WorkerRunnable(mServerSocket.accept());
 				this.mThreadPool.execute(work);
 				//Thread t = new Thread(work);
 				//t.start();
@@ -58,18 +60,10 @@ public class ServiceServer {
 	private void openServerSocket() {
 		try {
 			this.mServerSocket = new ServerSocket(mServerPort, mMaxCon);
-			this.mServerSocket.setReuseAddress(true);
+			this.mServerSocket.setReuseAddress(true);			
 		} catch (IOException e) {
 			System.out.println("[openServerSocket]e: " + e.getMessage());
 		}
-	}	
-	
-	private void startCpuMonitor() {
-		mScheduler = Executors.newSingleThreadScheduledExecutor();
-		try {
-			Utility.monitorCpuLoad(mScheduler, mCPU_Log, mAVG_CPU_Log);
-		} catch (InterruptedException e) {
-			System.out.println("[startCpuMonitor]e: " + e.getMessage());
-		}
+		System.out.println("[" + mCoord.getServerLoc() +"]" + " " + "is waiting for the request.");
 	}
 }

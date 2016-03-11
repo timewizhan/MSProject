@@ -1,57 +1,14 @@
+package Utility;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.management.ManagementFactory;
-import java.net.Socket;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import com.sun.management.OperatingSystemMXBean;
 
 import Wrapper.coordInfo;
 
-public class Utility {
-	public static JSONObject msgParser(Socket socket) {		
-		String result = "";	
-		BufferedReader input = null;
-		JSONObject msg = null;
-						
-		try {
-			input = new BufferedReader(new InputStreamReader(
-					socket.getInputStream()));
-			result = input.readLine();		
-						
-			JSONParser parser = new JSONParser();
-			msg = (JSONObject) parser.parse(result);			
-		} catch (UnsupportedEncodingException e) {
-			System.out.println("[msgParser]UnsupportedEncodingException e: " + e.getMessage());			
-		} catch (IOException e) {
-			System.out.println("[msgParser]IOException e: " + e.getMessage());
-		} catch (ParseException e) {
-			System.out.println("[msgParser]ParseException e: " + e.getMessage());
-		}	
-		return msg;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static String msgGenerator(int result) {
-		JSONObject response = new JSONObject();
-		response.put("RESPONSE", result);
-		
-		return response.toString();
-	}
-	
+public class CoordHandler {
 	public static String setLocation() {				
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));		
 		String loc = null;
@@ -61,7 +18,7 @@ public class Utility {
 				System.out.print("Enter a location: ");											
 				loc = in.readLine();
 								
-				if (Utility.checkCoord(loc.toUpperCase()))
+				if (checkCoord(loc.toUpperCase()))
 					isValid = true;
 				else
 					System.out.println("Please enter a correct location!");
@@ -116,37 +73,6 @@ public class Utility {
 		coord.setServerCoord(loc);
 	}
 	
-	public static void monitorCpuLoad(ScheduledExecutorService scheduler, ArrayList<Double> cpu_log, ArrayList<Double> avg_cpu_log) throws InterruptedException {
-		final OperatingSystemMXBean osBean = 
-				(com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();				
-		Runnable monitor = new Runnable() {
-			
-			@Override
-			public void run() {
-				double load = osBean.getSystemCpuLoad();
-				if (load > 0.0) {
-					if (cpu_log.size() < Integer.MAX_VALUE)
-						cpu_log.add(load * 100);
-					else {
-						double total = 0;
-						for (int i = 0; i < cpu_log.size(); i ++)
-							total = total + cpu_log.get(i);
-						
-						avg_cpu_log.add(total / cpu_log.size());
-						cpu_log.clear();
-						cpu_log.add(load);
-					}					
-					//System.out.println("[CPU Usage] " + load * 100);
-				}
-			}
-		};		
-		scheduler.scheduleAtFixedRate(monitor, 0, 1, TimeUnit.SECONDS);								
-	}
-	
-	public static void stopScheduler(ScheduledExecutorService scheduler) {
-		scheduler.shutdown();
-	}
-	
 	public static long calRTT(coordInfo coord, String user_loc) {		
 		long RTT = 0;
 		double R = 6371000;
@@ -178,10 +104,5 @@ public class Utility {
 				RTT = 20;
 		}
 		return RTT;
-	}
-	
-	public static String getTime() {		
-		SimpleDateFormat f = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS]");
-		return f.format(new Date());
 	}
 }
