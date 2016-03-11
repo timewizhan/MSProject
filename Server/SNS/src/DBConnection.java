@@ -106,7 +106,7 @@ public class DBConnection {
 			conn = DBConnection.getInstance().getConnection();
 			prepared = conn.prepareStatement("INSERT INTO status "
 					+ "(uid, status, traffic) VALUES "
-					+ "(?, ?, ?)");
+					+ "(?,?,?)");
 			
 			conn.setAutoCommit(false);
 			
@@ -449,7 +449,7 @@ public class DBConnection {
 			conn = DBConnection.getInstance().getConnection();			
 			prepared = conn.prepareStatement("INSERT INTO latent "
 					+ "(uid, sid, traffic) VALUES "
-					+ "(?, ?, ?)");
+					+ "(?,?,?)");
 			
 			conn.setAutoCommit(false);
 			
@@ -489,7 +489,7 @@ public class DBConnection {
 			conn = DBConnection.getInstance().getConnection();			
 			prepared = conn.prepareStatement("INSERT INTO reply "
 					+ "(uid, sid, reply, traffic) VALUES "
-					+ "(?, ?, ?, ?)");
+					+ "(?,?,?,?)");
 			
 			conn.setAutoCommit(false);
 			

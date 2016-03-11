@@ -93,24 +93,33 @@ public class WorkerRunnable implements Runnable {
     	
     	switch (reqType) {
 	    	case opType.monitor:
-	    		
-	    		// stop cpu util monitoring
-				// cal average cpu util
-				// store client_side_monitor
-				// store server_side_monitor
-	    		
-	    		CpuMonitor.stopScheduler(ServiceServer.mScheduler);
-				
-				int server_side_traffic = DBConnection.storeClientMonitor();
-				
-				CpuMonitor.startCpuMonitor();
+	    		storeMonitored();	    		
 	    		break;	    	
 	    	case opType.replacement:
+	    		// when should we restart the CpuMonitor ?
+	    		CpuMonitor.startCpuMonitor();
 	    		break;
 	    		
 	    	default:
 	    		System.out.println("[ERROR] Invalid Operation Type: " + reqType);
     	}    	
+    }
+    
+    private void storeMonitored() throws SQLException {
+		// stop cpu util monitoring
+		// cal average cpu util
+		// store client_side_monitor
+		// store server_side_monitor
+    	CpuMonitor.stopScheduler(ServiceServer.mScheduler);
+						
+		int totalCPU = 0;		
+		for(int i = 0; i < ServiceServer.mCPU_Log.size(); i++) {
+			totalCPU += ServiceServer.mCPU_Log.get(i);
+		}
+		
+		int avgCPU = totalCPU / ServiceServer.mCPU_Log.size();
+		int server_side_traffic = DBConnection.storeClientMonitor();
+		DBConnection.storeServerMonitor(avgCPU, server_side_traffic);				
     }
     
     private String getTime() {
