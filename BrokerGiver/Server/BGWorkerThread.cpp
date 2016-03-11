@@ -128,7 +128,7 @@ void CBGWorkerThread::RequestDataBase(ST_CLIENT_REQ &refstReqClient, ST_DB_RESUL
 	}
 
 	ST_DB_SQL stDBSql;
-	stDBSql.strSQL = "SELECT ip from redirection_table WHERE user_id=" + refstReqClient.strDst;
+	stDBSql.strSQL = "SELECT ip from redirection_table WHERE user_id=\"" + refstReqClient.strDst + "\"";
 
 	ST_DB_RESULT stDBResult;
 	dwRet = QueryFromDB(hDataBase, stDBSql, stDBResult);
@@ -153,12 +153,7 @@ DWORD CBGWorkerThread::StartWorkerThread(char *pReceiveBuf, DWORD dwByteTransfer
 		ParseReqData(stRecvData, stReqClient);
 
 		ST_DB_RESULT stDBResult;
-		//RequestDataBase(stReqClient, stDBResult);
-
-		// For simulation test.
-		ST_DB_RESULT_LINE stDBResultLine;
-		stDBResultLine.vecstrResult.push_back("165.132.122.244");
-		stDBResult.vecstDBResultLines.push_back(stDBResultLine);
+		RequestDataBase(stReqClient, stDBResult);
 
 		ST_CLIENT_RES stResClient;
 		ExtractResData(stDBResult, stResClient);

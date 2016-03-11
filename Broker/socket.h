@@ -11,7 +11,8 @@
 class CSocket{
 
 	WSADATA						wsaData;
-	int							optval;                        					//家南可记狼 汲沥蔼
+	int							optval;
+	//家南可记狼 汲沥蔼
 	int							ssock, csock;                       				//家南
 	struct sockaddr_in			server_addr, client_addr;        //IP客 Port蔼(溜 林家蔼)
 

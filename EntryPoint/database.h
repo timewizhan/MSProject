@@ -37,6 +37,7 @@ public:
 	~CDatabase();
 	int initDB();
 	int extractData();
+	void StoreData();
 	//	void insertData(string name, string location, int timestamp, int traffic);
 
 };

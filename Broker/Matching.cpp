@@ -3,11 +3,16 @@
 CMatch::CMatch(){
 	/* We will build the model row by row
 	So we start with creating a model with 0 rows and 2 columns */
-	user_no = 10;
+	CDatabase	databaseInstance;
+	vector<client_data> vecClientData = databaseInstance.extractClientData("select * from client_table", 4);
+	
+	user_no = vecClientData.size();;
 	cloud_no = 3;
 
 	Ncol = user_no * cloud_no;
 	lp = make_lp(0, Ncol);
+
+	databaseInstance.~CDatabase();
 }
 
 CMatch::~CMatch(){
@@ -42,10 +47,10 @@ void CMatch::NormalizeFactor(){
 		vecNormalizedSST.push_back(dNormalizedVal);
 	}
 
-	printf("\n");
+//	printf("\n");
 	for (int i = 0; i < vecNormalizedSST.size(); i++){
 		double dValue = vecNormalizedSST.at(i);
-		printf("[%d] normalized server side traffic: %f \n", i, (double)dValue);
+	//	printf("[%d] normalized server side traffic: %f \n", i, (double)dValue);
 	}
 
 	databaseInstance.InsertNormServerTable(vecNormalizedSST, "SST");
@@ -54,7 +59,6 @@ void CMatch::NormalizeFactor(){
 
 	//normalizing >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> cpu utilization
 	sQuery = "select * from server_table";
-	//vector <server_data> vecDataList_server = databaseInstance.extractServerData(sQuery, 3);
 	vecDataList_server = databaseInstance.extractServerData(sQuery, 3);
 
 	vector <int> vec_cpu_util_list;
@@ -77,7 +81,7 @@ void CMatch::NormalizeFactor(){
 	printf("\n");
 	for (int i = 0; i < vecNormalizedCpuUtil.size(); i++){
 		double dValue = vecNormalizedCpuUtil.at(i);
-		printf("[%d] normalized cpu utilization: %f \n", i, (double)dValue);
+//		printf("[%d] normalized cpu utilization: %f \n", i, (double)dValue);
 	}
 
 	databaseInstance.InsertNormServerTable(vecNormalizedCpuUtil, "CPU");
@@ -111,14 +115,13 @@ void CMatch::NormalizeFactor(){
 
 	vector <string> vecNormalizedCSTLocation = databaseInstance.ExtractCstLocation();
 
-	printf("\n");
+//	printf("\n");
 	for (int i = 0; i < vecNormalizedCST.size(); i++){
 	double dValue = vecNormalizedCST.at(i);
-	printf("[%d] normalized client side taffic/location: %f/%s \n", i, (double)dValue, vecNormalizedCSTLocation.at(i).c_str());
+//	printf("[%d] normalized client side taffic/location: %f/%s \n", i, (double)dValue, vecNormalizedCSTLocation.at(i).c_str());
 	}
 
 	databaseInstance.InsertNormCstTable(vecNormalizedCST, vecNormalizedCSTLocation);
-//	databaseInstance.InsertNormCstTable(vecNormalizedCSTLocation, "LOCATION");
 	
 
 
@@ -129,34 +132,144 @@ void CMatch::NormalizeFactor(){
 	vector <int> vec_distance_list;
 	for (int i = 0; i < vecDataList_client.size(); i++){
 		string sEachLocation = vecDataList_client.at(i).sLocation;
+		
+		//여기에 세개의 데이터센터와 거리재는 함수
+		//EP1(Washington : 38.9071923, -77.0368707)
+		//EP2(Texas		 : 31.9685988, -99.9018131)
+		//EP3(Newyork	 : 40.7127837, -74.0059413)
 
-		// 여기에 세개의 데이터센터와 거리재는 함수
-			//int iDistFromEP1 = EP1과의 거리;
-			//int iDistFromEP2 = EP2와의 거리;
-			//int iDistFromEP3 = EP3와의 거리;
-			//int arrDists[3] = {iDistFromEP1, iDistFromEP2, iDistFromEP3};
+		coord_value stUserCoordValue = databaseInstance.ExtractCoordValue(sEachLocation);
 
-		// 세개 중에서 최대값 최소값 구하는 함수 호출
-			//int iMaxValue = FindMaxDist(arrDists);
-			//int iMinValue = FindMinDist(arrDists);
+//		printf("[%s] stUserCoordValue: lat- %f, lon- %f \n", sEachLocation.c_str(), stUserCoordValue.latitude, stUserCoordValue.longitude);
+
+		double iDistFromEP1 = CalculateDistEp1(stUserCoordValue); //EP1과의 거리
+		double iDistFromEP2 = CalculateDistEp2(stUserCoordValue); //EP2와의 거리
+		double iDistFromEP3 = CalculateDistEp3(stUserCoordValue); //EP3와의 거리
+		
+//		printf("location: %s, EP1 Dist: %f, EP2 Dist: %f, EP3 Dist: %f \n"
+//			, sEachLocation.c_str(), iDistFromEP1, iDistFromEP2, iDistFromEP3);
+
+		double arrDists[3] = {iDistFromEP1, iDistFromEP2, iDistFromEP3};
+
+		//세개 중에서 최대값 최소값 구하는 함수 호출
+		double iMaxValue = FindMaxDist(arrDists);
+		double iMinValue = FindMinDist(arrDists);
 
 		//normalize
-			//double dRange = 1.0 / (iMaxValue - iMinValue);
-			//for (int i = 0; i < arrDists.size(); i++){
+		double dRange = 1.0 / (iMaxValue - iMinValue);
+		for (int i = 0; i < sizeof(arrDists)/sizeof(double); i++){
 
-			//	double dNormalizedVal = (arrDists[i] - iMinValue)*dRange;
-			//	arrDists[i] = dNormalizedVal;
-			//}
+			double dNormalizedVal = (arrDists[i] - iMinValue)*dRange;
+			arrDists[i] = dNormalizedVal;
+		}
 
-		// 여기서 노멀라이즈한 값 테이블에 없데이트.. 
-		//테이블은 User, EP1, EP2, EP3 컬럼을 가지고 각 ROW에는 USER 아이디와 각 EP에 대한 거리의 NORMALIZED 값이 들어감
-		//테이블 명은 distance_table
+		//여기서 노멀라이즈한 값 테이블에 없데이트.. 
+		databaseInstance.InsertNormDistTable(vecDataList_client.at(i).sUser, arrDists[0], arrDists[1], arrDists[2]);
 	}
 
-	CalculateLP();
+	databaseInstance.~CDatabase();
+	//CalculateLP();
+}
+
+double CMatch::CalculateDistEp1(coord_value stUserCoordValue){
+	//EP1(Washington : 38.9071923, -77.0368707)
+
+	double theta, dist;
+	theta = -77.0368707 - stUserCoordValue.longitude;
+	dist = sin(DegToRad(38.9071923)) * sin(DegToRad(stUserCoordValue.latitude)) + cos(DegToRad(38.9071923))
+		* cos(DegToRad(stUserCoordValue.latitude)) * cos(DegToRad(theta));
+	dist = acos(dist);
+	dist = RadToDeg(dist);
+
+	dist = dist * 60 * 1.1515;
+	dist = dist * 1.609344;    // 단위 mile 에서 km 변환.  
+	dist = dist * 1000.0;      // 단위  km 에서 m 로 변환  
+
+	return dist;
+}
+
+double CMatch::CalculateDistEp2(coord_value stUserCoordValue){
+	//EP2(Texas		 : 31.9685988, -99.9018131)
+
+	double theta, dist;
+	theta = -99.9018131 - stUserCoordValue.longitude;
+	dist = sin(DegToRad(31.9685988)) * sin(DegToRad(stUserCoordValue.latitude)) + cos(DegToRad(31.9685988))
+		* cos(DegToRad(stUserCoordValue.latitude)) * cos(DegToRad(theta));
+	dist = acos(dist);
+	dist = RadToDeg(dist);
+
+	dist = dist * 60 * 1.1515;
+	dist = dist * 1.609344;    // 단위 mile 에서 km 변환.  
+	dist = dist * 1000.0;      // 단위  km 에서 m 로 변환  
+
+	return dist;
+}
+
+double CMatch::CalculateDistEp3(coord_value stUserCoordValue){
+	//EP3(Newyork	 : 40.7127837, -74.0059413)
+
+	double theta, dist;
+	theta = -74.0059413 - stUserCoordValue.longitude;
+	dist = sin(DegToRad(40.7127837)) * sin(DegToRad(stUserCoordValue.latitude)) + cos(DegToRad(40.7127837))
+		* cos(DegToRad(stUserCoordValue.latitude)) * cos(DegToRad(theta));
+	dist = acos(dist);
+	dist = RadToDeg(dist);
+
+	dist = dist * 60 * 1.1515;
+	dist = dist * 1.609344;    // 단위 mile 에서 km 변환.  
+	dist = dist * 1000.0;      // 단위  km 에서 m 로 변환  
+
+	return dist;
+}
+
+double CMatch::DegToRad(double dDeg){
+
+	return (double)(dDeg * M_PI / (double)180);
+}
+
+double CMatch::RadToDeg(double dRad){
+
+	return (double)(dRad * (double)180 / M_PI);
+}
+
+void CMatch::InsertWeightTable(){
+
+	// Weight 계산
+	// [a: normalized cpu, b: normalized server-side traffic, c: normalized client-side traffic, d: distance] = 가중치
+	double a = 1.0;
+	double b = 1.0;
+	double c = 1.0;
+	double d = 1.0;
+	CDatabase	databaseInstance;
+	vector <norm_server_data> vecNormServData = databaseInstance.ExtractNormServerData();
+	vector <norm_cst_data> vecNormCstData = databaseInstance.ExtractNormCstData();
+	vector <norm_dist_data> vecNormDistData = databaseInstance.ExtractNormDistData();
+	for (int i = 0; i < vecNormDistData.size(); i++){
+		//user1, ep1
+		double weight_ep1 = a*(vecNormServData.at(0).dCpuUtil) + b*(vecNormServData.at(0).dServerSideTraffic) 
+			+ c*(vecNormCstData.at(i).dCst) + d*(vecNormDistData.at(i).dEp1);
+		//user1, ep2
+		double weight_ep2 = a*(vecNormServData.at(1).dCpuUtil) + b*(vecNormServData.at(1).dServerSideTraffic)
+			+ c*(vecNormCstData.at(i).dCst) + d*(vecNormDistData.at(i).dEp2);
+		//user1, ep3
+		double weight_ep3 = a*(vecNormServData.at(2).dCpuUtil) + b*(vecNormServData.at(2).dServerSideTraffic)
+			+ c*(vecNormCstData.at(i).dCst) + d*(vecNormDistData.at(i).dEp3);
+
+		if (i == 0){
+//			printf("ep1 - sst: %f, cpu: %f, cst: %f, dis: %f", 
+//			vecNormServData.at(0).dServerSideTraffic, vecNormServData.at(0).dCpuUtil, vecNormCstData.at(i).dCst, vecNormDistData.at(i).dEp1);
+		}
+		//user1의 ep1, ep2, ep3에 대한 가중치 DB에 넣기
+		databaseInstance.InsertWeightTable(vecNormDistData.at(i).sUser, i, weight_ep1, weight_ep2, weight_ep3);
+		
+	}
+
+	databaseInstance.~CDatabase();
 }
 
 void CMatch::CalculateLP(){
+	
+	printf("CalculateLP method \n");
 
 	if (lp == NULL)		ret = 1; 
 
@@ -262,19 +375,45 @@ void CMatch::CalculateLP(){
 	//min 이나 max로 만들어야 하는 objective function 만들어주는 곳. 
 	//여기에 row 배열 이용해서 가중치 넣어야함
 	//나중에 상황에 맞게 코드 수정해야함
+	CDatabase	databaseInstance;
+	vector<weight_data> vecWeightData = databaseInstance.ExtractWeightData();
+
 	if (ret == 0) {
 		set_add_rowmode(lp, FALSE); 
 
-
-		j = 0;
-
+		/*******************************************/
+/*		j = 0;
 		for (int i = 0; i < user_no*cloud_no; i++){
-
+			printf("\n j= %d, i= %d, colno[%d] = %d, row[%d] = 1", j, i, j, i+1, j);
 			colno[j] = i + 1;
 			row[j++] = 1;
 		}
+*/		/*******************************************/
+		j = 0;
+		for (int i = 0; i < user_no; i++){
+			for (int p = 0; p < cloud_no; p++){
 
-	
+				if ((p + 1 % cloud_no) == 1){
+		//			printf("\n j= %d, i= %d, p= %d, colno[%d] = %d, row[%d] = %f", j, i, p, j, j + 1, j, vecWeightData.at(i).dEp1);
+					colno[j] = j + 1;
+					row[j] = vecWeightData.at(i).dEp1;
+					j++;
+				}
+				else if ((p + 1 % cloud_no) == 2){
+		//			printf("\n j= %d, i= %d, p= %d, colno[%d] = %d, row[%d] = %f", j, i, p, j, j + 1, j, vecWeightData.at(i).dEp2);
+					colno[j] = j + 1;
+					row[j] = vecWeightData.at(i).dEp2;
+					j++;
+				}
+				else if ((p + 1 % cloud_no) == 3){
+		//			printf("\n j= %d, i= %d, p= %d, colno[%d] = %d, row[%d] = %f", j, i, p, j, j + 1, j, vecWeightData.at(i).dEp3);
+					colno[j] = j + 1;
+					row[j] = vecWeightData.at(i).dEp3;
+					j++;
+				}
+			}
+		}
+
 		if (!set_obj_fnex(lp, j, row, colno))
 			ret = 4;
 
@@ -300,7 +439,8 @@ void CMatch::CalculateLP(){
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if (ret == 0) {
-		printf("Objective value: %f\n", get_objective(lp));
+		printf("\n");
+		printf("Objective value: %f \n", get_objective(lp));
 
 		get_variables(lp, row);
 		for (j = 0; j < Ncol; j++)
@@ -310,7 +450,12 @@ void CMatch::CalculateLP(){
 		printf("\n[elements over 1] \n");
 		for (int j = 0; j < Ncol; j++){
 			if (row[j] > 0){
-				printf("%s \n", get_col_name(lp, j + 1));
+				string sMatchResult = get_col_name(lp, j + 1);
+				printf("%s, length: %d \n", sMatchResult.c_str(), sMatchResult.length());
+			//	printf("%s \n", get_col_name(lp, j + 1));
+
+				//string 잘라내서 매치 결과 뽑아내기
+				//DB에 저장
 			}
 		}
 	}
@@ -324,7 +469,8 @@ void CMatch::CalculateLP(){
 		delete_lp(lp);
 	}
 
-	
+	databaseInstance.DeleteTables();
+	databaseInstance.~CDatabase();
 }
 
 int CMatch::FindMax(vector <int> vec){
@@ -346,6 +492,30 @@ int CMatch::FindMin(vector <int> vec){
 
 		if (iMin >= vec.at(i))
 			iMin = vec.at(i);
+	}
+
+	return iMin;
+}
+
+double CMatch::FindMaxDist(double *arrDists){
+
+	double iMax = *arrDists;
+	for (int i = 0; i < 3; i++){		//EP 개수만큼 반복
+
+		if (iMax <= *(arrDists + i))
+			iMax = *(arrDists + i);
+	}
+
+	return iMax;
+}
+
+double CMatch::FindMinDist(double *arrDists){
+
+	double iMin = *arrDists;
+	for (int i = 0; i < 3; i++){		//EP 개수만큼 반복
+
+		if (iMin >= *(arrDists + i))
+			iMin = *(arrDists + i);
 	}
 
 	return iMin;

@@ -36,12 +36,14 @@ public:
 	int fd;
 
 	struct monitoring_result write_message;
+	struct monitoring_result read_message;
 
 	CSocket();
 	~CSocket();
 
 	void init_socket();
 	void send_message();
+	void recv_message();
 };
 
 #endif
