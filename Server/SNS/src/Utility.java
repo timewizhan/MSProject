@@ -51,7 +51,29 @@ public class Utility {
 		
 		return response.toString();
 	}
-		
+	
+	public static String setLocation() {				
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));		
+		String loc = null;
+		boolean isValid = false;		
+		try {
+			do {
+				System.out.print("Enter a location: ");											
+				loc = in.readLine();
+								
+				if (Utility.checkCoord(loc.toUpperCase()))
+					isValid = true;
+				else
+					System.out.println("Please enter a correct location!");
+				
+			} while (!isValid);
+			in.close();
+		} catch (IOException e) {
+			System.out.println("[setLocation]IOException e: " + e.getMessage());
+		}		
+		return loc.toUpperCase();
+	}
+	
 	public static boolean checkCoord(String loc) {
 		boolean isValid = false;		
 		try {
@@ -92,28 +114,6 @@ public class Utility {
 			System.out.println("[readCoord]IOException e: " + e.getMessage());
 		}
 		coord.setServerCoord(loc);
-	}
-	
-	public static String setLocation() {				
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));		
-		String loc = null;
-		boolean isValid = false;		
-		try {
-			do {
-				System.out.print("Enter a location: ");											
-				loc = in.readLine();
-								
-				if (Utility.checkCoord(loc.toUpperCase()))
-					isValid = true;
-				else
-					System.out.println("Please enter a correct location!");
-				
-			} while (!isValid);
-			in.close();
-		} catch (IOException e) {
-			System.out.println("[setLocation]IOException e: " + e.getMessage());
-		}		
-		return loc.toUpperCase();
 	}
 	
 	public static void monitorCpuLoad(ScheduledExecutorService scheduler, ArrayList<Double> cpu_log, ArrayList<Double> avg_cpu_log) throws InterruptedException {

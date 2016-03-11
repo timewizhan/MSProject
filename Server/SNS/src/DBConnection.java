@@ -55,7 +55,7 @@ public class DBConnection {
 		}		
 	}
 			
-	public static int isThere(String uname, int check, String loc) throws PropertyVetoException, SQLException, IOException {
+	public static int isThere(String uname, int check, String loc) {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		ResultSet rs = null;
@@ -98,7 +98,7 @@ public class DBConnection {
 		return uid;
 	}
 	
-	public static int writeStatus(int uid, String msg, int reqSize) throws PropertyVetoException, SQLException, IOException {
+	public static int writeStatus(int uid, String msg, int reqSize) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		
@@ -136,7 +136,7 @@ public class DBConnection {
 		return mSuccess;
 	}
 	
-	public static int readStatus(int uid, String uname, int reqSize, int num) throws PropertyVetoException, SQLException, IOException {
+	public static int readStatus(int uid, String uname, int reqSize, int num) throws SQLException {
 		int t_uid = getUID(uname);
 		if (t_uid != -1) {
 			statusInfo result = getStatus(t_uid, num);
@@ -150,7 +150,7 @@ public class DBConnection {
 			return mFail;
 	}
 	
-	public static int writeReply(int uid, String uname, String msg, int reqSize, int num) throws PropertyVetoException, SQLException, IOException {
+	public static int writeReply(int uid, String uname, String msg, int reqSize, int num) throws SQLException {
 		int t_uid = getUID(uname);
 		if (t_uid != -1) {
 			statusInfo result = getStatus(t_uid, num);
@@ -186,7 +186,92 @@ public class DBConnection {
 		return uInfo;
 	}
 	
-	private static void updateUser(int uid, int utype) throws PropertyVetoException, SQLException, IOException {
+	public static int storeClientMonitor() throws SQLException {
+		Connection conn = null;
+		PreparedStatement prepared = null;
+		
+		userInfo [] uInfo = getMonitor();
+		
+		int server_side_traffic = 0;
+		
+		try {
+			conn = DBConnection.getInstance().getConnection();
+			prepared = conn.prepareStatement("INSERT INTO client_side_monitor "
+					+ "(uname, location, client_side_traffic) VALUES "
+					+ "(?,?,?)");
+			
+			conn.setAutoCommit(false);
+				
+			int userTraffic = 0;
+			for (int i = 0; i < uInfo.length; i++) {								
+				userTraffic = uInfo[i].getTraffic();
+				prepared.setString(1, uInfo[i].getName());
+				prepared.setString(2, uInfo[i].getLoc());
+				prepared.setInt(3, userTraffic);
+				prepared.addBatch();
+				
+				server_side_traffic += userTraffic;
+			}
+						
+			prepared.executeBatch();
+			conn.commit();			
+			
+		} catch (PropertyVetoException e) {
+			System.out.println("[storeClientMonitor]PropertyVetoException: " + e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("[storeClientMonitor]SQLException: " + e.getMessage());
+			System.out.println("Rolling back data...");
+			if (conn != null)
+				conn.rollback();
+		} catch (IOException e) {
+			System.out.println("[storeClientMonitor]IOException: " + e.getMessage());
+		} finally {				
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					System.out.println("[storeClientMonitor/conn]SQLException: " + e.getMessage());
+				}											
+		}
+		return server_side_traffic;
+	}
+	
+	public static void storeServerMonitor(int avgCPU, int server_side_traffic) throws SQLException {
+		Connection conn = null;
+		PreparedStatement prepared = null;				
+		
+		try {
+			conn = DBConnection.getInstance().getConnection();
+			prepared = conn.prepareStatement("INSERT INTO server_side_monitor "
+					+ "(cpu_util, server_side_traffic) VALUES "
+					+ "(?,?)");
+						
+			conn.setAutoCommit(false);
+			
+			prepared.setInt(1, avgCPU);
+			prepared.setInt(2, server_side_traffic);
+			
+			conn.commit();						
+		} catch (PropertyVetoException e) {
+			System.out.println("[storeServerMonitor]PropertyVetoException: " + e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("[storeServerMonitor]SQLException: " + e.getMessage());
+			System.out.println("Rolling back data...");
+			if (conn != null)
+				conn.rollback();
+		} catch (IOException e) {
+			System.out.println("[storeServerMonitor]IOException: " + e.getMessage());
+		} finally {				
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					System.out.println("[storeServerMonitor/conn]SQLException: " + e.getMessage());
+				}											
+		}		
+	}
+	
+	private static void updateUser(int uid, int utype) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		
@@ -221,7 +306,7 @@ public class DBConnection {
 		}
 	}
 	
-	private static int addUser(String uname, int utype, String loc) throws PropertyVetoException, SQLException, IOException {
+	private static int addUser(String uname, int utype, String loc) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		ResultSet rs = null;		
@@ -308,7 +393,7 @@ public class DBConnection {
 			return -1;
 	}
 	
-	private static statusInfo getStatus(int uid, int num) throws PropertyVetoException, SQLException, IOException {
+	private static statusInfo getStatus(int uid, int num) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		ResultSet rs = null;
@@ -498,8 +583,9 @@ public class DBConnection {
 			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");						
 			Calendar cal = Calendar.getInstance();
 			
-			cal.setTime(date);			
-			cal.add(Calendar.HOUR, mPeriod);			
+			cal.setTime(date);	
+			cal.add(Calendar.HOUR, mPeriod);
+			cal.add(Calendar.MINUTE, mPeriod * 10);
 			String start = f.format(cal.getTime());
 			
 			cal.setTime(date);

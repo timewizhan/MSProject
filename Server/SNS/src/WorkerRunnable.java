@@ -22,8 +22,7 @@ public class WorkerRunnable implements Runnable {
 
     public void run() {
         JSONObject request  = Utility.msgParser(this.mClientSocket);
-        System.out.println(Utility.getTime() + mCoord.getServerLoc() + " received a request from " + "[" + request.get("SRC") + "]");
-        
+              
         try {        	
         	int result = operationHandler(request);
 			String response = Utility.msgGenerator(result);
@@ -34,8 +33,9 @@ public class WorkerRunnable implements Runnable {
 			
 			out.write(response);
 			out.newLine();
-			out.flush();
-			
+			out.flush();			
+
+			mClientSocket.close();
 			System.out.println(Utility.getTime() + mCoord.getServerLoc() + " handled a request from " + "[" + request.get("SRC") + "]");
 		} catch (PropertyVetoException e) {			
 			e.printStackTrace();
@@ -45,7 +45,7 @@ public class WorkerRunnable implements Runnable {
 			e.printStackTrace();
 		} catch (InterruptedException e) {			
 			e.printStackTrace();
-		}                	
+		}
     }
     
     private int operationHandler(JSONObject request) throws PropertyVetoException, SQLException, IOException, InterruptedException {		
@@ -77,12 +77,16 @@ public class WorkerRunnable implements Runnable {
 			uid = DBConnection.isThere(src, userType.visitor, loc);
 			res = DBConnection.readStatus(uid, dst, reqSize, opType.num_share);
 			break;
-		case opType.replacement:
-			
+		case opType.monitor:
+			// stop cpu util monitoring
+			// cal average cpu util
+			// store client_side_monitor
+			// store server_side_monitor
+			int server_side_traffic = DBConnection.storeClientMonitor();
+						
 			break;
 		default:
-			System.out.println("[ERROR] Invalid Operation Type: " + reqType);
-			res = 0;
+			System.out.println("[ERROR] Invalid Operation Type: " + reqType);			
 			break;
 		}
 		return res;
