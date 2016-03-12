@@ -66,6 +66,14 @@ struct weight_data{
 	double dEp3;
 };
 
+struct match_result_data{
+
+	string sUser;
+	int iPrevEp;
+	int iCurrEP;
+};
+
+
 class CDatabase{
 
 private:
@@ -91,13 +99,18 @@ public:
 	vector<norm_cst_data> ExtractNormCstData();
 	vector<norm_dist_data> ExtractNormDistData();
 	vector<weight_data> ExtractWeightData();
+	vector <match_result_data> ExtractMatchResult();
 	void DeleteDuplicateValues(string sQuery);
 	void insertData(string name, string location, int timestamp, int client_side_traffic, int server_side_traffic, int cpu_util, int ep_num, string side_flag);
 	void InsertNormServerTable(vector <double> vecNormalizedSST, string sFlag);
 	void InsertNormCstTable(vector <double> vecNormalizedCST, vector <string> vecNormalizedCSTLocation);
 	void InsertNormDistTable(string sUser, double dNormDistEp1, double dNormDistEp2, double dNormDistEp3);
 	void InsertWeightTable(string sUser, int iUserNo, double dWeightEp1, double dWeightEp2, double dWeightEp3);
+	void InsertMatchingTable(string sUserNo, string sEpNo);
+	void InsertUpdateMatchingTable();
+	boolean CheckPrevTableEmpty();
 	void updateLocation(int, int, int);
+	void UpdatePrevMatchingTable(vector <match_result_data> vecMatchResult);
 	void DeleteTables();
 };
 

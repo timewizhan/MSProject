@@ -1,8 +1,9 @@
 #ifndef _SOCKETSTRUCT_
 #define _SOCKETSTRUCT_
 
-#define USER 20
-#define MAXBUF 1024
+#define NUM_OF_EP 3
+
+#include "Common.h"
 
 struct ST_MONITORING_RESULT{
 
@@ -21,16 +22,11 @@ struct ST_MONITORING_RESULT{
 	int		traffic;
 };
 
-//클라이언트가 보낸 메세지와 전송받을 클라이언트의 이름을 저장
-typedef struct message {
-	char user[USER];
-	char sbuf[MAXBUF];
-};
-
-//서버에 접속한 클라이언트의 디스크립터와 거기에 매치되는 해당 클라이언트의 이름을 저장
-struct add_num {
-	int anum;
-	char name[MAXBUF];
+struct ST_EP_INFO {
+	int		iFDNum;
+	int		iEpNum;
+	string	sIpAddr;
+	string	sPort;
 };
 
 #endif
