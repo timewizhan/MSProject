@@ -23,7 +23,9 @@ if __name__ == "__main__":
 	if len(sys.argv) < 2:
 		sys.exit(1)
 
-	userID = sys.argv[1]
+	userID 		= sys.argv[1]
+	userPlace 	= sys.argv[2]
+
 	Log(userID)
 
 	Log.debug("=============================================")
@@ -31,7 +33,7 @@ if __name__ == "__main__":
 	Log.debug("=============================================")
 
 	try:
-		schedulerForBot = Scheduler(userID)
+		schedulerForBot = Scheduler(userID, userPlace)
 		if schedulerForBot == None:
 			raise Exception
 

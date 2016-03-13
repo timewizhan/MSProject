@@ -20,42 +20,38 @@ def findBotFile():
 
 	return os.path.exists(botFilePath)
 
-def getUsersFromDB():
+def getUsersInfoFromDB():
 	dataBase = PyDatabase()
 	dataBase.connectToDB()
-	
-	# TODO : find a table to get user's data
-	sql = "SELECT \"userName\" FROM public.\"completeUserid\""
-	userList = dataBase.querySQL(sql)
-	
+
+	sql = "SELECT \"userName\", \"userPlace\" FROM public.\"completeUserid\""
+	usersInfoList = dataBase.querySQL(sql)
+
 	dataBase.disconnectFromDB()
 
-	return userList
+	return usersInfoList
 
 def fn_process(*argv):
-	command_argv = argv[0]
-
-	modified_command_argv = ""
-	for i in command_argv:
-		if i == "_":
-			continue
-
-		modified_command_argv += i
+	command_argv_name	= argv[0]
+	command_argv_place	= argv[1]
 	
 	currentPath = os.getcwd()
 	botFilePath = currentPath + "\\" + BOT_FILE
 
-	completedCommand = botFilePath + " " + modified_command_argv
+	completedCommand = botFilePath + " " + command_argv_name + " " + command_argv_place
 	os.system(completedCommand)
 
-def operateMultiProcess(userList):
+def operateMultiProcess(usersInfoList):
 	procList = []
 
-	for i in range(0, len(userList)):
-		procList.append(Process(target = fn_process, args = (userList[i], )))
+	for i in range(0, len(usersInfoList)):
+		procList.append(Process(target = fn_process, args = (usersInfoList[i][0], usersInfoList[i][1],)))
 
+	procNumber = 0
 	for eachBot in procList:
 		eachBot.start()
+		print "[Debug] Process [%d] : [%s] is started" % (procNumber + 1, usersInfoList[procNumber][0])
+		procNumber += 1
 		time.sleep(1)
 
 	for eachBot in procList:
@@ -68,12 +64,12 @@ def mainStart():
 		sys.exit(1)
 
 	try:
-		userList = getUsersFromDB()
-		if len(userList) < 1:
+		usersInfoList = getUsersInfoFromDB()
+		if len(usersInfoList) < 1:
 			print "[Error] There is no user data"
 			sys.exit(1)
 
-		operateMultiProcess(userList)
+		operateMultiProcess(usersInfoList)
 	except Exception as e:
 		print "[Error] Abnormally exit"
 		sys.exit(1)

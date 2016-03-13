@@ -13,10 +13,11 @@ import pdb
 class Scheduler:
 	ONE_MINUTE = 60
 
-	def __init__(self, userID):
+	def __init__(self, userID, userPlace):
 		self.jobHashMap = JobHashMap()
 		self.patternDelegator = PatternDelegator(userID)
 		self.userID = userID
+		self.userPlace = userPlace
 
 	def start(self):
 		from Log import *
@@ -28,24 +29,25 @@ class Scheduler:
 		Log.debug("Start to operate bot")
 
 		continued =	firstStep = True
-		lastHourClock = False
 		
+		# Make an initial pattern
+		self.patternDelegator.startToGetPattern(self.jobHashMap)
+
 		while continued:
 			try:
-				self.checkNextWork(firstStep, lastHourClock)
+				Log.debug("Check whether day is changed or not")
+				self.checkNextDay(firstStep)
 
 				while timer.compareHourWithNowHour():
 					currentHour = timer.getCurrentHour()
-					if currentHour == 23:
-						lastHourClock = True
 
 					Log.debug("Start to deque for next work")
 					nextJobToWork = self.jobHashMap.dequeJobValueByKey(currentHour)
 					if nextJobToWork == 0:
 						Log.debug("Wait for 60 seconds")
 						time.sleep(self.ONE_MINUTE)
-						#time.sleep(1)
 						continue
+
 					#pdb.set_trace()
 					Log.debug("Start to communicate with servers")
 					self.startToCommunicateWithServer(nextJobToWork)
@@ -53,49 +55,50 @@ class Scheduler:
 					Log.debug("Start to save results")
 					#self.saveResultToDataBase()
 
+				timer.setCurrentDateAndTime()
+
 				Log.debug("Next Hour")
 			except Exception as e:
-				continued = False
-
 				Log.error("There is error in scheduler")
+				Log.error(e)
+
+				continued = False
 			
-	def checkNextWork(self, firstStep, lastHourClock):
+	def checkNextDay(self, firstStep):
 		if firstStep == True:
 			firstStep = False
+			return
 
-			self.patternDelegator.startToGetPattern(self.jobHashMap)
-
-		elif lastHourClock == True and timer.compareDayWithNowDay() == False:
-			lastHourClock = False
-			timer.setCurrentDateAndTime()
-
-			self.patternDelegator.startToGetPattern(self.jobHashMap)
-		elif timer.compareDayWithNowDay() == True:
-			timer.setCurrentDateAndTime()
-
+		if timer.compareDayWithNowDay():
+			return
+		
+		timer.setCurrentDateAndTime()
+		self.patternDelegator.startToGetPattern(self.jobHashMap)
+		
 	def startToCommunicateWithServer(self, nextJobToWork):
-		recorder = CRecorder()
-
 		# 1. communicate with Broker
-		Log.debug("Start to send to data to Broker")
+		Log.debug("Start to build data for Broker")
 		dataToSend = makeBrokerJsonData(self.userID, nextJobToWork)
+		Log.debug(dataToSend)
 
-		recorder.startRecord()
+		Log.debug("Start to send to data to Broker")
 		recvDataFromBroker = self.networkingWithBroker(dataToSend)
+		Log.debug(recvDataFromBroker)
 
 		dstIPAddress = self.getResponseData(recvDataFromBroker)
 
 		# 2. communicate with Server
-		Log.debug("Start to send to data to EP")
-		dataToSend = makeEntryPointJsonData(self.userID, nextJobToWork)
-		recvDataFromBroker = self.networkingWithEntryPoint(dstIPAddress, dataToSend)
-		networkTimeMsg = "NetworkTime " + str(recorder.endRecord())
+		Log.debug("Start to build data for SNS Server")
+		dataToSend = makeEntryPointJsonData(self.userID, nextJobToWork, self.userPlace)
+		Log.debug(dataToSend)
 
-		Log.debug(networkTimeMsg)
+		Log.debug("Start to send to data to SNS Server")
+		recvDataFromEP = self.networkingWithEntryPoint(dstIPAddress, dataToSend)
+		Log.debug(recvDataFromEP)
 
-		recorder.gerResultTime()
-
-		return self.getResponseData(recvDataFromBroker)
+		# 3. For saving data to database.
+		# Todo.
+		#self.getResponseData(recvDataFromEP)
 
 	def getResponseData(self, recvDataFromBroker):
 		jsonParser = JsonParser(recvDataFromBroker)
@@ -144,7 +147,7 @@ def getCommonType(jobToWork):
 
 	return opType
 
-def makeEntryPointJsonData(userID, jobToWork):
+def makeEntryPointJsonData(userID, jobToWork, userPlace):
 	jsonGenerator = JsonGenerator()
 
 	randValue = random.randrange(1, 5)
@@ -155,7 +158,7 @@ def makeEntryPointJsonData(userID, jobToWork):
 		msgToSend = getReplyMsgToSend(randValue)
 
 
-	jsonGenerator.appendElement("TYPE", opType)
+	jsonGenerator.appendElement("TYPE", str(opType))
 	jsonGenerator.appendElement("SRC", userID)
 
 	if len(jobToWork.getWhoName()) > 0:
@@ -163,7 +166,7 @@ def makeEntryPointJsonData(userID, jobToWork):
 	else:
 		whoName = userID
 	jsonGenerator.appendElement("DST", whoName)
-	jsonGenerator.appendElement("LOC", "")
+	jsonGenerator.appendElement("LOC", userPlace)
 	jsonGenerator.appendElement("MSG", msgToSend)
 
 	return jsonGenerator.toString()

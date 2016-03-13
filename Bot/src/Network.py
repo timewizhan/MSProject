@@ -90,6 +90,9 @@ class AbstractNetwork:
 		totalSizeOfDataSent = 0
 
 		try:
+			firstPos = 0
+			self.socketToConnect.sendall(jsonData[firstPos:] + "\r\n")	
+			'''
 			while totalSizeOfDataSent < sizeOfDataToSend:
 				remainedSize = sizeOfDataToSend - totalSizeOfDataSent
 				firstPos = sizeOfDataToSend - remainedSize
@@ -99,6 +102,7 @@ class AbstractNetwork:
 
 			if totalSizeOfDataSent > sizeOfDataToSend:
 				pass
+			'''
 		except NetworkError as e:
 			print e	
 
