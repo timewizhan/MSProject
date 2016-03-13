@@ -137,6 +137,12 @@ void CBGWorkerThread::RequestDataBase(ST_CLIENT_REQ &refstReqClient, ST_DB_RESUL
 		return;
 	}
 
+	dwRet = QuitDB(hDataBase);
+	if (dwRet != E_RET_SUCCESS) {
+		ErrorLog("Fail to quit data from DataBase");
+		return;
+	}
+
 	refstDBResult = stDBResult;
 }
 
