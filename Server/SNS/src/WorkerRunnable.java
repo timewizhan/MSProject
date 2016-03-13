@@ -9,6 +9,8 @@ import java.util.Date;
 
 import org.json.simple.JSONObject;
 
+import com.sun.org.apache.bcel.internal.generic.CPInstruction;
+
 import Type.opType;
 import Type.userType;
 import Utility.CoordHandler;
@@ -97,8 +99,17 @@ public class WorkerRunnable implements Runnable {
 	    		break;	    	
 	    	case opType.replacement:
 	    		// when should we restart the CpuMonitor ?
-	    		CpuMonitor.startCpuMonitor();
+	    		// get uid from users using uname
+	    		// get status using uid
+	    		// need two files?
+	    		// one for users
+	    		// the other for status
+	    		// OR
+	    		// JSONObject + JSONArray
 	    		break;
+	    	
+	    	//case opType.restart
+	    	//CpuMonitor.startCpuMonitor();
 	    		
 	    	default:
 	    		System.out.println("[ERROR] Invalid Operation Type: " + reqType);
