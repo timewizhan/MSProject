@@ -267,7 +267,7 @@ void CMatch::InsertWeightTable(){
 	databaseInstance.~CDatabase();
 }
 
-void CMatch::CalculateLP(){
+vector <match_result_data> CMatch::CalculateLP(){
 	
 	printf("CalculateLP method \n");
 
@@ -285,7 +285,7 @@ void CMatch::CalculateLP(){
 
 				string base = "x_";
 
-				string user_index = to_string(i + 1);
+				string user_index = to_string(i);
 				base.append(user_index);
 
 				string cloud_index = to_string(j + 1);
@@ -443,8 +443,8 @@ void CMatch::CalculateLP(){
 		printf("Objective value: %f \n", get_objective(lp));
 
 		get_variables(lp, row);
-		for (j = 0; j < Ncol; j++)
-			printf("%s: %f\n", get_col_name(lp, j + 1), row[j]);
+	//	for (j = 0; j < Ncol; j++)
+	//		printf("%s: %f\n", get_col_name(lp, j + 1), row[j]);
 
 		//1인거만 뽑자
 		printf("\n[elements over 1] \n");
@@ -454,23 +454,38 @@ void CMatch::CalculateLP(){
 				printf("%s, length: %d \n", sMatchResult.c_str(), sMatchResult.length());
 			//	printf("%s \n", get_col_name(lp, j + 1));
 
-				//string 잘라내서 매치 결과 뽑아내기
-				//DB에 저장
+				//string 잘라내서 (substr) 매치 결과 뽑아내기
+				string sFullString = sMatchResult;
+				int iStringLength = sMatchResult.length();
+				string sUserNo = sFullString.substr(2,1);
+				string sEpNo = sFullString.substr(3, iStringLength);
+				printf("User number : %s, ", sUserNo.c_str());
+				printf("EP number : %s \n", sEpNo.c_str());
+
+				//DB에 matching 결과 저장
+				databaseInstance.InsertMatchingTable(sUserNo, sEpNo);
 			}
 		}
 	}
 
-	if (row != NULL)
-		free(row);
-	if (colno != NULL)
-		free(colno);
+	if (row != NULL)	free(row);
+	if (colno != NULL)	free(colno);
+	if (lp != NULL)		delete_lp(lp); 
 
-	if (lp != NULL) {
-		delete_lp(lp);
-	}
+
+	//여기서 Prev 값이랑 다른 것만 추출해서 update_matching_table에 저장
+	databaseInstance.InsertUpdateMatchingTable();
+	
+	//데이터 읽어와서 벡터에 저장한 다음에 리턴으로 돌려줌
+	vector <match_result_data> vecMatchResult = databaseInstance.ExtractMatchResult();
+
+	//돌려주고 나서 prev 테이블 업데이트
+	databaseInstance.UpdatePrevMatchingTable(vecMatchResult);
 
 	databaseInstance.DeleteTables();
 	databaseInstance.~CDatabase();
+
+	return vecMatchResult;
 }
 
 int CMatch::FindMax(vector <int> vec){

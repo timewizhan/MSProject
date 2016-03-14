@@ -306,6 +306,34 @@ vector<weight_data> CDatabase::ExtractWeightData(){
 	return vecWeightData;
 }
 
+vector <match_result_data> CDatabase::ExtractMatchResult(){
+
+	string sQuery = "select * from update_matching_table";
+
+	m_iQueryStat = mysql_query(connection, sQuery.c_str());
+	if (m_iQueryStat != 0) {
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	sql_result = mysql_store_result(connection);
+
+	match_result_data stResValue;
+	vector <match_result_data> vecMatchResult;
+	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+		stResValue.sUser = sql_row[0];
+		stResValue.iPrevEp = atoi(sql_row[2]);
+		stResValue.iCurrEP = atoi(sql_row[3]);
+
+		vecMatchResult.push_back(stResValue);
+	}
+
+	mysql_free_result(sql_result);
+
+	return vecMatchResult;
+}
+
 void CDatabase::insertData(string name, string location, int timestamp, int client_side_traffic, int server_side_traffic, int cpu_util, int ep_num, string side_flag){
 
 
@@ -432,6 +460,155 @@ void CDatabase::InsertWeightTable(string sUser, int iUserNo, double dWeightEp1, 
 	}
 }
 
+void CDatabase::InsertMatchingTable(string sUserNo, string sEpNo){
+	
+	//weight_table에서 user_no로 user, user_no 가지고 오기
+	string sQuery = "select user from weight_table where user_no = '";
+	string sCloseQuery = "'";
+
+	sQuery = sQuery + sUserNo.c_str() + sCloseQuery;
+
+	m_iQueryStat = mysql_query(connection, sQuery.c_str());
+	if (m_iQueryStat != 0) {
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	sql_result = mysql_store_result(connection);
+
+	string sUserName;
+	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+		sUserName = sql_row[0];
+	}
+
+	mysql_free_result(sql_result);
+
+	
+	//user, user_no 값과 전달 받은 sEpNo 값으로 matching_table에 insert
+	char query[255];
+
+	sprintf_s(query, sizeof(query), "insert into matching_table values ('%s', '%s', '%s')", sUserName.c_str(), sUserNo.c_str(), sEpNo.c_str());
+
+	m_iQueryStat = mysql_query(connection, query);
+
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+}
+
+void CDatabase::InsertUpdateMatchingTable(){
+
+	boolean bEmptyCheck = CheckPrevTableEmpty();
+
+	if (bEmptyCheck){		//prev_matching_table에 아무 값이 없을때. 즉, 최초 Data replacement 일 때.
+
+
+		string sQuery = "select user, user_no, curr_ep from matching_table";
+
+		m_iQueryStat = mysql_query(connection, sQuery.c_str());
+		if (m_iQueryStat != 0) {
+
+			fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+		}
+
+		sql_result = mysql_store_result(connection);
+
+		while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+
+
+
+			char query[255];
+
+			//update_matching_table 값 입력
+			sprintf_s(query, sizeof(query), "insert into update_matching_table values ('%s', '%s', '%s', '%s')", sql_row[0], sql_row[1], "0", sql_row[2]);
+
+			m_iQueryStat = mysql_query(connection, query);
+
+			if (m_iQueryStat != 0){
+
+				fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+			}
+
+			//prev_matching_table 값 0 으로 입력
+			sprintf_s(query, sizeof(query), "insert into prev_matching_table values ('%s', '%s')", sql_row[0], "0");
+
+			m_iQueryStat = mysql_query(connection, query);
+
+			if (m_iQueryStat != 0){
+
+				fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+			}
+
+		}
+
+		mysql_free_result(sql_result);
+
+
+	}
+	else {
+
+		string sQuery = "select A.user, A.user_no, B.prev_ep, A.curr_ep from matching_table A join prev_matching_table B on A.user = B.user";
+
+		m_iQueryStat = mysql_query(connection, sQuery.c_str());
+		if (m_iQueryStat != 0) {
+
+			fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+		}
+
+		sql_result = mysql_store_result(connection);
+
+		while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+
+
+
+			char query[255];
+
+			sprintf_s(query, sizeof(query), "insert into update_matching_table values ('%s', '%s', '%s', '%s')", sql_row[0], sql_row[1], sql_row[2], sql_row[3]);
+
+			m_iQueryStat = mysql_query(connection, query);
+
+			if (m_iQueryStat != 0){
+
+				fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+			}
+		
+		
+		
+		}
+
+		mysql_free_result(sql_result);
+	}
+}
+
+boolean CDatabase::CheckPrevTableEmpty(){
+
+	boolean bEmptyCheck;
+	string sQuery = "select * from prev_matching_table";
+	
+	m_iQueryStat = mysql_query(connection, sQuery.c_str());
+	if (m_iQueryStat != 0) {
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	sql_result = mysql_store_result(connection);
+
+	if ((sql_row = mysql_fetch_row(sql_result)) == NULL){		//prev_matching_table에 아무 값이 없을때. 즉, 최초 Data replacement 일 때.
+		bEmptyCheck = true;
+	}
+	else {
+		bEmptyCheck = false;
+	}
+
+	mysql_free_result(sql_result);
+
+	return bEmptyCheck;
+}
+
 void CDatabase::updateLocation(int l_ny_traffic, int l_bs_traffic, int l_chi_traffic){
 
 	char query[255];
@@ -464,6 +641,22 @@ void CDatabase::updateLocation(int l_ny_traffic, int l_bs_traffic, int l_chi_tra
 	}
 }
 
+void CDatabase::UpdatePrevMatchingTable(vector <match_result_data> vecMatchResult) {
+
+	char query[255];
+
+	for (int i = 0; i < vecMatchResult.size(); i++){
+
+		sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).sUser.c_str());
+
+		m_iQueryStat = mysql_query(connection, query);
+		if (m_iQueryStat != 0){
+
+			fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+		}
+	}
+}
+
 void CDatabase::DeleteTables(){
 
 	string arrQuery[] = {
@@ -472,7 +665,9 @@ void CDatabase::DeleteTables(){
 		"delete from normalized_cst_table",
 		"delete from normalized_distance_table",
 		"delete from normalized_server_table",
-		"delete from weight_table"
+		"delete from weight_table",
+		"delete from matching_table",
+		"delete from update_matching_table"
 	};
 
 	for (int i = 0; i < sizeof(arrQuery) / sizeof(string); i++){

@@ -27,5 +27,4 @@
 
 using namespace std;
 
-
 #endif

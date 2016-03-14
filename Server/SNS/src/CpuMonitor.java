@@ -18,7 +18,11 @@ public class CpuMonitor {
 	
 	public static void monitorCpuLoad() throws InterruptedException {
 		final OperatingSystemMXBean osBean = 
-				(com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();				
+				(com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
+		
+		ServiceServer.mCPU_Log.clear();
+		ServiceServer.mAVG_CPU_Log.clear();
+		
 		Runnable monitor = new Runnable() {
 			
 			@Override

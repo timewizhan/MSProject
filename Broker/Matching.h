@@ -24,7 +24,7 @@ public:
 
 		void NormalizeFactor();
 		void InsertWeightTable();
-		void CalculateLP();
+		vector <match_result_data> CalculateLP();
 		double CalculateDistEp1(coord_value stUserCoordValue);
 		double CalculateDistEp2(coord_value stUserCoordValue);
 		double CalculateDistEp3(coord_value stUserCoordValue);
