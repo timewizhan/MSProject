@@ -128,15 +128,74 @@ void CSocket::CommSocket(){
 							
 							//여기서 LP 결과 리턴 값으로 받는걸로, EP 1에 보내야 되는거 2에 보내야되는거 3에보내야 되는거 구분
 							vector <match_result_data> vecMatchResult = match.CalculateLP();	//user, prev_ep, curr_ep 있는 데이터
-							
+						
+							int EP1_FD = 0;
+							int EP2_FD = 0;
+							int EP3_FD = 0;
+							for (int i = 0; i < NUM_OF_EP; i++){
+
+								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.85")){	//EP1: 165.132.123.85  
+								
+									EP1_FD = stEpInfo[i].iFDNum;
+								}
+								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.86")) {	//EP2: 165.132.123.86
+								
+									EP2_FD = stEpInfo[i].iFDNum;
+								}
+								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.87")) {	//EP3: 165.132.123.87
+								
+									EP3_FD = stEpInfo[i].iFDNum;
+								}
+							}
+
+
+							match_result_data stMatchResData;
+							for (int i = 0; i < vecMatchResult.size(); i++){
+
+								if (vecMatchResult.at(i).iPrevEp == 1){
+									
+									if (vecMatchResult.at(i).iPrevEp != vecMatchResult.at(i).iCurrEP){
+									
+										stMatchResData.sUser = vecMatchResult.at(i).sUser;
+										stMatchResData.iPrevEp = vecMatchResult.at(i).iPrevEp;
+										stMatchResData.iCurrEP = vecMatchResult.at(i).iCurrEP;
+
+										send(EP1_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+									}
+										
+								}
+								else if (vecMatchResult.at(i).iPrevEp == 2){
+
+									if (vecMatchResult.at(i).iPrevEp != vecMatchResult.at(i).iCurrEP){
+
+										stMatchResData.sUser = vecMatchResult.at(i).sUser;
+										stMatchResData.iPrevEp = vecMatchResult.at(i).iPrevEp;
+										stMatchResData.iCurrEP = vecMatchResult.at(i).iCurrEP;
+
+										send(EP2_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+									}
+								}
+								else if (vecMatchResult.at(i).iPrevEp == 3){
+									
+									if (vecMatchResult.at(i).iPrevEp != vecMatchResult.at(i).iCurrEP){
+
+										stMatchResData.sUser = vecMatchResult.at(i).sUser;
+										stMatchResData.iPrevEp = vecMatchResult.at(i).iPrevEp;
+										stMatchResData.iCurrEP = vecMatchResult.at(i).iCurrEP;
+
+										send(EP3_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+									}
+								}
+							}
+
 
 
 							//여기서 EP에게 돌려주는 걸 하자
-							for (int i = 0; i < NUM_OF_EP; i++){
+						//	for (int i = 0; i < NUM_OF_EP; i++){
 						
 							//	printf("[%d] IP Address: %s \n", i, stEpInfo[i].sIpAddr.c_str());
-								send(stEpInfo[i].iFDNum, (char*)&read_message, sizeof(read_message), 0);
-								printf("4. EP: %d, Side: %s \n", read_message.ep_num, read_message.side_flag);
+							//	send(stEpInfo[i].iFDNum, (char*)&read_message, sizeof(read_message), 0);
+							//	printf("4. EP: %d, Side: %s \n", read_message.ep_num, read_message.side_flag);
 
 								/*
 								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.85")){	//EP1: 165.132.123.85
@@ -150,7 +209,9 @@ void CSocket::CommSocket(){
 								}
 								*/
 								
-							}
+						//	}
+
+
 						}
 					}
 				}
