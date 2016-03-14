@@ -7,9 +7,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import com.sun.org.apache.bcel.internal.generic.CPInstruction;
 
 import Type.opType;
 import Type.userType;
@@ -39,9 +38,10 @@ public class WorkerRunnable implements Runnable {
 				out.newLine();
 				out.flush();
 				mClientSocket.close();
+				out.close();
 				System.out.println(getTime() + ServiceServer.mCoord.getServerLoc() + " handled a request from " + "[" + request.get("SRC") + "]");
         	} else {
-        		replacementHanlder(request);
+        		commandHanlder(request);
         	} 							
 		} catch (PropertyVetoException e) {			
 			e.printStackTrace();
@@ -90,37 +90,30 @@ public class WorkerRunnable implements Runnable {
 		return res;
 	}
     
-    private void replacementHanlder(JSONObject request) throws SQLException {
+    private void commandHanlder(JSONObject request) throws SQLException {
     	int reqType = Integer.parseInt((String) request.get("TYPE"));
     	
     	switch (reqType) {
 	    	case opType.monitor:
 	    		storeMonitored();	    		
 	    		break;	    	
-	    	case opType.replacement:
-	    		// when should we restart the CpuMonitor ?
-	    		// get uid from users using uname
-	    		// get status using uid
-	    		// need two files?
-	    		// one for users
-	    		// the other for status
-	    		// OR
-	    		// JSONObject + JSONArray
+	    	case opType.moveout:
+	    		JSONArray result = DBConnection.getMigrated();	    		
+	    		sendMigrated(result);	    		
 	    		break;
-	    	
-	    	//case opType.restart
-	    	//CpuMonitor.startCpuMonitor();
-	    		
+	    	case opType.movein:
+	    		System.out.println("Welcome home! " + request.toString());
+	    		break;
+	    	case opType.restart:
+	    		CpuMonitor.startCpuMonitor();
+	    		break;
 	    	default:
 	    		System.out.println("[ERROR] Invalid Operation Type: " + reqType);
+	    		break;
     	}    	
     }
     
     private void storeMonitored() throws SQLException {
-		// stop cpu util monitoring
-		// cal average cpu util
-		// store client_side_monitor
-		// store server_side_monitor
     	CpuMonitor.stopScheduler(ServiceServer.mScheduler);
 						
 		int totalCPU = 0;		
@@ -131,6 +124,30 @@ public class WorkerRunnable implements Runnable {
 		int avgCPU = totalCPU / ServiceServer.mCPU_Log.size();
 		int server_side_traffic = DBConnection.storeClientMonitor();
 		DBConnection.storeServerMonitor(avgCPU, server_side_traffic);				
+    }
+    
+    private void sendMigrated(JSONArray migrated) {
+    	String dstServerIP = "localhost";
+    	int dstServerPort = 7777;
+    	
+    	try {
+			Socket socket = new Socket(dstServerIP, dstServerPort);
+			
+			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
+					socket.getOutputStream(), "UTF-8"));
+			
+			String response = MessageHandler.msgGenerator(migrated);
+			
+			out.write(response);
+			out.newLine();
+			out.flush();
+			
+			socket.close();
+			out.close();
+		} catch (IOException e) {
+			System.out.println("[sendMigrated]IOException: " + e.getMessage());
+		}
+    	
     }
     
     private String getTime() {

@@ -4,38 +4,38 @@ public class userInfo {
 	private int mUID;
 	private String mName;
 	private String mLocation;
-	private int mTraffic;
+	private int mTraffic;	
 	
 	public userInfo() {
-		this.mUID = -1;
-		this.mName = null;
-		this.mLocation = null;
-		this.mTraffic = 0;
+		mUID = -1;
+		mName = null;
+		mLocation = null;
+		mTraffic = 0;
 	}
 	
 	public void setInfo(int uid, String uname, String loc) {
-		this.mUID = uid;
-		this.mName = uname;
-		this.mLocation = loc;
+		mUID = uid;
+		mName = uname;
+		mLocation = loc;
 	}
 	
 	public void updateTraffic(int traffic) {
-		this.mTraffic = this.mTraffic + traffic;
+		mTraffic = mTraffic + traffic;
 	}
 	
 	public int getUID() {
-		return this.mUID;
+		return mUID;
 	}
 	
 	public String getName() {
-		return this.mName;				
+		return mName;				
 	}
 	
 	public String getLoc() {
-		return this.mLocation;
+		return mLocation;
 	}
 	
 	public int getTraffic() {
-		return this.mTraffic;
+		return mTraffic;
 	}
 }

@@ -5,9 +5,12 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import Type.opType;
 
 public class MessageHandler {
 	public static JSONObject msgParser(Socket socket) {		
@@ -38,5 +41,14 @@ public class MessageHandler {
 		response.put("RESPONSE", result);
 		
 		return response.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static String msgGenerator(JSONArray migrated) {
+		JSONObject response = new JSONObject();
+		response.put("TYPE", Integer.toString(opType.movein));
+		response.put("MIGRATED", migrated);
+		
+		return response.toString();		
 	}
 }

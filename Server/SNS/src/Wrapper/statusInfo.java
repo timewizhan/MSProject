@@ -2,18 +2,24 @@ package Wrapper;
 
 public class statusInfo {	
 	private int[] mSIDs;
-	private String mStatus;
+	private String[] mStatus;
+	private String[] mTime;
 	
-	public statusInfo(int[] sid, String status) {
-		this.mSIDs = sid;
-		this.mStatus = status;
+	public statusInfo(int[] sid, String[] status, String[] time) {
+		mSIDs = sid;
+		mStatus = status;
+		mTime = time;
 	}
 	
 	public int[] getSIDs() {
-		return this.mSIDs;
+		return mSIDs;
 	}
 	
-	public String getStatus() {
-		return this.mStatus;
+	public String[] getStatusList() {
+		return mStatus;
+	}
+	
+	public String[] getTimeList() {
+		return mTime;
 	}
 }

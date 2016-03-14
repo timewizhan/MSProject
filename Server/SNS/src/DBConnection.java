@@ -11,8 +11,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
+import Type.userType;
 import Wrapper.statusInfo;
 import Wrapper.userInfo;
 
@@ -20,13 +24,15 @@ public class DBConnection {
 	private static DBConnection mDS;
 	private ComboPooledDataSource mCDPS;
 	
-	private final static int mResident = 1;	
+	private final static int mAll = -1;
 	private final static int mBasicResponseSize = 22;	
 	private final static int mPeriod = -1;
 	
 	private final static int mSuccess = 1;
 	private final static int mFail = 0;
 		
+	
+	
 	private DBConnection() throws IOException, SQLException, PropertyVetoException {
 		mCDPS = new ComboPooledDataSource();
 		mCDPS.setDriverClass("com.mysql.jdbc.Driver");
@@ -142,8 +148,13 @@ public class DBConnection {
 			statusInfo result = getStatus(t_uid, num);
 		
 			int [] t_sids = result.getSIDs();
-			String t_status = result.getStatus();					
-			storeLatent(uid, t_sids, reqSize, t_status.length());
+			String [] t_status = result.getStatusList();
+			
+			String total_t_status = "";
+			for (int i = 0; i < t_status.length; i++)
+				total_t_status.concat(t_status[i]);
+							
+			storeLatent(uid, t_sids, reqSize, total_t_status.length());
 		
 			return mSuccess;
 		} else
@@ -173,16 +184,14 @@ public class DBConnection {
 	// we should check whether the user's traffic info is 0 or not
 	// if the traffic info is 0, we don't need to store the corresponding user
 	public static userInfo [] getMonitor() {		
-		userInfo [] uInfo = getUserInfo();
+		userInfo [] uInfo = getUserInfo(mAll);
 		HashMap<Integer, Integer> tInfo = getTrafficLog();						
 		
 		for (int i = 0; i < uInfo.length; i++) {
 			int uid = uInfo[i].getUID();
 			if (tInfo.get(uid) != null)
-				uInfo[i].updateTraffic(tInfo.get(uid));
-			
-		}
-		
+				uInfo[i].updateTraffic(tInfo.get(uid));			
+		}		
 		return uInfo;
 	}
 	
@@ -269,6 +278,36 @@ public class DBConnection {
 					System.out.println("[storeServerMonitor/conn]SQLException: " + e.getMessage());
 				}											
 		}		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static JSONArray getMigrated() throws SQLException {
+		userInfo [] uInfo = getUserInfo(userType.resident);
+			
+		JSONArray userList = new JSONArray();
+		for (int i = 0; i < uInfo.length; i++) {
+			int uid = uInfo[i].getUID();
+			statusInfo user_status = getStatus(uid, mAll);
+			
+			String[] status = user_status.getStatusList();						
+			String[] time = user_status.getTimeList(); 			
+			
+			JSONObject userItem = new JSONObject();
+			userItem.put("UNAME", uInfo[i].getName());
+			userItem.put("LOCATION", uInfo[i].getLoc());
+						
+			JSONArray statusList = new JSONArray();				
+			for (int j = 0; j < status.length; j++) {
+				JSONObject statusItem = new JSONObject();
+				statusItem.put("STATUS", status[j]);
+				statusItem.put("TIME", time[j]);
+				statusList.add(statusItem);
+			}
+			
+			userItem.put("STATUS_LIST", statusList);
+			userList.add(userItem);
+		}						
+		return userList;
 	}
 	
 	private static void updateUser(int uid, int utype) throws SQLException {
@@ -387,39 +426,54 @@ public class DBConnection {
 		}
 		
 		//is Resident (i.e. actual user of corresponding server)
-		if ((type & mResident) == 1)
+		if ((type & userType.resident) == 1)
 			return uid;
 		else
 			return -1;
 	}
-	
+		
 	private static statusInfo getStatus(int uid, int num) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		ResultSet rs = null;
 		
-		int sids[] = null;
-		String status = "";
+		int[] sids = null;
+		String[] status = null;
+		String[] time = null;
 									
 		try {
-			conn = DBConnection.getInstance().getConnection();
-			prepared = conn.prepareStatement("SELECT sid,status FROM status WHERE "
-					+ "uid = ? ORDER BY sid DESC LIMIT ?",
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
+			if (num != mAll) {
+				conn = DBConnection.getInstance().getConnection();
+				prepared = conn.prepareStatement("SELECT sid,status,time FROM status WHERE "
+						+ "uid = ? ORDER BY sid DESC LIMIT ?",
+						ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
+				
+				prepared.setInt(1, uid);
+				prepared.setInt(2, num);
+			} else {
+				conn = DBConnection.getInstance().getConnection();
+				prepared = conn.prepareStatement("SELECT sid,status,time FROM status WHERE "
+						+ "uid = ?",
+						ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
+				
+				prepared.setInt(1, uid);
+			}
 			
-			prepared.setInt(1, uid);
-			prepared.setInt(2, num);
 			rs = prepared.executeQuery();
 						
 			int i = 0;
 			rs.last();
 			int rowCnt = rs.getRow();
 			sids = new int[rowCnt];
+			status = new String[rowCnt];
+			time = new String[rowCnt];
 			rs.beforeFirst();
 			while (rs.next()) {
 				sids[i] = rs.getInt("sid");
-				status = status.concat(rs.getString("status"));			
+				status[i] = rs.getString("status");
+				time[i] = rs.getString("time");
 				i++;
 			}
 		} catch (PropertyVetoException e) {
@@ -436,8 +490,7 @@ public class DBConnection {
 					System.out.println("[getStatus/conn]SQLException: " + e.getMessage());					
 				}		
 		}
-				
-		return new statusInfo(sids, status);
+		return new statusInfo(sids, status, time);
 	}
 	
 	private static void storeLatent(int uid, int[] sids, int reqSize, int slen) throws SQLException {
@@ -520,7 +573,7 @@ public class DBConnection {
 		return mSuccess;
 	}		
 	
-	private static userInfo[] getUserInfo () {
+	private static userInfo[] getUserInfo (int type) {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		ResultSet rs = null;
@@ -529,16 +582,26 @@ public class DBConnection {
 		
 		try {
 			conn = DBConnection.getInstance().getConnection();
-			prepared = conn.prepareStatement("SELECT uid,uname,location FROM users",
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
+			if (type != mAll) {
+				prepared = conn.prepareStatement("SELECT uid,uname,location FROM users",
+						ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
+			} else {
+				prepared = conn.prepareStatement("SELECT uid,uname,location FROM users WHERE "
+						+ "type = ? OR type = ?",
+						ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
+				
+				prepared.setInt(1, userType.resident);
+				prepared.setInt(2, userType.resitor);
+			}
 						
 			rs = prepared.executeQuery();
 			
 			int i = 0;
 			rs.last();
 			int rowCnt = rs.getRow();			
-			uInfo = new userInfo [rowCnt];			
+			uInfo = new userInfo [rowCnt];		
 			rs.beforeFirst();
 			while (rs.next()) {
 				uInfo[i] = new userInfo();
