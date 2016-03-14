@@ -64,6 +64,6 @@ public class ServiceServer {
 		} catch (IOException e) {
 			System.out.println("[openServerSocket]e: " + e.getMessage());
 		}
-		System.out.println("[" + mCoord.getServerLoc() +"]" + " " + "is waiting for the request.");
+		System.out.println(mCoord.getServerLoc() + " has started.");
 	}
 }

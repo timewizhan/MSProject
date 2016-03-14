@@ -36,7 +36,7 @@ public class CpuMonitor {
 						ServiceServer.mCPU_Log.clear();
 						ServiceServer.mCPU_Log.add(load);
 					}					
-					System.out.println("[CPU Usage] " + load * 100);
+					//System.out.println("[CPU Usage] " + load * 100);
 				}
 			}
 		};		
