@@ -99,7 +99,7 @@ public class WorkerRunnable implements Runnable {
 	    		break;	    	
 	    	case opType.moveout:
 	    		JSONArray result = DBConnection.getMigrated();	    		
-	    		sendMigrated(result);	    		
+	    		sendMigrated(result);    		
 	    		break;
 	    	case opType.movein:
 	    		System.out.println("Welcome home! " + request.toString());
@@ -146,8 +146,7 @@ public class WorkerRunnable implements Runnable {
 			out.close();
 		} catch (IOException e) {
 			System.out.println("[sendMigrated]IOException: " + e.getMessage());
-		}
-    	
+		}    	
     }
     
     private String getTime() {

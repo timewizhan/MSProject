@@ -283,10 +283,13 @@ public class DBConnection {
 	@SuppressWarnings("unchecked")
 	public static JSONArray getMigrated() throws SQLException {
 		userInfo [] uInfo = getUserInfo(userType.resident);
-			
+		int[] migrated_list = new int[uInfo.length];
+		
 		JSONArray userList = new JSONArray();
 		for (int i = 0; i < uInfo.length; i++) {
 			int uid = uInfo[i].getUID();
+			
+			migrated_list[i] = uid;
 			statusInfo user_status = getStatus(uid, mAll);
 			
 			String[] status = user_status.getStatusList();						
@@ -306,7 +309,9 @@ public class DBConnection {
 			
 			userItem.put("STATUS_LIST", statusList);
 			userList.add(userItem);
-		}						
+		}		
+		deleteMigrated(migrated_list);		
+		
 		return userList;
 	}
 	
@@ -679,5 +684,43 @@ public class DBConnection {
 				}
 		}
 		return tMap;
+	}
+	
+	private static void deleteMigrated(int[] migrated_list) throws SQLException {
+		Connection conn = null;
+		PreparedStatement prepared = null;		
+				
+		try {
+			conn = DBConnection.getInstance().getConnection();
+			prepared = conn.prepareStatement("DELETE FROM users WHERE "
+					+ "uid = ?");
+			
+			conn.setAutoCommit(false);
+			
+			for (int i = 0; i < migrated_list.length; i ++) {
+				prepared.setInt(1, migrated_list[i]);
+				prepared.addBatch();			
+			}						
+			
+			prepared.executeBatch();
+			conn.commit();	
+			
+		} catch (PropertyVetoException e) {
+			System.out.println("[getStatusTraffic]PropertyVetoException: " + e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("[getStatusTraffic]SQLException: " + e.getMessage());
+			System.out.println("Rolling back data...");
+			if (conn != null)
+				conn.rollback();
+		} catch (IOException e) {
+			System.out.println("[getStatusTraffic]IOException: " + e.getMessage());
+		} finally {						
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					System.out.println("[getStatusTraffic/conn]SQLException: " + e.getMessage());
+				}
+		}
 	}
 }
