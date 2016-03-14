@@ -1,5 +1,6 @@
 
 import java.lang.management.ManagementFactory;
+import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -50,4 +51,17 @@ public class CpuMonitor {
 	public static void stopScheduler(ScheduledExecutorService scheduler) {
 		ServiceServer.mScheduler.shutdown();		
 	}
+	
+	public static void storeMonitored() throws SQLException {
+    	CpuMonitor.stopScheduler(ServiceServer.mScheduler);
+						
+		int totalCPU = 0;		
+		for(int i = 0; i < ServiceServer.mCPU_Log.size(); i++) {
+			totalCPU += ServiceServer.mCPU_Log.get(i);
+		}
+		
+		int avgCPU = totalCPU / ServiceServer.mCPU_Log.size();				
+		int server_side_traffic = DBConnection.storeClientMonitor();				
+		DBConnection.storeServerMonitor(avgCPU, server_side_traffic);				
+    }
 }

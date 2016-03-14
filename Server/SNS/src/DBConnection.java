@@ -260,6 +260,7 @@ public class DBConnection {
 			prepared.setInt(1, avgCPU);
 			prepared.setInt(2, server_side_traffic);
 			
+			prepared.executeUpdate();
 			conn.commit();						
 		} catch (PropertyVetoException e) {
 			System.out.println("[storeServerMonitor]PropertyVetoException: " + e.getMessage());
@@ -310,6 +311,7 @@ public class DBConnection {
 			userItem.put("STATUS_LIST", statusList);
 			userList.add(userItem);
 		}		
+		
 		deleteMigrated(migrated_list);		
 		
 		return userList;

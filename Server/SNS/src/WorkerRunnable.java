@@ -95,11 +95,16 @@ public class WorkerRunnable implements Runnable {
     	
     	switch (reqType) {
 	    	case opType.monitor:
-	    		storeMonitored();	    		
+	    		CpuMonitor.storeMonitored();	    		
 	    		break;	    	
 	    	case opType.moveout:
-	    		JSONArray result = DBConnection.getMigrated();	    		
-	    		sendMigrated(result);    		
+	    		// When getMigrated method is called,
+	    		// migrated data is deleted
+	    		
+	    		// get the uname from the DB
+	    		// parameter: uname
+	    		JSONArray result = DBConnection.getMigrated();
+	    		MessageHandler.sendMigrated(result);    		
 	    		break;
 	    	case opType.movein:
 	    		System.out.println("Welcome home! " + request.toString());
@@ -111,43 +116,7 @@ public class WorkerRunnable implements Runnable {
 	    		System.out.println("[ERROR] Invalid Operation Type: " + reqType);
 	    		break;
     	}    	
-    }
-    
-    private void storeMonitored() throws SQLException {
-    	CpuMonitor.stopScheduler(ServiceServer.mScheduler);
-						
-		int totalCPU = 0;		
-		for(int i = 0; i < ServiceServer.mCPU_Log.size(); i++) {
-			totalCPU += ServiceServer.mCPU_Log.get(i);
-		}
-		
-		int avgCPU = totalCPU / ServiceServer.mCPU_Log.size();
-		int server_side_traffic = DBConnection.storeClientMonitor();
-		DBConnection.storeServerMonitor(avgCPU, server_side_traffic);				
-    }
-    
-    private void sendMigrated(JSONArray migrated) {
-    	String dstServerIP = "localhost";
-    	int dstServerPort = 7777;
-    	
-    	try {
-			Socket socket = new Socket(dstServerIP, dstServerPort);
-			
-			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-					socket.getOutputStream(), "UTF-8"));
-			
-			String response = MessageHandler.msgGenerator(migrated);
-			
-			out.write(response);
-			out.newLine();
-			out.flush();
-			
-			socket.close();
-			out.close();
-		} catch (IOException e) {
-			System.out.println("[sendMigrated]IOException: " + e.getMessage());
-		}    	
-    }
+    }                
     
     private String getTime() {
     	SimpleDateFormat f = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS]");

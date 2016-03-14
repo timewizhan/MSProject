@@ -1,7 +1,9 @@
 package Utility;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
@@ -51,4 +53,27 @@ public class MessageHandler {
 		
 		return response.toString();		
 	}
+	
+	public static void sendMigrated(JSONArray migrated) {
+    	String dstServerIP = "localhost";
+    	int dstServerPort = 7777;
+    	
+    	try {
+			Socket socket = new Socket(dstServerIP, dstServerPort);
+			
+			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
+					socket.getOutputStream(), "UTF-8"));
+			
+			String response = MessageHandler.msgGenerator(migrated);
+			
+			out.write(response);
+			out.newLine();
+			out.flush();
+			
+			socket.close();
+			out.close();
+		} catch (IOException e) {
+			System.out.println("[sendMigrated]IOException: " + e.getMessage());
+		}    	
+    }
 }
