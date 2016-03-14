@@ -46,10 +46,12 @@ void CSocket::send_message(){
 	}
 }
 
-void CSocket::recv_message(){
+match_result_data CSocket::recv_message(){
 
 	//recv
 	memset(&read_message, 0, sizeof(read_message));
 	int data_len = recv(ssock, (char*)&read_message, sizeof(read_message), 0);
-	printf("EP: %d, Side: %s \n", read_message.ep_num, read_message.side_flag);
+	printf("User: %s, Prev: %d, Curr: %d \n", read_message.sUser.c_str(), read_message.iPrevEp, read_message.iCurrEP);
+
+	return read_message;
 }

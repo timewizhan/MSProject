@@ -25,6 +25,13 @@ struct monitoring_result{
 	int traffic;
 };
 
+struct match_result_data{
+
+	string sUser;
+	int iPrevEp;
+	int iCurrEP;
+};
+
 class CSocket{
 
 public:
@@ -36,14 +43,14 @@ public:
 	int fd;
 
 	struct monitoring_result write_message;
-	struct monitoring_result read_message;
-
+	struct match_result_data read_message;
+	
 	CSocket();
 	~CSocket();
 
 	void init_socket();
 	void send_message();
-	void recv_message();
+	match_result_data recv_message();
 };
 
 #endif

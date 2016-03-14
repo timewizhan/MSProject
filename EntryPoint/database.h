@@ -30,7 +30,8 @@ private:
 
 public:
 
-	int query_stat;
+//	int query_stat;
+	int m_iQueryStat;
 	CSocket m_socket;
 
 	CDatabase();
@@ -38,6 +39,7 @@ public:
 	int initDB();
 	int extractData();
 	void StoreData();
+	void InsertMatchResultTable(match_result_data stRecvedResData);
 	//	void insertData(string name, string location, int timestamp, int traffic);
 
 };

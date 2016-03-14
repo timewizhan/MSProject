@@ -3,7 +3,7 @@
 #include "database.h"
 
 CDatabase::CDatabase(){
-	query_stat = 0;
+	m_iQueryStat = 0;
 	m_socket.init_socket();
 }
 
@@ -33,8 +33,8 @@ int CDatabase::extractData()
 {
 	printf("extract data method \n");
 
-	query_stat = mysql_query(connection, "select * from server_side_monitor");
-	if (query_stat != 0){
+	m_iQueryStat = mysql_query(connection, "select * from server_side_monitor");
+	if (m_iQueryStat != 0){
 
 		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
 		return 1;
@@ -72,9 +72,9 @@ int CDatabase::extractData()
 	printf("\n");
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	query_stat = mysql_query(connection, "select * from client_side_monitor");
+	m_iQueryStat = mysql_query(connection, "select * from client_side_monitor");
 
-	if (query_stat != 0)
+	if (m_iQueryStat != 0)
 	{
 		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
 		return 1;
@@ -130,8 +130,24 @@ void CDatabase::StoreData(){
 	int data_len = 0;
 
 	while (1){
-		m_socket.recv_message();
-		printf(".");
-		Sleep(1000);
+		//데이터 받아서 디비에 저장해야함
+		match_result_data stRecvedResData = m_socket.recv_message();
+		InsertMatchResultTable(stRecvedResData);
+		//특정 조건이 되면 탈출되게 해야함
+	}
+}
+
+void CDatabase::InsertMatchResultTable(match_result_data stRecvedResData){
+
+	char query[255];
+
+	sprintf_s(query, sizeof(query), "insert into match_result_table values ('%s', '%d', '%d')",
+		stRecvedResData.sUser.c_str(), stRecvedResData.iPrevEp, stRecvedResData.iCurrEP);
+
+	m_iQueryStat = mysql_query(connection, query);
+
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
 	}
 }
