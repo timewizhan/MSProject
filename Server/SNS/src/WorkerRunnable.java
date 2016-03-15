@@ -104,10 +104,22 @@ public class WorkerRunnable implements Runnable {
 	    		// get the uname from the DB
 	    		// parameter: uname
 	    		JSONArray result = DBConnection.getMigrated();
+	    		// send the migrated data
+	    		// parameter: JSONArray, Dst IP Addr
 	    		MessageHandler.sendMigrated(result);    		
 	    		break;
-	    	case opType.movein:
-	    		System.out.println("Welcome home! " + request.toString());
+	    	case opType.movein:	    		
+	    		JSONArray migrated = (JSONArray) request.get("MIGRATED");
+	    		
+	    		for (int i = 0; i < migrated.size(); i ++) {
+	    			JSONObject userItem = (JSONObject) migrated.get(i);
+	    			String uname = (String) userItem.get("UNAME");
+	    			String loc = (String) userItem.get("LOCATION");
+	    			JSONArray statusList = (JSONArray) userItem.get("STATUS_LIST");
+	    				    			
+	    			int uid = DBConnection.isThere(uname, userType.resident, loc);
+	    			DBConnection.writeStatus(uid, statusList);
+	    		}
 	    		break;
 	    	case opType.restart:
 	    		CpuMonitor.startCpuMonitor();

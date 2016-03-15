@@ -4,11 +4,13 @@ public class statusInfo {
 	private int[] mSIDs;
 	private String[] mStatus;
 	private String[] mTime;
+	private int[] mTraffic;
 	
-	public statusInfo(int[] sid, String[] status, String[] time) {
+	public statusInfo(int[] sid, String[] status, String[] time, int[] traffic) {
 		mSIDs = sid;
 		mStatus = status;
 		mTime = time;
+		mTraffic = traffic;
 	}
 	
 	public int[] getSIDs() {
@@ -21,5 +23,9 @@ public class statusInfo {
 	
 	public String[] getTimeList() {
 		return mTime;
+	}
+	
+	public int[] getTrafficList() {
+		return mTraffic;
 	}
 }

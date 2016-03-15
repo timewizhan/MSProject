@@ -142,15 +142,63 @@ public class DBConnection {
 		return mSuccess;
 	}
 	
+	public static void writeStatus(int uid, JSONArray statusList) throws SQLException {
+		Connection conn = null;
+		PreparedStatement prepared = null;
+		
+		try {
+			conn = DBConnection.getInstance().getConnection();
+			prepared = conn.prepareStatement("INSERT INTO status "
+					+ "(uid, status, time, traffic) VALUES "
+					+ "(?,?,?,?)");
+			
+			conn.setAutoCommit(false);
+			
+			for (int i = 0; i < statusList.size(); i++) {
+				JSONObject statusItem = (JSONObject) statusList.get(i);
+				
+				String status = (String) statusItem.get("STATUS");
+				String time = (String) statusItem.get("TIME"); 
+				int traffic =  (int) (long) statusItem.get("TRAFFIC");
+				
+				prepared.setInt(1, uid);
+				prepared.setString(2, status);
+				prepared.setString(3, time);
+				prepared.setInt(4, traffic);
+				prepared.addBatch();
+			}
+
+			prepared.executeBatch();						
+			conn.commit();			
+		} catch (PropertyVetoException e) {
+			System.out.println("[writeStatus]PropertyVetoException: " + e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("[writeStatus]SQLException: " + e.getMessage());
+			System.out.println("Rolling back data...");
+			if (conn != null)
+				conn.rollback();
+		} catch (IOException e) {
+			System.out.println("[writeStatus]IOException: " + e.getMessage());
+		} finally {
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					System.out.println("[writeStatus/conn]SQLException: " + e.getMessage());
+				}						
+		}			
+	}
+			
 	public static int readStatus(int uid, String uname, int reqSize, int num) throws SQLException {
 		int t_uid = getUID(uname);
 		if (t_uid != -1) {
 			statusInfo result = getStatus(t_uid, num);
 		
-			int [] t_sids = result.getSIDs();
+			int[] t_sids = result.getSIDs();
 			String [] t_status = result.getStatusList();
+	
 			
-			String total_t_status = "";
+			String total_t_status = "";			
 			for (int i = 0; i < t_status.length; i++)
 				total_t_status.concat(t_status[i]);
 							
@@ -223,8 +271,7 @@ public class DBConnection {
 			}
 						
 			prepared.executeBatch();
-			conn.commit();			
-			
+			conn.commit();						
 		} catch (PropertyVetoException e) {
 			System.out.println("[storeClientMonitor]PropertyVetoException: " + e.getMessage());
 		} catch (SQLException e) {
@@ -295,6 +342,7 @@ public class DBConnection {
 			
 			String[] status = user_status.getStatusList();						
 			String[] time = user_status.getTimeList(); 			
+			int[] traffic = user_status.getTrafficList();
 			
 			JSONObject userItem = new JSONObject();
 			userItem.put("UNAME", uInfo[i].getName());
@@ -305,6 +353,7 @@ public class DBConnection {
 				JSONObject statusItem = new JSONObject();
 				statusItem.put("STATUS", status[j]);
 				statusItem.put("TIME", time[j]);
+				statusItem.put("TRAFFIC", traffic[j]); 
 				statusList.add(statusItem);
 			}
 			
@@ -447,11 +496,12 @@ public class DBConnection {
 		int[] sids = null;
 		String[] status = null;
 		String[] time = null;
+		int[] traffic = null;
 									
 		try {
 			if (num != mAll) {
 				conn = DBConnection.getInstance().getConnection();
-				prepared = conn.prepareStatement("SELECT sid,status,time FROM status WHERE "
+				prepared = conn.prepareStatement("SELECT sid,status,time,traffic FROM status WHERE "
 						+ "uid = ? ORDER BY sid DESC LIMIT ?",
 						ResultSet.TYPE_SCROLL_INSENSITIVE,
 						ResultSet.CONCUR_READ_ONLY);
@@ -460,7 +510,7 @@ public class DBConnection {
 				prepared.setInt(2, num);
 			} else {
 				conn = DBConnection.getInstance().getConnection();
-				prepared = conn.prepareStatement("SELECT sid,status,time FROM status WHERE "
+				prepared = conn.prepareStatement("SELECT sid,status,time,traffic FROM status WHERE "
 						+ "uid = ?",
 						ResultSet.TYPE_SCROLL_INSENSITIVE,
 						ResultSet.CONCUR_READ_ONLY);
@@ -476,11 +526,13 @@ public class DBConnection {
 			sids = new int[rowCnt];
 			status = new String[rowCnt];
 			time = new String[rowCnt];
+			traffic = new int[rowCnt];
 			rs.beforeFirst();
 			while (rs.next()) {
 				sids[i] = rs.getInt("sid");
 				status[i] = rs.getString("status");
 				time[i] = rs.getString("time");
+				traffic[i] = rs.getInt("traffic");
 				i++;
 			}
 		} catch (PropertyVetoException e) {
@@ -497,7 +549,7 @@ public class DBConnection {
 					System.out.println("[getStatus/conn]SQLException: " + e.getMessage());					
 				}		
 		}
-		return new statusInfo(sids, status, time);
+		return new statusInfo(sids, status, time, traffic);
 	}
 	
 	private static void storeLatent(int uid, int[] sids, int reqSize, int slen) throws SQLException {
@@ -519,7 +571,7 @@ public class DBConnection {
 				prepared.setInt(3, Math.round((reqSize + slen)/sids.length));
 				prepared.addBatch();
 			}
-						
+			
 			prepared.executeBatch();
 			conn.commit();			
 		} catch (PropertyVetoException e) {
@@ -705,8 +757,7 @@ public class DBConnection {
 			}						
 			
 			prepared.executeBatch();
-			conn.commit();	
-			
+			conn.commit();				
 		} catch (PropertyVetoException e) {
 			System.out.println("[getStatusTraffic]PropertyVetoException: " + e.getMessage());
 		} catch (SQLException e) {
