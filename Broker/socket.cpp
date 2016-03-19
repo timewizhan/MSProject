@@ -19,7 +19,7 @@ CSocket::~CSocket(){}
 
 void CSocket::InitSocket(){
 
-	printf("init_socket \n");
+//	printf("init_socket \n");
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
 		printf("error\r\n");
@@ -53,9 +53,9 @@ void CSocket::InitSocket(){
 	}
 }
 
-void CSocket::CommSocket(){
+void CSocket::CommSocket(HANDLE	hThread){
 
-	printf("comm_socket \n");
+//	printf("comm_socket \n");
 
 	clen = sizeof(client_addr);
 
@@ -68,10 +68,9 @@ void CSocket::CommSocket(){
 	int iEpCount = 0;	// counting the number of connected EPs
 	while (1)
 	{
-		printf("1.start while \n");
 		tmp_fds = read_fds;
 		
-		printf("2.before select \n");
+		printf("[Waiting Select Signal] \n");
 		if (select(maxfd + 1, &tmp_fds, 0, 0, (struct timeval *)0)<1)
 		{
 			perror("select error : ");
@@ -86,7 +85,6 @@ void CSocket::CommSocket(){
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				if (fd == ssock)
 				{
-					printf("3.before accept, fd(ssock) = %d \n", fd);
 					if ((csock = accept(ssock, (struct sockaddr *)&client_addr, &clen))<0)
 					{
 						perror("accept error : ");
@@ -95,8 +93,7 @@ void CSocket::CommSocket(){
 
 					FD_SET(csock, &read_fds);
 
-					printf("4.new client is connected = %d \n", csock);
-
+					printf(" - New client is connected = %d \n", csock);
 					stEpInfo[iEpCount].iFDNum = csock;
 					stEpInfo[iEpCount].sIpAddr = inet_ntoa(client_addr.sin_addr);
 					iEpCount++;
@@ -109,19 +106,25 @@ void CSocket::CommSocket(){
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
 				else
 				{
-					printf("3. fd(csock) = %d \n", fd);
+					printf(" - Received Client Socket Signal (FD = %d) \n", fd);
 					memset(&read_message, 0, sizeof(read_message));
 
 					//클라이언트로 부터 메세지를 수신받는다.
-					data_len = recv(fd, (char*)&read_message, sizeof(read_message), 0);	//read의 리턴값 뭘까
+					data_len = recv(fd, (char*)&read_message, sizeof(read_message), 0);
 					
 					CDataQueue::getDataQueue()->pushDataToQueue(read_message);
+					
 				 
 					if (!strcmp(read_message.side_flag, "e")){		
 					
 						iECount++;
 						if (iECount == 3){		//3개의 EP에서 보낸 데이터 Broker 테이블 입력 완료
-							
+						
+							iECount = 0;
+
+							WaitForSingleObject(hThread, INFINITE);
+				//			ResumeThread(hThread);
+
 							CMatch match;
 							match.NormalizeFactor();
 							match.InsertWeightTable();
@@ -134,15 +137,15 @@ void CSocket::CommSocket(){
 							int EP3_FD = 0;
 							for (int i = 0; i < NUM_OF_EP; i++){
 
-								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.85")){	//EP1: 165.132.123.85  
+								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.122.244")){	//EP1: 165.132.123.85  
 								
 									EP1_FD = stEpInfo[i].iFDNum;
 								}
-								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.86")) {	//EP2: 165.132.123.86
+								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.122.245")) {	//EP2: 165.132.123.86
 								
 									EP2_FD = stEpInfo[i].iFDNum;
 								}
-								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.87")) {	//EP3: 165.132.123.87
+								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.73")) {	//EP3: 165.132.123.87
 								
 									EP3_FD = stEpInfo[i].iFDNum;
 								}
@@ -150,13 +153,17 @@ void CSocket::CommSocket(){
 
 
 							match_result_data stMatchResData;
+							char cUser[128];
+
 							for (int i = 0; i < vecMatchResult.size(); i++){
 
 								if (vecMatchResult.at(i).iPrevEp == 1){
 									
 									if (vecMatchResult.at(i).iPrevEp != vecMatchResult.at(i).iCurrEP){
 									
-										stMatchResData.sUser = vecMatchResult.at(i).sUser;
+										memset(&stMatchResData, 0, sizeof(stMatchResData));
+										strcpy_s(stMatchResData.arrUser, 40, vecMatchResult.at(i).arrUser);
+									
 										stMatchResData.iPrevEp = vecMatchResult.at(i).iPrevEp;
 										stMatchResData.iCurrEP = vecMatchResult.at(i).iCurrEP;
 
@@ -168,7 +175,9 @@ void CSocket::CommSocket(){
 
 									if (vecMatchResult.at(i).iPrevEp != vecMatchResult.at(i).iCurrEP){
 
-										stMatchResData.sUser = vecMatchResult.at(i).sUser;
+										memset(&stMatchResData, 0, sizeof(stMatchResData));
+										strcpy_s(stMatchResData.arrUser, 40, vecMatchResult.at(i).arrUser);
+									
 										stMatchResData.iPrevEp = vecMatchResult.at(i).iPrevEp;
 										stMatchResData.iCurrEP = vecMatchResult.at(i).iCurrEP;
 
@@ -179,7 +188,9 @@ void CSocket::CommSocket(){
 									
 									if (vecMatchResult.at(i).iPrevEp != vecMatchResult.at(i).iCurrEP){
 
-										stMatchResData.sUser = vecMatchResult.at(i).sUser;
+										memset(&stMatchResData, 0, sizeof(stMatchResData));
+										strcpy_s(stMatchResData.arrUser, 40, vecMatchResult.at(i).arrUser);
+									
 										stMatchResData.iPrevEp = vecMatchResult.at(i).iPrevEp;
 										stMatchResData.iCurrEP = vecMatchResult.at(i).iCurrEP;
 
@@ -188,30 +199,19 @@ void CSocket::CommSocket(){
 								}
 							}
 
+							//EP에게 전송 끝을 알림
+							memset(&stMatchResData, 0, sizeof(stMatchResData));
+							char arrEndSignal [40] = "end_match_result_transmission";
+							strcpy_s(stMatchResData.arrUser, 40, arrEndSignal);
+							stMatchResData.iCurrEP = 0;
+							stMatchResData.iPrevEp = 0;
 
+					
+							send(EP1_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+							send(EP2_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+							send(EP3_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
 
-							//여기서 EP에게 돌려주는 걸 하자
-						//	for (int i = 0; i < NUM_OF_EP; i++){
-						
-							//	printf("[%d] IP Address: %s \n", i, stEpInfo[i].sIpAddr.c_str());
-							//	send(stEpInfo[i].iFDNum, (char*)&read_message, sizeof(read_message), 0);
-							//	printf("4. EP: %d, Side: %s \n", read_message.ep_num, read_message.side_flag);
-
-								/*
-								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.85")){	//EP1: 165.132.123.85
-									send(stEpInfo[i].iFDNum, (char*)&read_message, sizeof(read_message), 0);
-								}
-								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.86")) {	//EP2: 165.132.123.86
-									send(stEpInfo[i].iFDNum, (char*)&read_message, sizeof(read_message), 0);
-								}
-								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.87")) {	//EP3: 165.132.123.87
-									send(stEpInfo[i].iFDNum, (char*)&read_message, sizeof(read_message), 0);
-								}
-								*/
-								
-						//	}
-
-
+							goto ProcessEnd;
 						}
 					}
 				}
@@ -221,4 +221,11 @@ void CSocket::CommSocket(){
 		} // end for statement
 
 	} // end while statement
+ProcessEnd:
+	printf("[ProcessEnd] \n");
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+

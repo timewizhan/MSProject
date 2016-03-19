@@ -27,7 +27,7 @@ public:
 	~CSocket();
 
 	void InitSocket();
-	void CommSocket();
+	void CommSocket(HANDLE	hThread);
 //	void SendMessage();
 	void WriteMessage(void *client_message, void *num, int basefd, int maxfd);
 };

@@ -7,15 +7,17 @@ CBroker::CBroker(){
 
 void CBroker::InitBroker(){
 
-	printf("init_broker \n");
+//	printf("init_broker \n");
 
-	InitThread();
-	BridgeSocket();
+	while (1){
+		InitThread();
+		BridgeSocket(hThread);
+	}
 }
 
 void CBroker::InitThread(){
 
-	printf("init_thread \n");
+//	printf("init_thread \n");
 
 	hThread = (HANDLE)_beginthreadex(NULL, 0, PreprocessInsert, &m_cDatabase, NULL, NULL);
 	if (!hThread)
@@ -25,37 +27,36 @@ void CBroker::InitThread(){
 	}
 }
 
-void CBroker::BridgeSocket(){
+void CBroker::BridgeSocket(HANDLE hThread){
 
-	m_cDatabase.m_cSocket.CommSocket();
+	m_cDatabase.m_cSocket.CommSocket(hThread);
 }
 
 unsigned WINAPI PreprocessInsert(void *data){
 
-	printf("preprocess_insert \n");
+//	printf("preprocess_insert \n");
+	printf("[Thread Start] \n");
 	CDatabase *l_db = (CDatabase *)data;
 
-	int l_ny_traffic = 0;
-	int l_bs_traffic = 0;
-	int l_chi_traffic = 0;
-
 	int cnt = 0;
+	int iECount = 0;
+	ST_CCT stCCT;
 	while (1){
-		cnt++;
-		if (cnt % 31 == 0){ printf("\n"); }
-		printf(".");
+	//	Sleep(1000);
+	//	printf(".");
+	//	if (cnt % 40 == 0){
+	//		printf("\n");
+	//	}
 
-		if (!CDataQueue::getDataQueue()->getQueue().empty()){															//queue가 비어있지 않으면
-			//이부분에 큐가 비어있는걸로 체크하면 안되고,
-			//EP로 부터 데이터를 다 받았다는 메세지를 따로 받아야함
-
+		if (!CDataQueue::getDataQueue()->getQueue().empty()){	//queue가 비어있지 않으면
+		
 			ST_MONITORING_RESULT poppedData = CDataQueue::getDataQueue()->popDataFromQueue();
 
-			printf("\n[read test in preprocess of inserting data] \n");
-			printf("EP: %d, Side: %s \n", poppedData.ep_num, poppedData.side_flag);
-			printf("cpu_util: %d, server-side traffic: %d \n", poppedData.cpu_util, poppedData.server_side_traffic);
-			printf("user: %s, location: %s, timestamp: %d, user traffic: %d \n", poppedData.user, poppedData.location
-				, poppedData.timestamp, poppedData.traffic);
+			printf("\n - Preprocess of inserting data \n");
+			printf("  - User: %s \n", poppedData.user);
+		//	printf("cpu_util: %d, server-side traffic: %d \n", poppedData.cpu_util, poppedData.server_side_traffic);
+		//	printf("user: %s, location: %s, timestamp: %d, user traffic: %d \n", poppedData.user, poppedData.location
+		//		, poppedData.timestamp, poppedData.traffic);
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			//지역별로 트래픽 합치기
@@ -63,51 +64,329 @@ unsigned WINAPI PreprocessInsert(void *data){
 
 				if (!strcmp(poppedData.location, "NY")){
 
-					l_ny_traffic += poppedData.traffic;
-					l_db->insertData(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic
-						, poppedData.server_side_traffic, poppedData.cpu_util, poppedData.ep_num, poppedData.side_flag);	//서버 부분 빼고 다 넣어주기
+					stCCT.iNyTraffic += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);	//서버 부분 빼고 다 넣어주기
 
 				}
 				else if (!strcmp(poppedData.location, "BS")){
 
-					l_bs_traffic += poppedData.traffic;
-					l_db->insertData(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic
-						, poppedData.server_side_traffic, poppedData.cpu_util, poppedData.ep_num, poppedData.side_flag);
+					stCCT.iBsTraffic += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
 
 				}
 				else if (!strcmp(poppedData.location, "CHI")){
 
-					l_chi_traffic += poppedData.traffic;
-					l_db->insertData(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic
-						, poppedData.server_side_traffic, poppedData.cpu_util, poppedData.ep_num, poppedData.side_flag);
+					stCCT.iChiTraffic += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
 				}
+				else if (!strcmp(poppedData.location, "TEX")){
+
+					stCCT.iTexTraffic += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "WA")){
+
+					stCCT.iWhaTraffic += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "WHA")){
+
+					stCCT.iWhaTraffic += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+
+
+
+
+				else if (!strcmp(poppedData.location, "WASHINGTON")){
+
+					stCCT.WASHINGTON_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "MONTANA")){
+
+					stCCT.MONTANA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "NORTHDAKOTA")){
+
+					stCCT.NORTHDAKOTA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "OREGON")){
+
+					stCCT.OREGON_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "IDAHO")){
+
+					stCCT.IDAHO_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "WYOMING")){
+
+					stCCT.WYOMING_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "SOUTHDAKOTA")){
+
+					stCCT.SOUTHDAKOTA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "NEBRASKA")){
+
+					stCCT.NEBRASKA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "ALASKA")){
+
+					stCCT.ALASKA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "CALIFORNIA")){
+
+					stCCT.CALIFORNIA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "NEVADA")){
+
+					stCCT.NEVADA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "UTAH")){
+
+					stCCT.UTAH_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "COLORADO")){
+
+					stCCT.COLORADO_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "KANSAS")){
+
+					stCCT.KANSAS_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "MISSOURI")){
+
+					stCCT.MISSOURI_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "ARIZONA")){
+
+					stCCT.ARIZONA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "NEWMEXICO")){
+
+					stCCT.NEWMEXICO_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "TEXAS")){
+
+					stCCT.TEXAS_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "OKLAHOMA")){
+
+					stCCT.OKLAHOMA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "ARKANSAS")){
+
+					stCCT.ARKANSAS_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "LOUISIANA")){
+
+					stCCT.LOUISIANA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "HAWAII")){
+
+					stCCT.HAWAII_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "MINNESOTA")){
+
+					stCCT.MINNESOTA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "WISCONSIN")){
+
+					stCCT.WISCONSIN_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "MICHIGAN")){
+
+					stCCT.MICHIGAN_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "IOWA")){
+
+					stCCT.IOWA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "ILLINOIS")){
+
+					stCCT.ILLINOIS_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "INDIANA")){
+
+					stCCT.INDIANA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "OHIO")){
+
+					stCCT.OHIO_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "PENNSYLVANIA")){
+
+					stCCT.PENNSYLVANIA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "NEWYORK")){
+
+					stCCT.NEWYORK_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "VERMONT")){
+
+					stCCT.VERMONT_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "NEWHAMPSHIRE")){
+
+					stCCT.NEWHAMPSHIRE_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "MAINE")){
+
+					stCCT.MAINE_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "MASSACHUSETTS")){
+
+					stCCT.MASSACHUSETTS_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "RHODE")){
+
+					stCCT.RHODE_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "CONNECTICUT")){
+
+					stCCT.CONNECTICUT_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "NEWJERSY")){
+
+					stCCT.NEWJERSY_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "DELAWARE")){
+
+					stCCT.DELAWARE_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "MARYLAND")){
+
+					stCCT.MARYLAND_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "KENTUCKY")){
+
+					stCCT.KENTUCKY_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "WESTVIRGINIA")){
+
+					stCCT.WESTVIRGINIA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "VIRGINIA")){
+
+					stCCT.VIRGINIA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "TENNESSEE")){
+
+					stCCT.TENNESSEE_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "NORTHCAROLINA")){
+
+					stCCT.NORTHCAROLINA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "MISSISSIPPI")){
+
+					stCCT.MISSISSIPPI_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "ALABAMA")){
+
+					stCCT.ALABAMA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "GEORGIA")){
+
+					stCCT.GEORGIA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "SOUTHCAROLINA")){
+
+					stCCT.SOUTHCAROLINA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "FLORIDA")){
+
+					stCCT.FLORIDA_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+				else if (!strcmp(poppedData.location, "GUAM")){
+
+					stCCT.GUAM_TRAFFIC += poppedData.traffic;
+					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				}
+
+
+
+
+
+
+
+
+
+
 
 			}
 			else if (!strcmp(poppedData.side_flag, "s")){
 
-				l_db->insertData(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic
-					, poppedData.server_side_traffic, poppedData.cpu_util, poppedData.ep_num, poppedData.side_flag);		//클라이언트 부분 빼고 다 넣어주기
+				l_db->InsertServerTable(poppedData.ep_num, poppedData.server_side_traffic, poppedData.cpu_util);		//클라이언트 부분 빼고 다 넣어주기
 
 			}
 			else if (!strcmp(poppedData.side_flag, "e")){
 
-				break;
+				iECount++;
+
+				if (iECount == 3){
+					iECount = 0;
+					break;
+				}
 			}
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		}
-
-		::Sleep(1000);
 	}
 
 
 	//여기서 client-side traffic 값 넣어주기
-	printf("Total traffic test: NY TT = %d, BS TT = %d, CHI TT = %d", l_ny_traffic, l_bs_traffic, l_chi_traffic);
-	l_db->updateLocation(l_ny_traffic, l_bs_traffic, l_chi_traffic);
-
-
-	// 데이터 값들 정규화 하는 함수 호출
-
-	//	여기서 LP 알고리즘을 호출해야할듯.
+	printf(" - Total Traffic \n");
+	l_db->updateLocation(stCCT);
 
 	return 0;
 }

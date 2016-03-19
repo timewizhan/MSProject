@@ -4,7 +4,7 @@ CMatch::CMatch(){
 	/* We will build the model row by row
 	So we start with creating a model with 0 rows and 2 columns */
 	CDatabase	databaseInstance;
-	vector<client_data> vecClientData = databaseInstance.extractClientData("select * from client_table", 4);
+	vector<client_data> vecClientData = databaseInstance.extractClientData("select * from client_table");
 	
 	user_no = vecClientData.size();;
 	cloud_no = 3;
@@ -40,17 +40,17 @@ void CMatch::NormalizeFactor(){
 	int iMinValue = FindMin(vec_server_side_traffic_list);
 
 	double dRange = 1.0 / (iMaxValue - iMinValue);
-	vector <double> vecNormalizedSST;
+	
+	norm_server_data stNormServerData;
+	vector <norm_server_data> vecNormalizedSST;
 	for (int i = 0; i < vec_server_side_traffic_list.size(); i++){
 
 		double dNormalizedVal = (vec_server_side_traffic_list.at(i) - iMinValue)*dRange;
-		vecNormalizedSST.push_back(dNormalizedVal);
-	}
-
-//	printf("\n");
-	for (int i = 0; i < vecNormalizedSST.size(); i++){
-		double dValue = vecNormalizedSST.at(i);
-	//	printf("[%d] normalized server side traffic: %f \n", i, (double)dValue);
+		
+		stNormServerData.sEpNum = vecDataList_server.at(i).sEpNum;
+		stNormServerData.dServerSideTraffic = dNormalizedVal;
+		
+		vecNormalizedSST.push_back(stNormServerData);
 	}
 
 	databaseInstance.InsertNormServerTable(vecNormalizedSST, "SST");
@@ -71,17 +71,17 @@ void CMatch::NormalizeFactor(){
 	iMinValue = FindMin(vec_cpu_util_list);
 	 
 	dRange = 1.0 / (iMaxValue - iMinValue);
-	vector <double> vecNormalizedCpuUtil;
+
+//	norm_server_data stNormServerData;
+	vector <norm_server_data> vecNormalizedCpuUtil;
 	for (int i = 0; i < vec_cpu_util_list.size(); i++){
 
 		double dNormalizedVal = (vec_cpu_util_list.at(i) - iMinValue)*dRange;
-		vecNormalizedCpuUtil.push_back(dNormalizedVal);
-	}
+		
+		stNormServerData.sEpNum = vecDataList_server.at(i).sEpNum;
+		stNormServerData.dCpuUtil = dNormalizedVal;
 
-	printf("\n");
-	for (int i = 0; i < vecNormalizedCpuUtil.size(); i++){
-		double dValue = vecNormalizedCpuUtil.at(i);
-//		printf("[%d] normalized cpu utilization: %f \n", i, (double)dValue);
+		vecNormalizedCpuUtil.push_back(stNormServerData);
 	}
 
 	databaseInstance.InsertNormServerTable(vecNormalizedCpuUtil, "CPU");
@@ -115,19 +115,13 @@ void CMatch::NormalizeFactor(){
 
 	vector <string> vecNormalizedCSTLocation = databaseInstance.ExtractCstLocation();
 
-//	printf("\n");
-	for (int i = 0; i < vecNormalizedCST.size(); i++){
-	double dValue = vecNormalizedCST.at(i);
-//	printf("[%d] normalized client side taffic/location: %f/%s \n", i, (double)dValue, vecNormalizedCSTLocation.at(i).c_str());
-	}
-
 	databaseInstance.InsertNormCstTable(vecNormalizedCST, vecNormalizedCSTLocation);
 	
 
 
 	//normalizing >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> distance 
 	sQuery = "select * from client_table";
-	vecDataList_client = databaseInstance.extractClientData(sQuery, 4);
+	vecDataList_client = databaseInstance.extractClientData(sQuery);
 
 	vector <int> vec_distance_list;
 	for (int i = 0; i < vecDataList_client.size(); i++){
@@ -241,26 +235,100 @@ void CMatch::InsertWeightTable(){
 	double c = 1.0;
 	double d = 1.0;
 	CDatabase	databaseInstance;
-	vector <norm_server_data> vecNormServData = databaseInstance.ExtractNormServerData();
-	vector <norm_cst_data> vecNormCstData = databaseInstance.ExtractNormCstData();
-	vector <norm_dist_data> vecNormDistData = databaseInstance.ExtractNormDistData();
-	for (int i = 0; i < vecNormDistData.size(); i++){
-		//user1, ep1
-		double weight_ep1 = a*(vecNormServData.at(0).dCpuUtil) + b*(vecNormServData.at(0).dServerSideTraffic) 
-			+ c*(vecNormCstData.at(i).dCst) + d*(vecNormDistData.at(i).dEp1);
-		//user1, ep2
-		double weight_ep2 = a*(vecNormServData.at(1).dCpuUtil) + b*(vecNormServData.at(1).dServerSideTraffic)
-			+ c*(vecNormCstData.at(i).dCst) + d*(vecNormDistData.at(i).dEp2);
-		//user1, ep3
-		double weight_ep3 = a*(vecNormServData.at(2).dCpuUtil) + b*(vecNormServData.at(2).dServerSideTraffic)
-			+ c*(vecNormCstData.at(i).dCst) + d*(vecNormDistData.at(i).dEp3);
+//	vector <norm_server_data> vecNormServData = databaseInstance.ExtractNormServerData();
+//	vector <norm_cst_data> vecNormCstData = databaseInstance.ExtractNormCstData();
+//	vector <norm_dist_data> vecNormDistData = databaseInstance.ExtractNormDistData();
+	string sQuery;
+	sQuery = "select * from client_table";
+	vector<client_data> vecClientData = databaseInstance.extractClientData(sQuery);
 
-		if (i == 0){
+	double dCpuUtil = 0;
+	double dSst = 0;
+	double dCst = 0;
+	double dEp1Dist = 0;
+	double dEp2Dist = 0;
+	double dEp3Dist = 0;
+	double dWeight_EP1 = 0;
+	double dWeight_EP2 = 0;
+	double dWeight_EP3 = 0;
+	norm_server_data stNormServerData;
+	norm_cst_data stNormCstData;
+
+	for (int i = 0; i < vecClientData.size(); i++){		//모든 유저에 대해서...
+
+	string sUser;
+	sUser = vecClientData.at(i).sUser;
+	//user1, ep1
+		
+		//SST, CPU
+		sQuery = "select * from normalized_server_table where EP = 'EP1'";
+		stNormServerData = databaseInstance.ExtractNormServerData(sQuery);
+		dCpuUtil = stNormServerData.dCpuUtil;
+		dSst = stNormServerData.dServerSideTraffic;
+
+		//CST
+		sQuery = "select A.user, A.location, B.client_side_traffic from client_table A join normalized_cst_table B on A.location = B.location where A.user ='" + sUser + "'";
+		stNormCstData = databaseInstance.ExtractNormCstData(sQuery);
+		dCst = stNormCstData.dCst;
+
+		//DIST
+		sQuery = "select user, ep1 from normalized_distance_table where user ='" + sUser + "'";
+		dEp1Dist = databaseInstance.ExtractNormDistData(sQuery);
+
+		//weight
+		dWeight_EP1 = a*dCpuUtil + b*dSst + c*dCst + d*dEp1Dist;
+
+
+	//user1, ep2
+	
+		//SST, CPU
+		sQuery = "select * from normalized_server_table where EP = 'EP2'";
+		stNormServerData = databaseInstance.ExtractNormServerData(sQuery);
+		dCpuUtil = stNormServerData.dCpuUtil;
+		dSst = stNormServerData.dServerSideTraffic;
+
+		//CST
+		sQuery = "select A.user, A.location, B.client_side_traffic from client_table A join normalized_cst_table B on A.location = B.location where A.user ='" + sUser + "'";
+		stNormCstData = databaseInstance.ExtractNormCstData(sQuery);
+		dCst = stNormCstData.dCst;
+
+		//DIST
+		sQuery = "select user, ep2 from normalized_distance_table where user ='" + sUser + "'";
+		dEp2Dist = databaseInstance.ExtractNormDistData(sQuery);
+
+		//weight
+		dWeight_EP2 = a*dCpuUtil + b*dSst + c*dCst + d*dEp2Dist;
+	
+
+	//user1, ep3
+	
+		//SST, CPU
+		sQuery = "select * from normalized_server_table where EP = 'EP3'";
+		stNormServerData = databaseInstance.ExtractNormServerData(sQuery);
+		dCpuUtil = stNormServerData.dCpuUtil;
+		dSst = stNormServerData.dServerSideTraffic;
+
+		//CST
+		sQuery = "select A.user, A.location, B.client_side_traffic from client_table A join normalized_cst_table B on A.location = B.location where A.user ='" + sUser + "'";
+		stNormCstData = databaseInstance.ExtractNormCstData(sQuery);
+		dCst = stNormCstData.dCst;
+
+		//DIST
+		sQuery = "select user, ep3 from normalized_distance_table where user ='" + sUser + "'";
+		dEp3Dist = databaseInstance.ExtractNormDistData(sQuery);
+
+		//weight
+		dWeight_EP3 = a*dCpuUtil + b*dSst + c*dCst + d*dEp3Dist;
+
+
+
+
+//		if (i == 0){
 //			printf("ep1 - sst: %f, cpu: %f, cst: %f, dis: %f", 
 //			vecNormServData.at(0).dServerSideTraffic, vecNormServData.at(0).dCpuUtil, vecNormCstData.at(i).dCst, vecNormDistData.at(i).dEp1);
-		}
+//		}
 		//user1의 ep1, ep2, ep3에 대한 가중치 DB에 넣기
-		databaseInstance.InsertWeightTable(vecNormDistData.at(i).sUser, i, weight_ep1, weight_ep2, weight_ep3);
+		databaseInstance.InsertWeightTable(sUser, i, dWeight_EP1, dWeight_EP2, dWeight_EP3);
 		
 	}
 
@@ -269,7 +337,7 @@ void CMatch::InsertWeightTable(){
 
 vector <match_result_data> CMatch::CalculateLP(){
 	
-	printf("CalculateLP method \n");
+//	printf("CalculateLP method \n");
 
 	if (lp == NULL)		ret = 1; 
 
@@ -451,14 +519,14 @@ vector <match_result_data> CMatch::CalculateLP(){
 		for (int j = 0; j < Ncol; j++){
 			if (row[j] > 0){
 				string sMatchResult = get_col_name(lp, j + 1);
-				printf("%s, length: %d \n", sMatchResult.c_str(), sMatchResult.length());
+			//	printf("%s, length: %d \n", sMatchResult.c_str(), sMatchResult.length());
 			//	printf("%s \n", get_col_name(lp, j + 1));
 
 				//string 잘라내서 (substr) 매치 결과 뽑아내기
 				string sFullString = sMatchResult;
 				int iStringLength = sMatchResult.length();
-				string sUserNo = sFullString.substr(2,1);
-				string sEpNo = sFullString.substr(3, iStringLength);
+				string sUserNo = sFullString.substr(2, iStringLength-3);
+				string sEpNo = sFullString.substr(iStringLength-1, 1);
 				printf("User number : %s, ", sUserNo.c_str());
 				printf("EP number : %s \n", sEpNo.c_str());
 
@@ -474,6 +542,7 @@ vector <match_result_data> CMatch::CalculateLP(){
 
 
 	//여기서 Prev 값이랑 다른 것만 추출해서 update_matching_table에 저장
+	//user랑 EP랑 매칭할때 weight_table에 있는 user, user_no 값에 따라서 매칭 해야한다.
 	databaseInstance.InsertUpdateMatchingTable();
 	
 	//데이터 읽어와서 벡터에 저장한 다음에 리턴으로 돌려줌

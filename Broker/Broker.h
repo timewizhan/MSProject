@@ -18,7 +18,7 @@ public:
 
 	void InitBroker();
 	void InitThread();
-	void BridgeSocket();
+	void BridgeSocket(HANDLE hThread);
 
 };
 

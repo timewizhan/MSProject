@@ -18,7 +18,7 @@ CDatabase::~CDatabase(){
 
 int CDatabase::InitDB(){
 
-	printf("init db \n");
+//	printf("init db \n");
 
 	mysql_init(&conn);
 
@@ -32,14 +32,14 @@ int CDatabase::InitDB(){
 	}
 	else if (connection){
 
-		printf("connection success \n");
+	//	printf("connection success \n");
 	}
 
 	return 0;
 }
 
 
-vector<client_data> CDatabase::extractClientData(string sQuery, int iNumOfColumn){
+vector<client_data> CDatabase::extractClientData(string sQuery){
 
 	m_iQueryStat = mysql_query(connection, sQuery.c_str());
 	if (m_iQueryStat != 0) {
@@ -81,6 +81,7 @@ vector<server_data> CDatabase::extractServerData(string sQuery, int iNumOfColumn
 	vector <server_data> vecServerData;
 	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
 
+		stResData.sEpNum = sql_row[0];
 		stResData.iServerSideTraffic = atoi(sql_row[1]);
 		stResData.iCpuUtil = atoi(sql_row[2]);
 
@@ -153,7 +154,7 @@ vector <string> CDatabase::ExtractCstLocation(){
 		sResData = sql_row[0];
 		vecClientData.push_back(sResData);
 	//	printf("test / location : %s \n", sql_row[0]);
-		printf("test / location : %s \n", sResData.c_str());
+	//	printf("test / location : %s \n", sResData.c_str());
 	}
 
 	mysql_free_result(sql_result);
@@ -168,7 +169,7 @@ coord_value	CDatabase::ExtractCoordValue(string sLocation){
 	string cond_close = "'";
 
 	sQuery = sQuery + cond_open + sLocation + cond_close;
-	printf("query [%s]: %s", sLocation.c_str(), sQuery.c_str());
+//	printf("query [%s]: %s", sLocation.c_str(), sQuery.c_str());
 
 	m_iQueryStat = mysql_query(connection, sQuery.c_str());
 	if (m_iQueryStat != 0) {
@@ -191,9 +192,7 @@ coord_value	CDatabase::ExtractCoordValue(string sLocation){
 	return stCoordValue;
 }
 
-vector<norm_server_data> CDatabase::ExtractNormServerData(){
-	
-	string sQuery = "select * from normalized_server_table";
+norm_server_data CDatabase::ExtractNormServerData(string sQuery){
 	
 	m_iQueryStat = mysql_query(connection, sQuery.c_str());
 	if (m_iQueryStat != 0) {
@@ -204,25 +203,19 @@ vector<norm_server_data> CDatabase::ExtractNormServerData(){
 	sql_result = mysql_store_result(connection);
 
 	norm_server_data stResValue;
-	vector <norm_server_data> vecNormServData;
 	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
 
 		stResValue.sEpNum = sql_row[0];
 		stResValue.dServerSideTraffic = stod(sql_row[1]);
 		stResValue.dCpuUtil = stod(sql_row[2]);
-		//	printf("test / location : %s \n", sql_row[0]);
-
-		vecNormServData.push_back(stResValue);
 	}
 
 	mysql_free_result(sql_result);
 
-	return vecNormServData;
+	return stResValue;
 }
 
-vector<norm_cst_data> CDatabase::ExtractNormCstData(){
-
-	string sQuery = "select A.user, B.client_side_traffic from client_table A join normalized_cst_table B on A.location = B.location";
+norm_cst_data CDatabase::ExtractNormCstData(string sQuery){
 
 	m_iQueryStat = mysql_query(connection, sQuery.c_str());
 	if (m_iQueryStat != 0) {
@@ -233,23 +226,19 @@ vector<norm_cst_data> CDatabase::ExtractNormCstData(){
 	sql_result = mysql_store_result(connection);
 
 	norm_cst_data stResValue;
-	vector <norm_cst_data> vecNormCstData;
 	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
 
-		stResValue.sUser = sql_row[0];
-		stResValue.dCst = stod(sql_row[1]);
-		
-		vecNormCstData.push_back(stResValue);
+		stResValue.sUser = sql_row[0];	//user
+	//	stResValue.		= sql_row[1] // <-- location
+		stResValue.dCst = stod(sql_row[2]);	//client_side_traffic
 	}
 
 	mysql_free_result(sql_result);
 
-	return vecNormCstData;
+	return stResValue;
 }
 
-vector<norm_dist_data> CDatabase::ExtractNormDistData(){
-
-	string sQuery = "select * from normalized_distance_table";
+double CDatabase::ExtractNormDistData(string sQuery){
 
 	m_iQueryStat = mysql_query(connection, sQuery.c_str());
 	if (m_iQueryStat != 0) {
@@ -259,21 +248,18 @@ vector<norm_dist_data> CDatabase::ExtractNormDistData(){
 
 	sql_result = mysql_store_result(connection);
 
-	norm_dist_data stResValue;
-	vector <norm_dist_data> vecNormDistData;
+	double dResValue = 0;
 	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
 
-		stResValue.sUser = sql_row[0];
-		stResValue.dEp1 = stod(sql_row[1]);
-		stResValue.dEp2 = stod(sql_row[2]);
-		stResValue.dEp3 = stod(sql_row[3]);
-
-		vecNormDistData.push_back(stResValue);
+	//	stResValue.sUser = sql_row[0];
+		dResValue = stod(sql_row[1]);
+	//	stResValue.dEp2 = stod(sql_row[2]);
+	//	stResValue.dEp3 = stod(sql_row[3]);
 	}
 
 	mysql_free_result(sql_result);
 
-	return vecNormDistData;
+	return dResValue;
 }
 
 vector<weight_data> CDatabase::ExtractWeightData(){
@@ -322,7 +308,8 @@ vector <match_result_data> CDatabase::ExtractMatchResult(){
 	vector <match_result_data> vecMatchResult;
 	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
 
-		stResValue.sUser = sql_row[0];
+	//	stResValue.sUser = sql_row[0];
+		strcpy_s(stResValue.arrUser, 40, sql_row[0]);
 		stResValue.iPrevEp = atoi(sql_row[2]);
 		stResValue.iCurrEP = atoi(sql_row[3]);
 
@@ -333,7 +320,7 @@ vector <match_result_data> CDatabase::ExtractMatchResult(){
 
 	return vecMatchResult;
 }
-
+/*
 void CDatabase::insertData(string name, string location, int timestamp, int client_side_traffic, int server_side_traffic, int cpu_util, int ep_num, string side_flag){
 
 
@@ -350,14 +337,69 @@ void CDatabase::insertData(string name, string location, int timestamp, int clie
 	}
 
 }
+*/
+void CDatabase::InsertServerTable(int iEP, int server_side_traffic, int cpu_util){
 
-void CDatabase::InsertNormServerTable(vector <double> vecNormalizedData, string sFlag){
+	string sEP; 
+
+	if (iEP == 1){
+		sEP = "EP1";
+	}
+	else if (iEP == 2){
+		sEP = "EP2";
+	}
+	else if (iEP == 3){
+		sEP = "EP3";
+	}
+
+
+	char query[255];
+
+	sprintf_s(query, sizeof(query), "insert into server_table values ('%s', %d, %d)",
+		sEP.c_str(), server_side_traffic, cpu_util);
+
+	m_iQueryStat = mysql_query(connection, query);
+
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+}
+
+void CDatabase::InsertClientTable(string sUser, string sLocation, int iTimestamp, int iClientSideTraffic){
+
+
+	char query[255];
+
+	sprintf_s(query, sizeof(query), "insert into client_table values ('%s', '%s', %d, %d)",
+		sUser.c_str(), sLocation.c_str(), iTimestamp, iClientSideTraffic);
+
+	m_iQueryStat = mysql_query(connection, query);
+
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+}
+
+void CDatabase::InsertNormServerTable(vector <norm_server_data> vecNormalizedData, string sFlag){
 
 	char query[255];
 
 	if (!strcmp(sFlag.c_str(), "SST")){
 	
-		sprintf_s(query, sizeof(query), "insert into normalized_server_table values ('EP1', '%f', '%f')", vecNormalizedData.at(0), 0);
+		sprintf_s(query, sizeof(query), "insert into normalized_server_table values ('%s', '%f', '%f')", vecNormalizedData.at(0).sEpNum.c_str(), vecNormalizedData.at(0).dServerSideTraffic, 0);
+
+		m_iQueryStat = mysql_query(connection, query);
+
+		if (m_iQueryStat != 0){
+
+			fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+		}
+		
+		sprintf_s(query, sizeof(query), "insert into normalized_server_table values ('%s', '%f', '%f')", vecNormalizedData.at(1).sEpNum.c_str(), vecNormalizedData.at(1).dServerSideTraffic, 0);
 
 		m_iQueryStat = mysql_query(connection, query);
 
@@ -366,7 +408,7 @@ void CDatabase::InsertNormServerTable(vector <double> vecNormalizedData, string 
 			fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
 		}
 
-		sprintf_s(query, sizeof(query), "insert into normalized_server_table values ('EP2', '%f', '%f')", vecNormalizedData.at(1), 0);
+		sprintf_s(query, sizeof(query), "insert into normalized_server_table values ('%s', '%f', '%f')", vecNormalizedData.at(2).sEpNum.c_str(), vecNormalizedData.at(2).dServerSideTraffic, 0);
 
 		m_iQueryStat = mysql_query(connection, query);
 
@@ -374,20 +416,12 @@ void CDatabase::InsertNormServerTable(vector <double> vecNormalizedData, string 
 
 			fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
 		}
-
-		sprintf_s(query, sizeof(query), "insert into normalized_server_table values ('EP3', '%f', '%f')", vecNormalizedData.at(2), 0);
-
-		m_iQueryStat = mysql_query(connection, query);
-
-		if (m_iQueryStat != 0){
-
-			fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
-		}
+		
 	}
 	else if (!strcmp(sFlag.c_str(), "CPU")) {
 
 		//EP1
-		sprintf_s(query, sizeof(query), "UPDATE normalized_server_table SET cpu_util = %f WHERE EP = 'EP1'", vecNormalizedData.at(0));
+		sprintf_s(query, sizeof(query), "UPDATE normalized_server_table SET cpu_util = %f WHERE EP = '%s'", vecNormalizedData.at(0).dCpuUtil, vecNormalizedData.at(0).sEpNum.c_str());
 
 		m_iQueryStat = mysql_query(connection, query);
 		if (m_iQueryStat != 0){
@@ -395,8 +429,9 @@ void CDatabase::InsertNormServerTable(vector <double> vecNormalizedData, string 
 			fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
 		}
 
+		
 		//EP2
-		sprintf_s(query, sizeof(query), "UPDATE normalized_server_table SET cpu_util = %f WHERE EP = 'EP2'", vecNormalizedData.at(1));
+		sprintf_s(query, sizeof(query), "UPDATE normalized_server_table SET cpu_util = %f WHERE EP = '%s'", vecNormalizedData.at(1).dCpuUtil, vecNormalizedData.at(1).sEpNum.c_str());
 
 		m_iQueryStat = mysql_query(connection, query);
 		if (m_iQueryStat != 0){
@@ -405,13 +440,14 @@ void CDatabase::InsertNormServerTable(vector <double> vecNormalizedData, string 
 		}
 
 		//EP3
-		sprintf_s(query, sizeof(query), "UPDATE normalized_server_table SET cpu_util = %f WHERE EP = 'EP3'", vecNormalizedData.at(2));
+		sprintf_s(query, sizeof(query), "UPDATE normalized_server_table SET cpu_util = %f WHERE EP = '%s'", vecNormalizedData.at(2).dCpuUtil, vecNormalizedData.at(2).sEpNum.c_str());
 
 		m_iQueryStat = mysql_query(connection, query);
 		if (m_iQueryStat != 0){
 
 			fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
 		}
+		
 	}
 }
 
@@ -609,12 +645,13 @@ boolean CDatabase::CheckPrevTableEmpty(){
 	return bEmptyCheck;
 }
 
-void CDatabase::updateLocation(int l_ny_traffic, int l_bs_traffic, int l_chi_traffic){
+//void CDatabase::updateLocation(int l_ny_traffic, int l_bs_traffic, int l_chi_traffic){
+void CDatabase::updateLocation(ST_CCT stCCT){
 
 	char query[255];
 
 	//NY
-	sprintf_s(query, sizeof(query), "UPDATE broker_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NY'", l_ny_traffic);
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NY'", stCCT.iNyTraffic);
 
 	m_iQueryStat = mysql_query(connection, query);
 	if (m_iQueryStat != 0){
@@ -623,7 +660,7 @@ void CDatabase::updateLocation(int l_ny_traffic, int l_bs_traffic, int l_chi_tra
 	}
 
 	//BS
-	sprintf_s(query, sizeof(query), "UPDATE broker_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'BS'", l_bs_traffic);
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'BS'", stCCT.iBsTraffic);
 
 	m_iQueryStat = mysql_query(connection, query);
 	if (m_iQueryStat != 0){
@@ -632,7 +669,489 @@ void CDatabase::updateLocation(int l_ny_traffic, int l_bs_traffic, int l_chi_tra
 	}
 
 	//CHI
-	sprintf_s(query, sizeof(query), "UPDATE broker_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'CHI'", l_chi_traffic);
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'CHI'", stCCT.iChiTraffic);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'TEX'", stCCT.iTexTraffic);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'WA'", stCCT.iWhaTraffic);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+
+
+
+
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'WASHINGTON'", stCCT.WASHINGTON_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'MONTANA'", stCCT.MONTANA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NORTHDAKOTA'", stCCT.NORTHDAKOTA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'OREGON'", stCCT.OREGON_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'IDAHO'", stCCT.IDAHO_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'WYOMING'", stCCT.WYOMING_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'SOUTHDAKOTA'", stCCT.SOUTHDAKOTA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NEBRASKA'", stCCT.NEBRASKA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'ALASKA'", stCCT.ALASKA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'CALIFORNIA'", stCCT.CALIFORNIA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NEVADA'", stCCT.NEVADA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'UTAH'", stCCT.UTAH_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'COLORADO'", stCCT.COLORADO_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'KANSAS'", stCCT.KANSAS_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'MISSOURI'", stCCT.MISSOURI_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'ARIZONA'", stCCT.ARIZONA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NEWMEXICO'", stCCT.NEWMEXICO_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'TEXAS'", stCCT.TEXAS_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'OKLAHOMA'", stCCT.OKLAHOMA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'ARKANSAS'", stCCT.ARKANSAS_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'LOUISIANA'", stCCT.LOUISIANA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'HAWAII'", stCCT.HAWAII_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'MINNESOTA'", stCCT.MINNESOTA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'WISCONSIN'", stCCT.WISCONSIN_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'MICHIGAN'", stCCT.MICHIGAN_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'IOWA'", stCCT.IOWA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'ILLINOIS'", stCCT.ILLINOIS_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'INDIANA'", stCCT.INDIANA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'OHIO'", stCCT.OHIO_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'PENNSYLVANIA'", stCCT.PENNSYLVANIA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NEWYORK'", stCCT.NEWYORK_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'VERMONT'", stCCT.VERMONT_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NEWHAMPSHIRE'", stCCT.NEWHAMPSHIRE_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'MAINE'", stCCT.MAINE_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'MASSACHUSETTS'", stCCT.MASSACHUSETTS_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'RHODE'", stCCT.RHODE_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'CONNECTICUT'", stCCT.CONNECTICUT_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NEWJERSY'", stCCT.NEWJERSY_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'DELAWARE'", stCCT.DELAWARE_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'MARYLAND'", stCCT.MARYLAND_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'KENTUCKY'", stCCT.KENTUCKY_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'WESTVIRGINIA'", stCCT.WESTVIRGINIA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'VIRGINIA'", stCCT.VIRGINIA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'TENNESSEE'", stCCT.TENNESSEE_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'NORTHCAROLINA'", stCCT.NORTHCAROLINA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'MISSISSIPPI'", stCCT.MISSISSIPPI_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'ALABAMA'", stCCT.ALABAMA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'GEORGIA'", stCCT.GEORGIA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'SOUTHCAROLINA'", stCCT.SOUTHCAROLINA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'FLORIDA'", stCCT.FLORIDA_TRAFFIC);
+
+	m_iQueryStat = mysql_query(connection, query);
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	//CHI
+	sprintf_s(query, sizeof(query), "UPDATE client_table SET CLIENT_SIDE_TRAFFIC = %d WHERE LOCATION = 'GUAM'", stCCT.GUAM_TRAFFIC);
 
 	m_iQueryStat = mysql_query(connection, query);
 	if (m_iQueryStat != 0){
@@ -647,7 +1166,11 @@ void CDatabase::UpdatePrevMatchingTable(vector <match_result_data> vecMatchResul
 
 	for (int i = 0; i < vecMatchResult.size(); i++){
 
-		sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).sUser.c_str());
+		char arrUser[40];
+		memset(arrUser, 0x00, 40);
+		strcpy_s(arrUser, 40, vecMatchResult.at(i).arrUser);
+
+		sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
 
 		m_iQueryStat = mysql_query(connection, query);
 		if (m_iQueryStat != 0){
@@ -660,6 +1183,8 @@ void CDatabase::UpdatePrevMatchingTable(vector <match_result_data> vecMatchResul
 void CDatabase::DeleteTables(){
 
 	string arrQuery[] = {
+		"delete from server_table",
+		"delete from client_table",
 		"delete from cst_table",
 		"delete from distance_table",
 		"delete from normalized_cst_table",

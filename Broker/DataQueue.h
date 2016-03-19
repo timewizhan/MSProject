@@ -8,6 +8,7 @@ class CDataQueue{
 private:
 	static CDataQueue*					m_cQueue;
 	deque <ST_MONITORING_RESULT>		m_deQueue;
+//	queue <ST_MONITORING_RESULT>		m_deQueue;
 	CRITICAL_SECTION					m_stCriticalSection;
 
 	CDataQueue();

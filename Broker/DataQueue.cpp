@@ -21,7 +21,6 @@ void CDataQueue::pushDataToQueue(ST_MONITORING_RESULT data){
 	::EnterCriticalSection(&m_stCriticalSection);
 	m_deQueue.push_back(data);
 	::LeaveCriticalSection(&m_stCriticalSection);
-
 }
 
 ST_MONITORING_RESULT CDataQueue::popDataFromQueue(){
