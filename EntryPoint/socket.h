@@ -19,15 +19,16 @@ struct monitoring_result{
 	int server_side_traffic;
 
 	//client side monitoring result
-	char user[20];
-	char location[20];
+	char user[40];
+	char location[40];
 	int timestamp;
 	int traffic;
 };
 
 struct match_result_data{
 
-	string sUser;
+//	string sUser;
+	char arrUser[40];
 	int iPrevEp;
 	int iCurrEP;
 };

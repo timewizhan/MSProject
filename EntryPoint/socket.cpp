@@ -26,7 +26,7 @@ void CSocket::init_socket(){
 	//변수 초기화
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	server_addr.sin_addr.s_addr = inet_addr("165.132.120.144");
 	server_addr.sin_port = htons(3333);
 
 	clen = sizeof(server_addr);
@@ -36,6 +36,28 @@ void CSocket::init_socket(){
 		perror("connect error : ");
 	}
 }
+/*
+void CSocket::send_message(){
+
+	//send message
+	if (send(ssock, (char*)&write_message, sizeof(write_message), 0)<0){
+		perror("write error : ");
+		exit(1);
+	}
+}
+
+match_result_data CSocket::recv_message(){
+
+	//recv
+	memset(&read_message, 0, sizeof(read_message));
+	int data_len = recv(ssock, (char*)&read_message, sizeof(read_message), 0);
+	printf("data_len: %d \n", data_len);
+//	printf("WSAStartup failed. Error No. %d\n", WSAGetLastError());
+	printf("User: %s, Prev: %d, Curr: %d \n", read_message.sUser.c_str(), read_message.iPrevEp, read_message.iCurrEP);
+
+	return read_message;
+}*/
+
 
 void CSocket::send_message(){
 
@@ -51,7 +73,8 @@ match_result_data CSocket::recv_message(){
 	//recv
 	memset(&read_message, 0, sizeof(read_message));
 	int data_len = recv(ssock, (char*)&read_message, sizeof(read_message), 0);
-	printf("User: %s, Prev: %d, Curr: %d \n", read_message.sUser.c_str(), read_message.iPrevEp, read_message.iCurrEP);
+
+	printf("User: %s, Prev: %d, Curr: %d \n", read_message.arrUser, read_message.iPrevEp, read_message.iCurrEP);
 
 	return read_message;
 }

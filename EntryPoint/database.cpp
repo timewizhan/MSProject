@@ -54,7 +54,7 @@ int CDatabase::extractData()
 		m_socket.write_message.server_side_traffic = _server_side_traffic;
 		//		printf("test: %d %d", _cpu_util,_server_side_traffic);
 		//구조체의 나머지 부분은 NULL 로 채운다. flag도 값 넣어줘야함
-		m_socket.write_message.ep_num = 1;
+		m_socket.write_message.ep_num = 2;
 		//		m_socket.write_message.side_flag = "s";
 		strcpy_s(m_socket.write_message.side_flag, 2, "s");
 		memset(&m_socket.write_message.user, 0, sizeof(m_socket.write_message.user));
@@ -67,7 +67,7 @@ int CDatabase::extractData()
 
 	mysql_free_result(sql_result);
 
-	::Sleep(1);
+//	::Sleep(1);
 
 	printf("\n");
 
@@ -100,11 +100,11 @@ int CDatabase::extractData()
 		m_socket.write_message.server_side_traffic = 0;				//server-side traffic
 
 		m_socket.send_message(); //아니면 이걸 그냥 static으로 선언해버릴까?
-		::Sleep(1);
+	//	::Sleep(1);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
-	::Sleep(1);
+//	::Sleep(1);
 
 	memset(&m_socket.write_message, 0, sizeof(m_socket.write_message));
 	strcpy_s(m_socket.write_message.side_flag, 2, "e");											//전송할 내용이 더이상 없음을 알리는 플래그 전송(e = end)
@@ -116,24 +116,29 @@ int CDatabase::extractData()
 	m_socket.write_message.timestamp = 0;
 	m_socket.write_message.traffic = 0;
 
-	m_socket.send_message(); //아니면 이걸 그냥 static으로 선언해버릴까?
+	m_socket.send_message(); 
 
 	mysql_free_result(sql_result);
 
-	mysql_close(connection);
+//	mysql_close(connection);
 
 	return 0;
 }
-
+/*
 void CDatabase::StoreData(){
 
 	int data_len = 0;
 
 	while (1){
-		//데이터 받아서 디비에 저장해야함
+		//데이터 받아서 디비에 저장
 		match_result_data stRecvedResData = m_socket.recv_message();
-		InsertMatchResultTable(stRecvedResData);
-		//특정 조건이 되면 탈출되게 해야함
+		if (stRecvedResData.sUser != ""){
+			InsertMatchResultTable(stRecvedResData);
+		}
+		else if (stRecvedResData.sUser == "end_match_result"){
+			break;
+		}
+		
 	}
 }
 
@@ -143,6 +148,38 @@ void CDatabase::InsertMatchResultTable(match_result_data stRecvedResData){
 
 	sprintf_s(query, sizeof(query), "insert into match_result_table values ('%s', '%d', '%d')",
 		stRecvedResData.sUser.c_str(), stRecvedResData.iPrevEp, stRecvedResData.iCurrEP);
+
+	m_iQueryStat = mysql_query(connection, query);
+
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+}*/
+
+
+void CDatabase::StoreData(){
+
+	int data_len = 0;
+
+	while (1){
+		//데이터 받아서 디비에 저장
+		match_result_data stRecvedResData = m_socket.recv_message();
+		if (!strcmp(stRecvedResData.arrUser, "end_match_result_transmission")){
+			break;
+		}
+		else if (strcmp(stRecvedResData.arrUser, "")){
+			InsertMatchResultTable(stRecvedResData);
+		}
+	}
+}
+
+void CDatabase::InsertMatchResultTable(match_result_data stRecvedResData){
+
+	char query[255];
+
+	sprintf_s(query, sizeof(query), "insert into match_result_table values ('%s', '%d', '%d')",
+		stRecvedResData.arrUser, stRecvedResData.iPrevEp, stRecvedResData.iCurrEP);
 
 	m_iQueryStat = mysql_query(connection, query);
 

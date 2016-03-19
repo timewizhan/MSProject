@@ -15,8 +15,8 @@
 //DB
 #define DB_HOST "127.0.0.1"
 #define DB_USER "root"
-#define DB_PASS "cclab"
-#define DB_NAME "EP1"
+#define DB_PASS "cclabj0gg00"
+#define DB_NAME "EP2"
 
 class CDatabase{
 

@@ -22,12 +22,12 @@ void EP_Test4::initEntryPoint()
 {
 
 	//	m_sock.init_socket();		//socket
-	while (1) {
-		m_db.initDB();				//database
+	m_db.initDB();				//database
+//	while (1) {
 		m_db.extractData();
 		m_db.StoreData();
 	
-		Sleep(5000);
-	}
+//		Sleep(5000);
+//	}
 }
 
