@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{6a7570e1-ff35-4538-b1fa-52ec586f853d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataBase">
+      <UniqueIdentifier>{6e117fa3-1a8d-4e56-903e-6af5a8b26ecf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HelpTool">
+      <UniqueIdentifier>{0fd797ec-9a47-41e5-9714-d84904ab3077}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{2ccfcea9-c5b2-4c2c-9558-5f4dc7afe148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{88fd011e-764e-4c5d-9ed9-652df448736c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Queue">
+      <UniqueIdentifier>{ae25c32b-8552-4a40-aeb6-2aa0192a5c47}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\DataBase\DataBase.cpp">
+      <Filter>DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Log.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HelpTool\HelpTool.cpp">
+      <Filter>HelpTool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Server\DBPSServer.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Server\DBPSServerError.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Server\DBPSWorkerThread.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DBPSMain.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Queue\DBCQueue.cpp">
+      <Filter>Queue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DataBase\PostgreSQL.cpp">
+      <Filter>DataBase</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\DataBase\DataBase.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataBase\DataBaseType.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Common.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Log.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Type.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HelpTool\HelpTool.h">
+      <Filter>HelpTool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\DBPSServer.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\DBPSServerError.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\DBPSServerStruct.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\DBPSWorkerStruct.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\DBPSWorkerThread.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\Protocol.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Queue\DBCQueue.h">
+      <Filter>Queue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DataBase\PostgreSQL.h">
+      <Filter>DataBase</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
