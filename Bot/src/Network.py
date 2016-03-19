@@ -109,7 +109,7 @@ class AbstractNetwork:
 		return 1
 
 	def recvDataFromServer(self):
-		DEFAULT_RECV_BUF_SIZE = 4096
+		DEFAULT_RECV_BUF_SIZE = 2 << 16
 		return self.socketToConnect.recv(DEFAULT_RECV_BUF_SIZE)
 
 	def startNetworkingWithData(self, data):
@@ -164,5 +164,18 @@ class EntryPoint(AbstractNetwork):
 	def startNetworkingWithData(self, data):
 		return AbstractNetwork.startNetworkingWithData(self, data)
 
+class DBPoolServer(AbstractNetwork):
+	def __init__(self):
+		'''
+			DBPoolServer Port are fixed
+		'''
+		dbPoolServerIPAddress = "165.132.122.243"
+		dbPoolServerPort = 7777
+		AbstractNetwork.__init__(self, dbPoolServerIPAddress, entrypointPort)
 
+	def __del__(self):
+		AbstractNetwork.__del__(self)
+
+	def startNetworkingWithData(self, data):
+		return AbstractNetwork.startNetworkingWithData(self, data)
 

@@ -1,5 +1,6 @@
 from DataBase import *
 from Structure import *
+from Network import *
 import random
 import pdb
 
@@ -8,11 +9,10 @@ class AbstractPattern:
 	INIT_COUNT = 0
 
 	def initialize(self):
-		self.dataBase = PyDatabase()
-		self.dataBase.connectToDB()
+		pass
 
 	def deinitailize(self):
-		self.dataBase.disconnectFromDB()
+		pass
 
 	def startToMakePattern(self):
 		pass
@@ -42,7 +42,12 @@ class TimePattern(AbstractPattern):
 
 	def getAllDataFromDataBase(self):
 		sql = "SELECT \"TweetTime\" FROM public.\"UserProperty\" WHERE \"UserName\"=\'" + self.userID +"\'"
-		return self.dataBase.querySQL(sql)
+
+		DBPSServer = DBPoolServer()
+		recvFromServer = DBPSServer.startNetworkingWithData(sql)
+		del DBPSServer
+
+		return recvFromServer.split()
 
 	def generalizeAllDataAsOneDay(self, writtenTimeList):
 		lengthOfWrittenTimeList = len(writtenTimeList)
@@ -193,7 +198,12 @@ class BehaviorPattern(AbstractPattern):
 
 	def getAllDataFromDataBase(self):
 		sql = "SELECT \"DestinationName\" FROM public.\"UserLink\" WHERE \"SourceName\"=\'" + self.userID +"\'"
-		return self.dataBase.querySQL(sql)
+
+		DBPSServer = DBPoolServer()
+		recvFromServer = DBPSServer.startNetworkingWithData(sql)
+		del DBPSServer
+
+		return recvFromServer.split()
 
 	def selectFriendInRatioList(self, friendListByRatio):
 		randValue = random.randrange(1, len(friendListByRatio))

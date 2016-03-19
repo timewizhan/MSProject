@@ -20,15 +20,14 @@ def findBotFile():
 
 	return os.path.exists(botFilePath)
 
-def getUsersInfoFromDB():
-	dataBase = PyDatabase()
-	dataBase.connectToDB()
+def getUsersInfoFromDB(botNumber):
+	sql = "SELECT \"userName\", \"userPlace\" FROM public.\"completeUserid\" WHERE \"classifier\"=" + botNumber
 
-	sql = "SELECT \"userName\", \"userPlace\" FROM public.\"completeUserid\""
-	usersInfoList = dataBase.querySQL(sql)
+	DBPSServer = DBPoolServer()
+	recvFromServer = DBPSServer.startNetworkingWithData(sql)
+	del DBPSServer
 
-	dataBase.disconnectFromDB()
-
+	usersInfoList = recvFromServer.split()
 	return usersInfoList
 
 def fn_process(*argv):
@@ -58,13 +57,13 @@ def operateMultiProcess(usersInfoList):
 		eachBot.join()
 	 
 
-def mainStart():
+def mainStart(botNumber):
 	if not findBotFile():
 		print "[Error] Can't find botFile"
 		sys.exit(1)
 
 	try:
-		usersInfoList = getUsersInfoFromDB()
+		usersInfoList = getUsersInfoFromDB(botNumber)
 		if len(usersInfoList) < 1:
 			print "[Error] There is no user data"
 			sys.exit(1)
@@ -76,6 +75,10 @@ def mainStart():
 
 
 if __name__ == "__main__":
+	if len(sys.argv) < 2:
+		print "Usage : [Bot Number]"
+		sys.exit(1)
+
 	currentPath = getCurrentDir()
 	setEnvPath(currentPath)
 	from DataBase import *
@@ -84,7 +87,8 @@ if __name__ == "__main__":
 	print "*************Generate Bot*************"
 	print "**************************************"
 
-	mainStart()
+	botNumber = sys.argv[1]
+	mainStart(botNumber)
 
 	print "**************************************"
 	print "****************Finish****************"
