@@ -2,6 +2,9 @@
 #include "Broker.h"
 
 void main(){
-	CBroker broker;
-//	while (1){}
+	
+//	while (1){
+		
+		CBroker broker;
+//	}
 }

@@ -9,7 +9,7 @@
 
 CDatabase::CDatabase(){
 
-	InitDB();
+//	InitDB();
 }
 
 CDatabase::~CDatabase(){
@@ -38,6 +38,9 @@ int CDatabase::InitDB(){
 	return 0;
 }
 
+void CDatabase::CloseDB(){
+	mysql_close(connection);
+}
 
 vector<client_data> CDatabase::extractClientData(string sQuery){
 

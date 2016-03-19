@@ -95,6 +95,7 @@ public:
 	~CDatabase();
 
 	int InitDB();
+	void CloseDB();
 	vector<client_data> extractClientData(string sQuery);
 	vector<server_data> extractServerData(string sQuery, int iNumOfColumn);
 	vector<client_data> ExtractCstData(string sQuery);

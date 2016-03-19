@@ -53,6 +53,11 @@ void CSocket::InitSocket(){
 	}
 }
 
+void CSocket::CloseSocket(){
+	closesocket(ssock);
+	WSACleanup();
+}
+
 void CSocket::CommSocket(HANDLE	hThread){
 
 //	printf("comm_socket \n");
@@ -132,6 +137,7 @@ void CSocket::CommSocket(HANDLE	hThread){
 							//여기서 LP 결과 리턴 값으로 받는걸로, EP 1에 보내야 되는거 2에 보내야되는거 3에보내야 되는거 구분
 							vector <match_result_data> vecMatchResult = match.CalculateLP();	//user, prev_ep, curr_ep 있는 데이터
 						
+							
 							int EP1_FD = 0;
 							int EP2_FD = 0;
 							int EP3_FD = 0;
@@ -150,7 +156,7 @@ void CSocket::CommSocket(HANDLE	hThread){
 									EP3_FD = stEpInfo[i].iFDNum;
 								}
 							}
-
+							
 
 							match_result_data stMatchResData;
 							char cUser[128];
@@ -210,7 +216,7 @@ void CSocket::CommSocket(HANDLE	hThread){
 							send(EP1_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
 							send(EP2_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
 							send(EP3_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
-
+						
 							goto ProcessEnd;
 						}
 					}

@@ -4,6 +4,7 @@ CMatch::CMatch(){
 	/* We will build the model row by row
 	So we start with creating a model with 0 rows and 2 columns */
 	CDatabase	databaseInstance;
+	databaseInstance.InitDB();
 	vector<client_data> vecClientData = databaseInstance.extractClientData("select * from client_table");
 	
 	user_no = vecClientData.size();;
@@ -12,6 +13,7 @@ CMatch::CMatch(){
 	Ncol = user_no * cloud_no;
 	lp = make_lp(0, Ncol);
 
+	databaseInstance.CloseDB();
 	databaseInstance.~CDatabase();
 }
 
@@ -22,6 +24,7 @@ CMatch::~CMatch(){
 void CMatch::NormalizeFactor(){
 	
 	CDatabase	databaseInstance;
+	databaseInstance.InitDB();
 	string sQuery;
 	
 
@@ -161,6 +164,7 @@ void CMatch::NormalizeFactor(){
 		databaseInstance.InsertNormDistTable(vecDataList_client.at(i).sUser, arrDists[0], arrDists[1], arrDists[2]);
 	}
 
+	databaseInstance.CloseDB();
 	databaseInstance.~CDatabase();
 	//CalculateLP();
 }
@@ -235,6 +239,7 @@ void CMatch::InsertWeightTable(){
 	double c = 1.0;
 	double d = 1.0;
 	CDatabase	databaseInstance;
+	databaseInstance.InitDB();
 //	vector <norm_server_data> vecNormServData = databaseInstance.ExtractNormServerData();
 //	vector <norm_cst_data> vecNormCstData = databaseInstance.ExtractNormCstData();
 //	vector <norm_dist_data> vecNormDistData = databaseInstance.ExtractNormDistData();
@@ -332,6 +337,7 @@ void CMatch::InsertWeightTable(){
 		
 	}
 
+	databaseInstance.CloseDB();
 	databaseInstance.~CDatabase();
 }
 
@@ -444,6 +450,7 @@ vector <match_result_data> CMatch::CalculateLP(){
 	//여기에 row 배열 이용해서 가중치 넣어야함
 	//나중에 상황에 맞게 코드 수정해야함
 	CDatabase	databaseInstance;
+	databaseInstance.InitDB();
 	vector<weight_data> vecWeightData = databaseInstance.ExtractWeightData();
 
 	if (ret == 0) {
@@ -552,6 +559,7 @@ vector <match_result_data> CMatch::CalculateLP(){
 	databaseInstance.UpdatePrevMatchingTable(vecMatchResult);
 
 	databaseInstance.DeleteTables();
+	databaseInstance.CloseDB();
 	databaseInstance.~CDatabase();
 
 	return vecMatchResult;

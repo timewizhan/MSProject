@@ -6,18 +6,18 @@ CBroker::CBroker(){
 }
 
 void CBroker::InitBroker(){
-
-//	printf("init_broker \n");
-
 	while (1){
+	
+		m_cDatabase.InitDB();
+
 		InitThread();
 		BridgeSocket(hThread);
+		
+		m_cDatabase.CloseDB();
 	}
 }
 
 void CBroker::InitThread(){
-
-//	printf("init_thread \n");
 
 	hThread = (HANDLE)_beginthreadex(NULL, 0, PreprocessInsert, &m_cDatabase, NULL, NULL);
 	if (!hThread)
@@ -34,7 +34,6 @@ void CBroker::BridgeSocket(HANDLE hThread){
 
 unsigned WINAPI PreprocessInsert(void *data){
 
-//	printf("preprocess_insert \n");
 	printf("[Thread Start] \n");
 	CDatabase *l_db = (CDatabase *)data;
 
@@ -42,22 +41,15 @@ unsigned WINAPI PreprocessInsert(void *data){
 	int iECount = 0;
 	ST_CCT stCCT;
 	while (1){
-	//	Sleep(1000);
-	//	printf(".");
-	//	if (cnt % 40 == 0){
-	//		printf("\n");
-	//	}
-
-		if (!CDataQueue::getDataQueue()->getQueue().empty()){	//queue가 비어있지 않으면
+	
+//		if (!CDataQueue::getDataQueue()->getQueue().empty()){	//queue가 비어있지 않으면
+		if (CDataQueue::getDataQueue()->getQueue().size() > 0){	//queue가 비어있지 않으면
 		
 			ST_MONITORING_RESULT poppedData = CDataQueue::getDataQueue()->popDataFromQueue();
 
 			printf("\n - Preprocess of inserting data \n");
-			printf("  - User: %s \n", poppedData.user);
-		//	printf("cpu_util: %d, server-side traffic: %d \n", poppedData.cpu_util, poppedData.server_side_traffic);
-		//	printf("user: %s, location: %s, timestamp: %d, user traffic: %d \n", poppedData.user, poppedData.location
-		//		, poppedData.timestamp, poppedData.traffic);
-
+			printf("  - User: %s, Flag: %s \n", poppedData.user, poppedData.side_flag);
+	
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			//지역별로 트래픽 합치기
 			if (!strcmp(poppedData.side_flag, "c")){

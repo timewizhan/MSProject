@@ -1,5 +1,5 @@
-#ifndef _COMMON_
-#define _COMMON_
+#ifndef _COMMONHEADERINBROKER_
+#define _COMMONHEADERINBROKER_
 
 
 #include <stdio.h>
@@ -10,17 +10,13 @@
 //thread related headers
 #include <Windows.h>
 #include <process.h>
-//#include <unistd.h>
-//#include <pthread.h>
 
 //socket related headers
 #include <winsock.h>
-//#include <winsock2.h>
-//#include <WinSock2.h>
 
 #include <iostream>
 #include <queue>
-#include <deque>
+//#include <deque>
 #include <vector>
 #include <algorithm>
 #include <math.h>

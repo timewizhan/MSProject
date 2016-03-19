@@ -11,15 +11,16 @@ CDataQueue::~CDataQueue(){
 	::DeleteCriticalSection(&m_stCriticalSection);
 }
 
-::deque <ST_MONITORING_RESULT> CDataQueue::getQueue(){
+::queue <ST_MONITORING_RESULT> CDataQueue::getQueue(){
 
 	return m_deQueue;
-}
+} 
 
 void CDataQueue::pushDataToQueue(ST_MONITORING_RESULT data){
 
 	::EnterCriticalSection(&m_stCriticalSection);
-	m_deQueue.push_back(data);
+	m_deQueue.push(data);
+	printf("queue size : %d \n", m_deQueue.size());
 	::LeaveCriticalSection(&m_stCriticalSection);
 }
 
@@ -27,7 +28,7 @@ ST_MONITORING_RESULT CDataQueue::popDataFromQueue(){
 
 	::EnterCriticalSection(&m_stCriticalSection);
 	ST_MONITORING_RESULT data = m_deQueue.front();
-	m_deQueue.pop_front();
+	m_deQueue.pop();
 	::LeaveCriticalSection(&m_stCriticalSection);
 
 	return data;

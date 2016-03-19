@@ -11,8 +11,8 @@ unsigned WINAPI PreprocessInsert(void *data);
 class CBroker{
 
 public:
-	HANDLE	hThread;
-	CDatabase		m_cDatabase;
+	HANDLE hThread;
+	CDatabase m_cDatabase;
 
 	CBroker();
 
