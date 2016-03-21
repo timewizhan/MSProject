@@ -20,7 +20,7 @@ public class ServiceServer {
 	public static ScheduledExecutorService mScheduler;	
 	
 	public static ArrayList<Double> mCPU_Log;
-	public static ArrayList<Double> mAVG_CPU_Log;
+	public static ArrayList<Double> mAVG_CPU_Log;		
 	
 	public static void main(String[] args) throws InterruptedException, IOException {																		
 		// disable c3p0 logging
@@ -48,7 +48,7 @@ public class ServiceServer {
 		while(true) {
 			try {
 				WorkerRunnable work = new WorkerRunnable(mServerSocket.accept());
-				this.mThreadPool.execute(work);
+				mThreadPool.execute(work);				
 				//Thread t = new Thread(work);
 				//t.start();
 			} catch (IOException e) {
@@ -59,8 +59,8 @@ public class ServiceServer {
 	
 	private void openServerSocket() {
 		try {
-			this.mServerSocket = new ServerSocket(mServerPort, mMaxCon);
-			this.mServerSocket.setReuseAddress(true);			
+			mServerSocket = new ServerSocket(mServerPort, mMaxCon);
+			mServerSocket.setReuseAddress(true);			
 		} catch (IOException e) {
 			System.out.println("[openServerSocket]e: " + e.getMessage());
 		}

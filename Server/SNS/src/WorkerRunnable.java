@@ -16,17 +16,19 @@ import Utility.CoordHandler;
 import Utility.MessageHandler;
 
 public class WorkerRunnable implements Runnable {
-    private Socket mClientSocket = null;    
+    private Socket mClientSocket = null;
+    private int mNumReq = 0;
 
     public WorkerRunnable(Socket clientSocket) {
-    	mClientSocket = clientSocket;
+    	mClientSocket = clientSocket;    	
     }
 
     public void run() {
-        JSONObject request  = MessageHandler.msgParser(mClientSocket);
-             
+        JSONObject request  = MessageHandler.msgParser(mClientSocket);             
+        int reqType = Integer.parseInt((String) request.get("TYPE")); 
+        
         try {
-        	if (Integer.parseInt((String) request.get("TYPE")) < 5) {
+        	if (reqType < 5) {
 	        	int result = operationHandler(request);
 				String response = MessageHandler.msgGenerator(result);
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
@@ -39,9 +41,10 @@ public class WorkerRunnable implements Runnable {
 				out.flush();
 				mClientSocket.close();
 				out.close();
-				System.out.println(getTime() + ServiceServer.mCoord.getServerLoc() + " handled a request from " + "[" + request.get("SRC") + "]");
+				System.out.println(getTime() + ServiceServer.mCoord.getServerLoc() + " handled the request from " + "[" + request.get("SRC") + "]");
         	} else {
         		commandHanlder(request);
+        		System.out.println(getTime() + ServiceServer.mCoord.getServerLoc() + " handled the command " + reqType);
         	} 							
 		} catch (PropertyVetoException e) {			
 			e.printStackTrace();
@@ -59,8 +62,7 @@ public class WorkerRunnable implements Runnable {
 		int reqSize = request.toString().length();
 		int res = 0;		
 						
-		int reqType = Integer.parseInt((String) request.get("TYPE"));	
-		
+		int reqType = Integer.parseInt((String) request.get("TYPE"));		
 		String src = (String) request.get("SRC");		
 		String dst = (String) request.get("DST");
 		String loc = (String) request.get("LOC");
@@ -69,24 +71,25 @@ public class WorkerRunnable implements Runnable {
 		switch (reqType) {                                                                                                                                                                                                      
 			case opType.tweet:				
 				uid = DBConnection.isThere(src, userType.resident, loc);			
-				res = DBConnection.writeStatus(uid, msg, reqSize);			
+				res = DBConnection.writeStatus(uid, msg, reqSize);				
 				break;
 			case opType.read:
 				uid = DBConnection.isThere(src, userType.visitor, loc);
-				res = DBConnection.readStatus(uid, dst, reqSize, opType.num_read);
+				res = DBConnection.readStatus(uid, dst, reqSize, opType.num_read);				
 				break; 
 			case opType.reply:
 				uid = DBConnection.isThere(src, userType.visitor, loc);			
-				res = DBConnection.writeReply(uid, dst, msg, reqSize, opType.num_read);
+				res = DBConnection.writeReply(uid, dst, msg, reqSize, opType.num_read);				
 				break;
 			case opType.retweet:
 				uid = DBConnection.isThere(src, userType.visitor, loc);
-				res = DBConnection.readStatus(uid, dst, reqSize, opType.num_share);
+				res = DBConnection.readStatus(uid, dst, reqSize, opType.num_share);				
 				break;		
 			default:
 				System.out.println("[ERROR] Invalid Operation Type: " + reqType);			
 				break;
 		}
+		mNumReq++;
 		return res;
 	}
     
