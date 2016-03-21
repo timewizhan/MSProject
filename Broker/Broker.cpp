@@ -2,12 +2,20 @@
 
 CBroker::CBroker(){
 
+	CDataQueue::getDataQueue();
 	InitBroker();
+
 }
 
 void CBroker::InitBroker(){
+
 	while (1){
 	
+		if (!CDataQueue::getDataQueue()->getQueue().empty())
+		{
+			printf("Warning!!!!! dataQueue is not empty");
+			break;
+		}
 		m_cDatabase.InitDB();
 
 		InitThread();
@@ -43,7 +51,7 @@ unsigned WINAPI PreprocessInsert(void *data){
 	while (1){
 	
 //		if (!CDataQueue::getDataQueue()->getQueue().empty()){	//queue가 비어있지 않으면
-		if (CDataQueue::getDataQueue()->getQueue().size() > 0){	//queue가 비어있지 않으면
+		if (!CDataQueue::getDataQueue()->isEmpty()){	//queue가 비어있지 않으면
 		
 			ST_MONITORING_RESULT poppedData = CDataQueue::getDataQueue()->popDataFromQueue();
 

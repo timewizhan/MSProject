@@ -19,7 +19,7 @@ class CSocket{
 
 	struct ST_EP_INFO			stEpInfo[NUM_OF_EP];
 	int							index, maxfd;
-	struct ST_MONITORING_RESULT read_message;	
+	// struct ST_MONITORING_RESULT read_message;	
 
 public:
 

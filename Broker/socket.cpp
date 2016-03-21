@@ -40,7 +40,7 @@ void CSocket::InitSocket(){
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	server_addr.sin_port = htons(3333);
 
-	if (bind(ssock, (struct sockaddr *)&server_addr, sizeof(server_addr))<0)
+	if (bind(ssock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
 	{
 		perror("bind error: ");
 		exit(1);
@@ -111,15 +111,15 @@ void CSocket::CommSocket(HANDLE	hThread){
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			
 				else
 				{
+					struct ST_MONITORING_RESULT read_message;
 					printf(" - Received Client Socket Signal (FD = %d) \n", fd);
-					memset(&read_message, 0, sizeof(read_message));
+					memset(&read_message, 0, sizeof(struct ST_MONITORING_RESULT));
 
 					//클라이언트로 부터 메세지를 수신받는다.
-					data_len = recv(fd, (char*)&read_message, sizeof(read_message), 0);
+					data_len = recv(fd, (char*)&read_message, sizeof(struct ST_MONITORING_RESULT), 0);
 					
 					CDataQueue::getDataQueue()->pushDataToQueue(read_message);
 					
-				 
 					if (!strcmp(read_message.side_flag, "e")){		
 					
 						iECount++;
