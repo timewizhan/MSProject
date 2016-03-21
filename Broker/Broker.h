@@ -5,6 +5,7 @@
 #include "SocketStruct.h"
 #include "Database.h"
 #include "Common.h"
+#include "FileWrite.h"
 
 unsigned WINAPI PreprocessInsert(void *data);
 
@@ -18,7 +19,7 @@ public:
 
 	void InitBroker();
 	void InitThread();
-	void BridgeSocket(HANDLE hThread);
+	void BridgeSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWeightResFile);
 
 };
 

@@ -4,6 +4,7 @@
 #include "DataQueue.h"
 #include "Common.h"
 #include "SocketStruct.h"
+#include "FileWrite.h"
 
 class CSocket{
 
@@ -28,7 +29,7 @@ public:
 
 	void InitSocket();
 	void CloseSocket();
-	void CommSocket(HANDLE	hThread);
+	void CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWeightResFile);
 //	void SendMessage();
 	void WriteMessage(void *client_message, void *num, int basefd, int maxfd);
 };

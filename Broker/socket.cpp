@@ -58,7 +58,7 @@ void CSocket::CloseSocket(){
 	WSACleanup();
 }
 
-void CSocket::CommSocket(HANDLE	hThread){
+void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWeightResFile){
 
 //	printf("comm_socket \n");
 
@@ -128,16 +128,20 @@ void CSocket::CommSocket(HANDLE	hThread){
 							iECount = 0;
 
 							WaitForSingleObject(hThread, INFINITE);
-				//			ResumeThread(hThread);
-
+				
 							CMatch match;
 							match.NormalizeFactor();
 							match.InsertWeightTable();
 							
-							//여기서 LP 결과 리턴 값으로 받는걸로, EP 1에 보내야 되는거 2에 보내야되는거 3에보내야 되는거 구분
 							vector <match_result_data> vecMatchResult = match.CalculateLP();	//user, prev_ep, curr_ep 있는 데이터
 						
-							
+
+							////////// Data Replacement 시간 출력 //////////
+							CFileWrite cFileWrite;
+							cFileWrite.InputTimeIntoDRFile(insDRResFile);
+							///////////////////////////////////////////////
+
+
 							int EP1_FD = 0;
 							int EP2_FD = 0;
 							int EP3_FD = 0;
@@ -174,6 +178,14 @@ void CSocket::CommSocket(HANDLE	hThread){
 										stMatchResData.iCurrEP = vecMatchResult.at(i).iCurrEP;
 
 										send(EP1_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+										
+										////////////////// Data Replacement 유저 출력 ///////////////////
+									//	CFileWrite cFileWrite;
+										cFileWrite.WriteDRFile(stMatchResData.arrUser, insDRResFile);
+										cFileWrite.WriteDRFile(stMatchResData.iPrevEp, insDRResFile);
+										cFileWrite.WriteDRFile(stMatchResData.iCurrEP, insDRResFile);
+										cFileWrite.WriteNewLine(insDRResFile);
+										////////////////////////////////////////////////////////////////
 									}
 										
 								}
@@ -188,6 +200,13 @@ void CSocket::CommSocket(HANDLE	hThread){
 										stMatchResData.iCurrEP = vecMatchResult.at(i).iCurrEP;
 
 										send(EP2_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+										////////////////// Data Replacement 유저 출력 ///////////////////
+										//	CFileWrite cFileWrite;
+										cFileWrite.WriteDRFile(stMatchResData.arrUser, insDRResFile);
+										cFileWrite.WriteDRFile(stMatchResData.iPrevEp, insDRResFile);
+										cFileWrite.WriteDRFile(stMatchResData.iCurrEP, insDRResFile);
+										cFileWrite.WriteNewLine(insDRResFile);
+										////////////////////////////////////////////////////////////////
 									}
 								}
 								else if (vecMatchResult.at(i).iPrevEp == 3){
@@ -201,6 +220,13 @@ void CSocket::CommSocket(HANDLE	hThread){
 										stMatchResData.iCurrEP = vecMatchResult.at(i).iCurrEP;
 
 										send(EP3_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+										////////////////// Data Replacement 유저 출력 ///////////////////
+										//	CFileWrite cFileWrite;
+										cFileWrite.WriteDRFile(stMatchResData.arrUser, insDRResFile);
+										cFileWrite.WriteDRFile(stMatchResData.iPrevEp, insDRResFile);
+										cFileWrite.WriteDRFile(stMatchResData.iCurrEP, insDRResFile);
+										cFileWrite.WriteNewLine(insDRResFile);
+										////////////////////////////////////////////////////////////////
 									}
 								}
 							}

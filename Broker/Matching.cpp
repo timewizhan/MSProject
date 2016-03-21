@@ -234,8 +234,8 @@ void CMatch::InsertWeightTable(){
 
 	// Weight 계산
 	// [a: normalized cpu, b: normalized server-side traffic, c: normalized client-side traffic, d: distance] = 가중치
-	double a = 1.0;
-	double b = 1.0;
+	double a = 0.5;
+	double b = 0.5;
 	double c = 1.0;
 	double d = 1.0;
 	CDatabase	databaseInstance;

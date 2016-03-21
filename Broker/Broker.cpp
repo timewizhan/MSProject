@@ -9,17 +9,23 @@ CBroker::CBroker(){
 
 void CBroker::InitBroker(){
 
+//	CFileWrite cFileWrite;
+	ofstream insDRResFile("Data_Replacement_Result.txt");
+	ofstream insWeightResFile("Weight_Result.txt");
+	
+//	cFileWrite.FileOpen();
 	while (1){
 	
 		if (!CDataQueue::getDataQueue()->getQueue().empty())
 		{
-			printf("Warning!!!!! dataQueue is not empty");
+			printf("Warning! DataQueue is not empty. \n");
 			break;
 		}
+
 		m_cDatabase.InitDB();
 
 		InitThread();
-		BridgeSocket(hThread);
+		BridgeSocket(hThread, insDRResFile, insWeightResFile);
 		
 		m_cDatabase.CloseDB();
 	}
@@ -35,9 +41,9 @@ void CBroker::InitThread(){
 	}
 }
 
-void CBroker::BridgeSocket(HANDLE hThread){
+void CBroker::BridgeSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWeightResFile){
 
-	m_cDatabase.m_cSocket.CommSocket(hThread);
+	m_cDatabase.m_cSocket.CommSocket(hThread, insDRResFile, insWeightResFile);
 }
 
 unsigned WINAPI PreprocessInsert(void *data){
