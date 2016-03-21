@@ -5,8 +5,8 @@
 *      Author: alphahacker
 */
 
-#ifndef _COMMON_
-#define _COMMON_
+#ifndef _COMMONHEADERINEP_
+#define _COMMONHEADERINEP_
 
 #include <stdio.h>
 #include <string.h>

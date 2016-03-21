@@ -5,8 +5,8 @@
 *      Author: ms-dev
 */
 
-#ifndef _DB_
-#define _DB_
+#ifndef _DBINEP_
+#define _DBINEP_
 
 #include "Common.h"
 #include "mysql.h"
@@ -16,7 +16,7 @@
 #define DB_HOST "127.0.0.1"
 #define DB_USER "root"
 #define DB_PASS "cclabj0gg00"
-#define DB_NAME "EP2"
+#define DB_NAME "EP3"
 
 class CDatabase{
 
@@ -37,6 +37,7 @@ public:
 	CDatabase();
 	~CDatabase();
 	int initDB();
+	void CloseDB();
 	int extractData();
 	void StoreData();
 	void InsertMatchResultTable(match_result_data stRecvedResData);

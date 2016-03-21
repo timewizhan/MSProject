@@ -5,8 +5,8 @@
 *      Author: ms-dev
 */
 
-#ifndef _SOCKET_
-#define	_SOCKET_
+#ifndef _SOCKETINEP_
+#define	_SOCKETINEP_
 
 struct monitoring_result{
 

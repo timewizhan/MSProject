@@ -29,6 +29,10 @@ int CDatabase::initDB(){
 	return 0;
 }
 
+void CDatabase::CloseDB(){
+	mysql_close(connection);
+}
+
 int CDatabase::extractData()
 {
 	printf("extract data method \n");
@@ -52,22 +56,19 @@ int CDatabase::extractData()
 
 		m_socket.write_message.cpu_util = _cpu_util;
 		m_socket.write_message.server_side_traffic = _server_side_traffic;
-		//		printf("test: %d %d", _cpu_util,_server_side_traffic);
+
 		//구조체의 나머지 부분은 NULL 로 채운다. flag도 값 넣어줘야함
-		m_socket.write_message.ep_num = 2;
-		//		m_socket.write_message.side_flag = "s";
+		m_socket.write_message.ep_num = 3;
 		strcpy_s(m_socket.write_message.side_flag, 2, "s");
 		memset(&m_socket.write_message.user, 0, sizeof(m_socket.write_message.user));
 		memset(&m_socket.write_message.location, 0, sizeof(m_socket.write_message.location));
 		m_socket.write_message.timestamp = 0;
 		m_socket.write_message.traffic = 0;
 
-		m_socket.send_message(); //아니면 이걸 그냥 static으로 선언해버릴까?
+		m_socket.send_message(); 
 	}
 
 	mysql_free_result(sql_result);
-
-//	::Sleep(1);
 
 	printf("\n");
 
@@ -95,16 +96,13 @@ int CDatabase::extractData()
 		//구조체의 나머지 부분은 NULL 로 채운다. flag도 값 넣어줘야함
 		m_socket.write_message.ep_num = 1;							//EP number
 		strcpy_s(m_socket.write_message.side_flag, 2, "c");
-		//	m_socket.write_message.side_flag = "c";						//server-side or client-side
 		m_socket.write_message.cpu_util = 0;						//cpu utilization
 		m_socket.write_message.server_side_traffic = 0;				//server-side traffic
 
 		m_socket.send_message(); //아니면 이걸 그냥 static으로 선언해버릴까?
-	//	::Sleep(1);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
-//	::Sleep(1);
 
 	memset(&m_socket.write_message, 0, sizeof(m_socket.write_message));
 	strcpy_s(m_socket.write_message.side_flag, 2, "e");											//전송할 내용이 더이상 없음을 알리는 플래그 전송(e = end)
@@ -124,6 +122,7 @@ int CDatabase::extractData()
 
 	return 0;
 }
+
 /*
 void CDatabase::StoreData(){
 
@@ -138,7 +137,6 @@ void CDatabase::StoreData(){
 		else if (stRecvedResData.sUser == "end_match_result"){
 			break;
 		}
-		
 	}
 }
 
