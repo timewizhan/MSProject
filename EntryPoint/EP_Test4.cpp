@@ -22,11 +22,45 @@ void EP_Test4::initEntryPoint()
 {
 
 	//	m_sock.init_socket();		//socket
-	m_db.initDB();
+	m_db.initDB();				//database
 
+	
+	//SNS server와 통신하는 부분
+	CSocket cSNSServerSocket;
+	cSNSServerSocket.InitSocketWithSNSServer();
+
+	//1. 모니터 결과 저장하라고 메세지 보내기 string : {"TYPE" : "5"}
+	cSNSServerSocket.SendStoreCmdMessage();
+
+	//2. 저장완료했다고 메세지 받기
+	cSNSServerSocket.RecvStoreCompleteMessage();
+
+	//3. 모니터링 결과 뽑아서 Broker에게 전송
 	m_db.extractData();
+
+	//4. 매칭 결과 받아서 EP에 있는 DB에 저장
 	m_db.StoreData();
 	
+	//5. 매칭 결과 저장 완료 메세지 전송 
+	cSNSServerSocket.SendMatchStoreCompleteMessage();
+	
+	//6. SNS서버로 부터 Data Replacement 완료 메세지 받기
+	cSNSServerSocket.RecvDRCompleteMessage();
+
+	//7. 소켓 닫기 
+//	cSNSServerSocket.CloseSNSServerSocket();
+
+	//8. Broker에게 DR 완료 메세지 보내기
+	CSocket cBrokerSocket;
+	cBrokerSocket.SendDRCompleteMessage();
+
+	//9. 1시간마다 EP가 동시에 돌아가게 하기 위해 동기화 메세지 다시 받기
+	cBrokerSocket.RecvSyncMessage();
+
 	m_db.CloseDB();
+
+	//7. 소켓 닫기 
+	cSNSServerSocket.CloseSNSServerSocket();
+	cBrokerSocket.CloseBrokerSocket();
 }
 

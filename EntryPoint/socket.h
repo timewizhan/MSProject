@@ -28,6 +28,7 @@ struct monitoring_result{
 struct match_result_data{
 
 //	string sUser;
+//	char cUser[128];
 	char arrUser[40];
 	int iPrevEp;
 	int iCurrEP;
@@ -38,6 +39,9 @@ class CSocket{
 public:
 	WSADATA wsaData;
 	int ssock;
+
+	int SNSServerCsocket;
+
 	int clen;
 	struct sockaddr_in client_addr, server_addr;
 	fd_set read_fds, tmp_fds;
@@ -50,6 +54,18 @@ public:
 	~CSocket();
 
 	void init_socket();
+
+	void InitSocketWithSNSServer();
+	void SendStoreCmdMessage();
+	void RecvStoreCompleteMessage();
+	void SendMatchStoreCompleteMessage();
+	void RecvDRCompleteMessage();
+	void CloseSNSServerSocket();
+	void CloseBrokerSocket();
+
+	void SendDRCompleteMessage();
+	void RecvSyncMessage();
+
 	void send_message();
 	match_result_data recv_message();
 };
