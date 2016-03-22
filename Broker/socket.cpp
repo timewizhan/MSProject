@@ -53,6 +53,49 @@ void CSocket::InitSocket(){
 	}
 }
 
+void CSocket::InitBrokerGiverSocket(){
+
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0){
+		printf("error\r\n");
+	}
+
+	if ((BrokerGiverSock = socket(AF_INET, SOCK_STREAM, 0))<0){
+		perror("socket error : ");
+		exit(1);
+	}
+
+	//변수 초기화
+	memset(&server_addr, 0, sizeof(server_addr));
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	server_addr.sin_port = htons(8888);
+
+	clen = sizeof(server_addr);
+
+	//socket이라는 파일 서술자를 이용하여 소켓에 연결을 하게 된다.
+	if (connect(BrokerGiverSock, (struct sockaddr *)&server_addr, clen)<0){
+		perror("connect error : ");
+	}
+}
+
+void CSocket::SendStopMsg(){
+	string sStopMsg = "10";
+	//send message
+	if (send(BrokerGiverSock, (char*)&sStopMsg, sizeof(sStopMsg), 0)<0){
+		perror("write error : ");
+		exit(1);
+	}
+}
+
+void CSocket::SendResumeMsg(){
+	string sResumeMsg = "01";
+	//send message
+	if (send(BrokerGiverSock, (char*)&sResumeMsg, sizeof(sResumeMsg), 0)<0){
+		perror("write error : ");
+		exit(1);
+	}
+}
+
 void CSocket::CloseSocket(){
 	closesocket(ssock);
 	WSACleanup();
@@ -129,6 +172,12 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 
 							WaitForSingleObject(hThread, INFINITE);
 				
+							/////////////////////////////////////////////////////
+							//여기에 Broker Giver에게 멈추라는 코드 넣어야함
+							InitBrokerGiverSocket();
+							SendStopMsg();
+							/////////////////////////////////////////////////////
+
 							CMatch match;
 							match.NormalizeFactor();
 							match.InsertWeightTable();
@@ -239,10 +288,38 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 							stMatchResData.iPrevEp = 0;
 
 					
+							char arrDRComplete[50];
 							send(EP1_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+							data_len = recv(EP1_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
+							if (data_len < 0){
+								printf("Couldn't Receive Data Replacement Complete Message From EP1 \n");
+							}
+
 							send(EP2_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+							data_len = recv(EP2_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
+							if (data_len < 0){
+								printf("Couldn't Receive Data Replacement Complete Message From EP2 \n");
+							}
+
 							send(EP3_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
-						
+							data_len = recv(EP3_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
+							if (data_len < 0){
+								printf("Couldn't Receive Data Replacement Complete Message From EP3 \n");
+							}
+
+							//9. 1시간마다 EP가 동시에 돌아가게 하기 위해 동기화 메세지 다시 보내기
+							char arrSyncMsg[10];
+							memset(&arrSyncMsg, 0, sizeof(arrSyncMsg));
+							strcpy_s(arrSyncMsg, 9, "SyncMsg");
+
+							send(EP1_FD, (char*)&arrSyncMsg, sizeof(arrSyncMsg), 0);
+							send(EP2_FD, (char*)&arrSyncMsg, sizeof(arrSyncMsg), 0);
+							send(EP3_FD, (char*)&arrSyncMsg, sizeof(arrSyncMsg), 0);
+
+							//Broker Giver에게 재시작하라는 메세지 전송
+							SendResumeMsg();
+							
+
 							goto ProcessEnd;
 						}
 					}
@@ -256,8 +333,5 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 ProcessEnd:
 	printf("[ProcessEnd] \n");
 }
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

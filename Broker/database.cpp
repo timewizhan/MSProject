@@ -8,17 +8,12 @@
 #include "Database.h"
 
 CDatabase::CDatabase(){
-
-//	InitDB();
 }
 
 CDatabase::~CDatabase(){
-//	printf("\n DB ¼Ò¸ê \n");
 }
 
 int CDatabase::InitDB(){
-
-//	printf("init db \n");
 
 	mysql_init(&conn);
 

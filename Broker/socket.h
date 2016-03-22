@@ -11,7 +11,8 @@ class CSocket{
 	WSADATA						wsaData;
 	int							optval;
 	//家南可记狼 汲沥蔼
-	int							ssock, csock;             
+	int							ssock, csock;  
+	int							BrokerGiverSock;
 	struct sockaddr_in			server_addr, client_addr; 
 
 	int							clen, data_len;
@@ -28,6 +29,9 @@ public:
 	~CSocket();
 
 	void InitSocket();
+	void InitBrokerGiverSocket();
+	void SendStopMsg();
+	void SendResumeMsg();
 	void CloseSocket();
 	void CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWeightResFile);
 //	void SendMessage();
