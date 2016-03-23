@@ -567,7 +567,7 @@ void CDatabase::InsertUpdateMatchingTable(){
 			}
 
 			//prev_matching_table 값 0 으로 입력
-			sprintf_s(query, sizeof(query), "insert into prev_matching_table values ('%s', '%s')", sql_row[0], "0");
+			sprintf_s(query, sizeof(query), "insert into prev_matching_table values ('%s', '%s', '%s', %d)", sql_row[0], "1", "165.132.123.85", 7777);
 
 			m_iQueryStat = mysql_query(connection, query);
 
@@ -1167,8 +1167,18 @@ void CDatabase::UpdatePrevMatchingTable(vector <match_result_data> vecMatchResul
 		char arrUser[40];
 		memset(arrUser, 0x00, 40);
 		strcpy_s(arrUser, 40, vecMatchResult.at(i).arrUser);
+		
 
-		sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
+		if (vecMatchResult.at(i).iCurrEP == 1){
+			sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d, ip = '165.132.123.85', port = 7777 WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
+		}
+		else if (vecMatchResult.at(i).iCurrEP == 2){
+			sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d, ip = '165.132.123.86', port = 7777 WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
+		}
+		else if (vecMatchResult.at(i).iCurrEP == 3){
+			sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d, ip = '165.132.123.87', port = 7777 WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
+		}
+
 
 		m_iQueryStat = mysql_query(connection, query);
 		if (m_iQueryStat != 0){

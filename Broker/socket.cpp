@@ -79,7 +79,7 @@ void CSocket::InitBrokerGiverSocket(){
 }
 
 void CSocket::SendStopMsg(){
-	string sStopMsg = "10";
+	string sStopMsg = "1";
 	//send message
 	if (send(BrokerGiverSock, (char*)&sStopMsg, sizeof(sStopMsg), 0)<0){
 		perror("write error : ");
@@ -88,7 +88,7 @@ void CSocket::SendStopMsg(){
 }
 
 void CSocket::SendResumeMsg(){
-	string sResumeMsg = "01";
+	string sResumeMsg = "0";
 	//send message
 	if (send(BrokerGiverSock, (char*)&sResumeMsg, sizeof(sResumeMsg), 0)<0){
 		perror("write error : ");
@@ -172,12 +172,14 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 
 							WaitForSingleObject(hThread, INFINITE);
 				
+							printf("[Sending Stop Signal to BrokerGiver] \n");
 							/////////////////////////////////////////////////////
 							//여기에 Broker Giver에게 멈추라는 코드 넣어야함
 							InitBrokerGiverSocket();
 							SendStopMsg();
 							/////////////////////////////////////////////////////
 
+							printf("[Calculatiing LP] \n");
 							CMatch match;
 							match.NormalizeFactor();
 							match.InsertWeightTable();
@@ -196,23 +198,23 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 							int EP3_FD = 0;
 							for (int i = 0; i < NUM_OF_EP; i++){
 
-								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.122.244")){	//EP1: 165.132.123.85  
+								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.85")){	//EP1: 165.132.123.85  
 								
 									EP1_FD = stEpInfo[i].iFDNum;
 								}
-								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.122.245")) {	//EP2: 165.132.123.86
+								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.86")) {	//EP2: 165.132.123.86
 								
 									EP2_FD = stEpInfo[i].iFDNum;
 								}
-								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.73")) {	//EP3: 165.132.123.87
+								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.87")) {	//EP3: 165.132.123.87
 								
 									EP3_FD = stEpInfo[i].iFDNum;
 								}
 							}
 							
-
+							printf("[Sending Matching Result to EPs] \n");
 							match_result_data stMatchResData;
-							char cUser[128];
+						//	char cUser[128];
 
 							for (int i = 0; i < vecMatchResult.size(); i++){
 
@@ -280,6 +282,7 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 								}
 							}
 
+							printf("[Sending End Transmission Signal of Match Result to EPs] \n");
 							//EP에게 전송 끝을 알림
 							memset(&stMatchResData, 0, sizeof(stMatchResData));
 							char arrEndSignal [40] = "end_match_result_transmission";
@@ -308,6 +311,7 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 							}
 
 							//9. 1시간마다 EP가 동시에 돌아가게 하기 위해 동기화 메세지 다시 보내기
+							printf("[Sending Sync Signal to EPs] \n");
 							char arrSyncMsg[10];
 							memset(&arrSyncMsg, 0, sizeof(arrSyncMsg));
 							strcpy_s(arrSyncMsg, 9, "SyncMsg");
