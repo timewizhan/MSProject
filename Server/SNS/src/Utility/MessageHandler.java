@@ -7,33 +7,37 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import Type.ServerAddr;
 import Type.opType;
 
 public class MessageHandler {
+	
+	public final static String store_complete = "store_complete";
+	public final static String data_replacement_complete = "data_replacement_complete";
+	
 	public static JSONObject msgParser(Socket socket) {		
 		String result = "";	
-		BufferedReader input = null;
+		BufferedReader in = null;
 		JSONObject msg = null;
 						
 		try {
-			input = new BufferedReader(new InputStreamReader(
+			in = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
-			result = input.readLine();		
+			result = in.readLine();		
 						
 			JSONParser parser = new JSONParser();
 			msg = (JSONObject) parser.parse(result);			
 		} catch (UnsupportedEncodingException e) {
-			System.out.println("[msgParser]UnsupportedEncodingException e: " + e.getMessage());			
+			System.out.println("[msgParser]UnsupportedEncodingException: " + e.getMessage());			
 		} catch (IOException e) {
-			System.out.println("[msgParser]IOException e: " + e.getMessage());
+			System.out.println("[msgParser]IOException: " + e.getMessage());
 		} catch (ParseException e) {
-			System.out.println("[msgParser]ParseException e: " + e.getMessage());
-		}	
+			System.out.println("[msgParser]ParseException: " + e.getMessage());
+		}
 		return msg;
 	}
 	
@@ -43,37 +47,56 @@ public class MessageHandler {
 		response.put("RESPONSE", result);
 		
 		return response.toString();
-	}
+	}		
 	
 	@SuppressWarnings("unchecked")
-	public static String msgGenerator(JSONArray migrated) {
+	public static String msgGenerator(JSONObject migrated) {
 		JSONObject response = new JSONObject();
-		response.put("TYPE", Integer.toString(opType.movein));
+		response.put("TYPE", String.valueOf(opType.movein));
 		response.put("MIGRATED", migrated);
 		
 		return response.toString();		
 	}
 	
-	public static void sendMigrated(JSONArray migrated) {
-    	String dstServerIP = "localhost";
-    	int dstServerPort = 7777;
+	public static int sendMigrated(int curr, JSONObject migrated) {
+    	String dstServerIP = ServerAddr.IP_LIST[curr];
+    	int dstServerPort = ServerAddr.PORT;    	
+    	int result = 0;
+    	
+    	Socket socket = null;
+    	BufferedWriter out = null;
     	
     	try {
-			Socket socket = new Socket(dstServerIP, dstServerPort);
+			socket = new Socket(dstServerIP, dstServerPort);
 			
-			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
+			out = new BufferedWriter(new OutputStreamWriter(
 					socket.getOutputStream(), "UTF-8"));
 			
-			String response = MessageHandler.msgGenerator(migrated);
+			String migrated_data = MessageHandler.msgGenerator(migrated);
 			
-			out.write(response);
+			out.write(migrated_data);			
 			out.newLine();
-			out.flush();
+			out.flush();			
+						
+			JSONObject response = msgParser(socket);												
 			
-			socket.close();
-			out.close();
+			result = (int) (long) response.get("RESPONSE");						
 		} catch (IOException e) {
 			System.out.println("[sendMigrated]IOException: " + e.getMessage());
-		}    	
-    }		
+		} finally {			
+			if (out != null)
+				try {
+					out.close();
+				} catch (IOException e) {
+					System.out.println("[sendMigrated/out]IOException: " + e.getMessage());
+				}
+			if (socket != null)
+				try {
+					socket.close();
+				} catch (IOException e) {
+					System.out.println("[sendMigrated/socket]IOException: " + e.getMessage());
+				}
+		}		    	
+    	return result;
+    }
 }

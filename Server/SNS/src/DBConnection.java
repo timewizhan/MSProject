@@ -5,9 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -17,6 +14,8 @@ import org.json.simple.JSONObject;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import Type.userType;
+import Utility.Talculator;
+import Wrapper.matchInfo;
 import Wrapper.statusInfo;
 import Wrapper.userInfo;
 
@@ -26,13 +25,10 @@ public class DBConnection {
 	
 	private final static int mAll = -1;
 	private final static int mBasicResponseSize = 22;	
-	private final static int mPeriod = -1;
 	
 	private final static int mSuccess = 1;
 	private final static int mFail = 0;
-		
-	
-	
+			
 	private DBConnection() throws IOException, SQLException, PropertyVetoException {
 		mCDPS = new ComboPooledDataSource();
 		mCDPS.setDriverClass("com.mysql.jdbc.Driver");
@@ -142,7 +138,7 @@ public class DBConnection {
 		return mSuccess;
 	}
 	
-	public static void writeStatus(int uid, JSONArray statusList) throws SQLException {
+	public static int writeStatus(int uid, JSONArray statusList) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		
@@ -186,7 +182,8 @@ public class DBConnection {
 				} catch (SQLException e) {
 					System.out.println("[writeStatus/conn]SQLException: " + e.getMessage());
 				}						
-		}			
+		}
+		return mSuccess;
 	}
 			
 	public static int readStatus(int uid, String uname, int reqSize, int num) throws SQLException {
@@ -231,9 +228,9 @@ public class DBConnection {
 	// when we store the traffic info into the database
 	// we should check whether the user's traffic info is 0 or not
 	// if the traffic info is 0, we don't need to store the corresponding user
-	public static userInfo [] getMonitor() {		
+	public static userInfo [] getMonitor(String[] period) {		
 		userInfo [] uInfo = getUserInfo(mAll);
-		HashMap<Integer, Integer> tInfo = getTrafficLog();						
+		HashMap<Integer, Integer> tInfo = getTrafficLog(period);						
 		
 		for (int i = 0; i < uInfo.length; i++) {
 			int uid = uInfo[i].getUID();
@@ -243,18 +240,20 @@ public class DBConnection {
 		return uInfo;
 	}
 	
-	public static int storeClientMonitor() throws SQLException {
+	public static int[] storeClientMonitor() throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		
-		userInfo [] uInfo = getMonitor();
+		String[] period = Talculator.getPeriod();
 		
+		userInfo [] uInfo = getMonitor(period);
+		int total_request = getTotalReq(period);		
 		int server_side_traffic = 0;
 		
 		try {
 			conn = DBConnection.getInstance().getConnection();
 			prepared = conn.prepareStatement("INSERT INTO client_side_monitor "
-					+ "(uname, location, client_side_traffic) VALUES "
+					+ "(user, location, client_side_traffic) VALUES "
 					+ "(?,?,?)");
 			
 			conn.setAutoCommit(false);
@@ -289,23 +288,32 @@ public class DBConnection {
 					System.out.println("[storeClientMonitor/conn]SQLException: " + e.getMessage());
 				}											
 		}
-		return server_side_traffic;
+		
+		int[] server_side_monitor = new int[2];
+		server_side_monitor[0] = server_side_traffic;
+		server_side_monitor[1] = total_request;
+		
+		return server_side_monitor;
 	}
 	
-	public static void storeServerMonitor(int avgCPU, int server_side_traffic) throws SQLException {
+	public static void storeServerMonitor(int avgCPU, int[] server_side_monitor) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;				
 		
 		try {
 			conn = DBConnection.getInstance().getConnection();
 			prepared = conn.prepareStatement("INSERT INTO server_side_monitor "
-					+ "(cpu_util, server_side_traffic) VALUES "
-					+ "(?,?)");
+					+ "(cpu_util, server_side_traffic, num_request) VALUES "
+					+ "(?,?,?)");
 						
 			conn.setAutoCommit(false);
 			
+			int server_side_traffic = server_side_monitor[0];
+			int num_request = server_side_monitor[1];
+			
 			prepared.setInt(1, avgCPU);
 			prepared.setInt(2, server_side_traffic);
+			prepared.setInt(3, num_request);
 			
 			prepared.executeUpdate();
 			conn.commit();						
@@ -328,42 +336,81 @@ public class DBConnection {
 		}		
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static JSONArray getMigrated() throws SQLException {
-		userInfo [] uInfo = getUserInfo(userType.resident);
-		int[] migrated_list = new int[uInfo.length];
+	public static matchInfo[] getMatchResult() {
+		Connection conn = null;
+		PreparedStatement prepared = null;
+		ResultSet rs = null;
 		
-		JSONArray userList = new JSONArray();
-		for (int i = 0; i < uInfo.length; i++) {
-			int uid = uInfo[i].getUID();
-			
-			migrated_list[i] = uid;
-			statusInfo user_status = getStatus(uid, mAll);
-			
-			String[] status = user_status.getStatusList();						
-			String[] time = user_status.getTimeList(); 			
-			int[] traffic = user_status.getTrafficList();
-			
-			JSONObject userItem = new JSONObject();
-			userItem.put("UNAME", uInfo[i].getName());
-			userItem.put("LOCATION", uInfo[i].getLoc());
+		matchInfo[] match = null;
+									
+		try {		
+			conn = DBConnection.getInstance().getConnection();
+			prepared = conn.prepareStatement("SELECT user, prev_ep, curr_ep FROM match_result_table",
+					ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
+					
+			rs = prepared.executeQuery();
 						
-			JSONArray statusList = new JSONArray();				
-			for (int j = 0; j < status.length; j++) {
-				JSONObject statusItem = new JSONObject();
-				statusItem.put("STATUS", status[j]);
-				statusItem.put("TIME", time[j]);
-				statusItem.put("TRAFFIC", traffic[j]); 
-				statusList.add(statusItem);
+			int i = 0;
+			rs.last();
+			int rowCnt = rs.getRow();			
+			match = new matchInfo[rowCnt];
+			rs.beforeFirst();
+			while (rs.next()) {
+				String uname = rs.getString("user");
+				int prev = rs.getInt("prev_ep");
+				int curr = rs.getInt("curr_ep");
+				
+				if (curr >= 1)
+					curr = curr - 1;
+				
+				match[i] = new matchInfo();
+				match[i].setInfo(uname, prev, curr);
+				i++;
 			}
-			
-			userItem.put("STATUS_LIST", statusList);
-			userList.add(userItem);
-		}		
+		} catch (PropertyVetoException e) {
+			System.out.println("[getMatchRes]PropertyVetoException: " + e.getMessage());			
+		}  catch (SQLException e) {
+			System.out.println("[getMatchRes]SQLException: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("[getMatchRes]IOException: " + e.getMessage()); 
+		} finally {
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					System.out.println("[getMatchRes/conn]SQLException: " + e.getMessage());					
+				}		
+		}
+		return match;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static JSONObject getMigrated(String uname) throws SQLException {
+		userInfo uInfo = getUserInfo(uname);						
+		int uid = uInfo.getUID();
+		String loc = uInfo.getLoc();
 		
-		deleteMigrated(migrated_list);		
+		statusInfo uStatus = getStatus(uid, mAll);		
+		String[] status = uStatus.getStatusList();						
+		String[] time = uStatus.getTimeList(); 			
+		int[] traffic = uStatus.getTrafficList();
 		
-		return userList;
+		JSONObject userItem = new JSONObject();
+		userItem.put("UNAME", uname);
+		userItem.put("LOCATION", loc);
+					
+		JSONArray statusList = new JSONArray();				
+		for (int j = 0; j < status.length; j++) {
+			JSONObject statusItem = new JSONObject();
+			statusItem.put("STATUS", status[j]);
+			statusItem.put("TIME", time[j]);
+			statusItem.put("TRAFFIC", traffic[j]); 
+			statusList.add(statusItem);
+		}
+		userItem.put("STATUS_LIST", statusList);						
+		
+		return userItem;		
 	}
 	
 	private static void updateUser(int uid, int utype) throws SQLException {
@@ -663,8 +710,12 @@ public class DBConnection {
 			uInfo = new userInfo [rowCnt];		
 			rs.beforeFirst();
 			while (rs.next()) {
+				int uid = rs.getInt("uid");
+				String uname = rs.getString("uname");
+				String loc = rs.getString("location");
+				
 				uInfo[i] = new userInfo();
-				uInfo[i].setInfo(rs.getInt("uid"), rs.getString("uname"), rs.getString("location"));				
+				uInfo[i].setInfo(uid, uname, loc);				
 				i++;
 			}				
 		} catch (SQLException e) {
@@ -684,7 +735,47 @@ public class DBConnection {
 		return uInfo;
 	}
 	
-	private static HashMap<Integer, Integer> getTrafficLog() {
+	private static userInfo getUserInfo (String uname) {
+		Connection conn = null;
+		PreparedStatement prepared = null;
+		ResultSet rs = null;
+
+		userInfo uInfo = new userInfo();
+		
+		try {
+			conn = DBConnection.getInstance().getConnection();
+			prepared = conn.prepareStatement("SELECT uid, location FROM users WHERE "
+						+ "uname = ?",
+						ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_READ_ONLY);
+				
+			prepared.setString(1, uname);				
+									
+			rs = prepared.executeQuery();
+						
+			if (rs.next()) {
+				int uid = rs.getInt("uid");
+				String loc = rs.getString("location");
+				uInfo.setInfo(uid, uname, loc);												
+			}				
+		} catch (SQLException e) {
+			System.out.println("[getUserInfo]SQLException: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("[getUserInfo]IOException: " + e.getMessage());			
+		} catch (PropertyVetoException e) {
+			System.out.println("[getUserInfo]PropertyVetoException: " + e.getMessage());
+		} finally {
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					System.out.println("[getUserInfo/conn]SQLException: " + e.getMessage());					
+				}								
+		}		
+		return uInfo;
+	}
+	
+	private static HashMap<Integer, Integer> getTrafficLog(String[] period) {
 		Connection conn = null;
 		PreparedStatement prepared = null;
 		ResultSet rs = null;				
@@ -699,20 +790,11 @@ public class DBConnection {
 					+ "UNION ALL "
 					+ "SELECT uid, traffic, time FROM latent) x "
 					+ "WHERE time BETWEEN ? AND ? "
-					+ "GROUP BY uid");
-						
-			Date date = new Date();			
-			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");						
-			Calendar cal = Calendar.getInstance();
+					+ "GROUP BY uid");									
+											
+			String start = period[0];
+			String end = period[1];
 			
-			cal.setTime(date);	
-			cal.add(Calendar.HOUR, mPeriod);
-			cal.add(Calendar.MINUTE, mPeriod * 10);
-			String start = f.format(cal.getTime());
-			
-			cal.setTime(date);
-			String end = f.format(cal.getTime());
-																		
 			prepared.setString(1, start);
 			prepared.setString(2, end);
 			
@@ -740,39 +822,78 @@ public class DBConnection {
 		return tMap;
 	}
 	
-	private static void deleteMigrated(int[] migrated_list) throws SQLException {
+	private static int getTotalReq(String[] period) {
+		Connection conn = null;
+		PreparedStatement prepared = null;
+		ResultSet rs = null;				
+		int total_req = 0;
+		
+		try {
+			conn = DBConnection.getInstance().getConnection();
+			prepared = conn.prepareStatement("SELECT COUNT(uid) FROM ("
+					+ "SELECT uid, time FROM status "
+					+ "UNION ALL "
+					+ "SELECT uid, time FROM reply "
+					+ "UNION ALL "
+					+ "SELECT uid, time FROM latent) x "
+					+ "WHERE time BETWEEN ? AND ?");					
+								
+			String start = period[0];
+			String end = period[1];
+			
+			prepared.setString(1, start);
+			prepared.setString(2, end);
+			
+			rs = prepared.executeQuery();						
+						
+			while(rs.next()) {
+				total_req = rs.getInt("COUNT(uid)");																
+			}					
+		} catch (PropertyVetoException e) {
+			System.out.println("[getTotalReq]PropertyVetoException: " + e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("[getTotalReq]SQLException: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("[getTotalReq]IOException: " + e.getMessage());
+		} finally {						
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					System.out.println("[getTotalReq/conn]SQLException: " + e.getMessage());
+				}
+		}
+		return total_req;
+	}
+	
+	public static void deleteMigrated(String uname) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;		
 				
 		try {
 			conn = DBConnection.getInstance().getConnection();
 			prepared = conn.prepareStatement("DELETE FROM users WHERE "
-					+ "uid = ?");
+					+ "uname = ?");
 			
-			conn.setAutoCommit(false);
-			
-			for (int i = 0; i < migrated_list.length; i ++) {
-				prepared.setInt(1, migrated_list[i]);
-				prepared.addBatch();			
-			}						
-			
-			prepared.executeBatch();
+			conn.setAutoCommit(false);								
+			prepared.setString(1, uname);																	
+			prepared.executeUpdate();
 			conn.commit();				
 		} catch (PropertyVetoException e) {
-			System.out.println("[getStatusTraffic]PropertyVetoException: " + e.getMessage());
+			System.out.println("[deleteMigrated]PropertyVetoException: " + e.getMessage());
 		} catch (SQLException e) {
-			System.out.println("[getStatusTraffic]SQLException: " + e.getMessage());
+			System.out.println("[deleteMigrated]SQLException: " + e.getMessage());
 			System.out.println("Rolling back data...");
 			if (conn != null)
 				conn.rollback();
 		} catch (IOException e) {
-			System.out.println("[getStatusTraffic]IOException: " + e.getMessage());
+			System.out.println("[deleteMigrated]IOException: " + e.getMessage());
 		} finally {						
 			if (conn != null)
 				try {
 					conn.close();
 				} catch (SQLException e) {
-					System.out.println("[getStatusTraffic/conn]SQLException: " + e.getMessage());
+					System.out.println("[deleteMigrated/conn]SQLException: " + e.getMessage());
 				}
 		}
 	}

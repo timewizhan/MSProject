@@ -14,10 +14,10 @@ import Type.opType;
 import Type.userType;
 import Utility.CoordHandler;
 import Utility.MessageHandler;
+import Wrapper.matchInfo;
 
 public class WorkerRunnable implements Runnable {
-    private Socket mClientSocket = null;
-    private int mNumReq = 0;
+    private Socket mClientSocket = null;    
 
     public WorkerRunnable(Socket clientSocket) {
     	mClientSocket = clientSocket;    	
@@ -25,27 +25,30 @@ public class WorkerRunnable implements Runnable {
 
     public void run() {
         JSONObject request  = MessageHandler.msgParser(mClientSocket);             
-        int reqType = Integer.parseInt((String) request.get("TYPE")); 
-        
+        int reqType = Integer.parseInt((String) request.get("TYPE"));         
+        BufferedWriter out = null;
+        String response = null;
+        boolean sleepFlag = false;
+       
         try {
         	if (reqType < 5) {
-	        	int result = operationHandler(request);
-				String response = MessageHandler.msgGenerator(result);
-				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-						mClientSocket.getOutputStream(), "UTF-8"));	
-				
-				Thread.sleep(CoordHandler.calRTT(ServiceServer.mCoord, (String) request.get("LOC")));
-				
-				out.write(response);
-				out.newLine();
-				out.flush();
-				mClientSocket.close();
-				out.close();
-				System.out.println(getTime() + ServiceServer.mCoord.getServerLoc() + " handled the request from " + "[" + request.get("SRC") + "]");
+        		sleepFlag = true;
+	        	int result = operationHandler(request);	        	
+	        	System.out.println(getTime() + ServiceServer.mCoord.getServerLoc() + " is handling the request from " + "[" + request.get("SRC") + "]");
+	        	response = MessageHandler.msgGenerator(result);	        									
         	} else {
-        		commandHanlder(request);
-        		System.out.println(getTime() + ServiceServer.mCoord.getServerLoc() + " handled the command " + reqType);
-        	} 							
+        		System.out.println(getTime() + ServiceServer.mCoord.getServerLoc() + " is handling the command " + reqType);
+        		response = commandHanlder(request);        					        		
+        	}        	        			
+        	out = new BufferedWriter(new OutputStreamWriter(
+					mClientSocket.getOutputStream(), "UTF-8"));	
+			
+        	if(sleepFlag)
+        		Thread.sleep(CoordHandler.calRTT(ServiceServer.mCoord, (String) request.get("LOC")));
+			
+			out.write(response);
+			out.newLine();
+			out.flush();							        	
 		} catch (PropertyVetoException e) {			
 			e.printStackTrace();
 		} catch (SQLException e) {			
@@ -54,13 +57,26 @@ public class WorkerRunnable implements Runnable {
 			e.printStackTrace();
 		} catch (InterruptedException e) {			
 			e.printStackTrace();
+		} finally {
+			if (out != null)
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			if (mClientSocket != null)
+				try {
+					mClientSocket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 		}
     }
     
     private int operationHandler(JSONObject request) throws PropertyVetoException, SQLException, IOException, InterruptedException {		
 		int uid = -1;
 		int reqSize = request.toString().length();
-		int res = 0;		
+		int result = 0;		
 						
 		int reqType = Integer.parseInt((String) request.get("TYPE"));		
 		String src = (String) request.get("SRC");		
@@ -71,66 +87,67 @@ public class WorkerRunnable implements Runnable {
 		switch (reqType) {                                                                                                                                                                                                      
 			case opType.tweet:				
 				uid = DBConnection.isThere(src, userType.resident, loc);			
-				res = DBConnection.writeStatus(uid, msg, reqSize);				
+				result = DBConnection.writeStatus(uid, msg, reqSize);				
 				break;
 			case opType.read:
 				uid = DBConnection.isThere(src, userType.visitor, loc);
-				res = DBConnection.readStatus(uid, dst, reqSize, opType.num_read);				
+				result = DBConnection.readStatus(uid, dst, reqSize, opType.num_read);				
 				break; 
 			case opType.reply:
 				uid = DBConnection.isThere(src, userType.visitor, loc);			
-				res = DBConnection.writeReply(uid, dst, msg, reqSize, opType.num_read);				
+				result = DBConnection.writeReply(uid, dst, msg, reqSize, opType.num_read);				
 				break;
 			case opType.retweet:
 				uid = DBConnection.isThere(src, userType.visitor, loc);
-				res = DBConnection.readStatus(uid, dst, reqSize, opType.num_share);				
+				result = DBConnection.readStatus(uid, dst, reqSize, opType.num_share);				
 				break;		
 			default:
 				System.out.println("[ERROR] Invalid Operation Type: " + reqType);			
 				break;
-		}
-		mNumReq++;
-		return res;
+		}		
+		return result;
 	}
     
-    private void commandHanlder(JSONObject request) throws SQLException {
+    private String commandHanlder(JSONObject request) throws SQLException {
     	int reqType = Integer.parseInt((String) request.get("TYPE"));
-    	
+    	String result = null;
+    	    	
     	switch (reqType) {
 	    	case opType.monitor:
-	    		CpuMonitor.storeMonitored();	    		
+	    		CpuMonitor.storeMonitored();
+	    		result = MessageHandler.store_complete;	    		
 	    		break;	    	
 	    	case opType.moveout:
-	    		// When getMigrated method is called,
-	    		// migrated data is deleted
+	    		matchInfo[] match = DBConnection.getMatchResult();	    			    		
 	    		
-	    		// get the uname from the DB
-	    		// parameter: uname
-	    		JSONArray result = DBConnection.getMigrated();
-	    		// send the migrated data
-	    		// parameter: JSONArray, Dst IP Addr
-	    		MessageHandler.sendMigrated(result);    		
-	    		break;
-	    	case opType.movein:	    		
-	    		JSONArray migrated = (JSONArray) request.get("MIGRATED");
-	    		
-	    		for (int i = 0; i < migrated.size(); i ++) {
-	    			JSONObject userItem = (JSONObject) migrated.get(i);
-	    			String uname = (String) userItem.get("UNAME");
-	    			String loc = (String) userItem.get("LOCATION");
-	    			JSONArray statusList = (JSONArray) userItem.get("STATUS_LIST");
-	    				    			
-	    			int uid = DBConnection.isThere(uname, userType.resident, loc);
-	    			DBConnection.writeStatus(uid, statusList);
+	    		for (int i = 0; i < match.length; i++) {
+	    			String uname = match[i].getName();
+	    			int curr = match[i].getCurr();	    				    				    			
+	    			JSONObject migrated = DBConnection.getMigrated(uname);
+	    			
+	    			DBConnection.deleteMigrated(uname);
+	    			
+	    			int res = MessageHandler.sendMigrated(curr, migrated);
+	    			if (res != 1)
+	    				System.out.println(getTime() + ServiceServer.mCoord.getServerLoc() + "has received data replacement failed msg " + "[" + uname +"]");
 	    		}
+	    		result = MessageHandler.data_replacement_complete;
+	    		CpuMonitor.startCpuMonitor();	    		
 	    		break;
-	    	case opType.restart:
-	    		CpuMonitor.startCpuMonitor();
-	    		break;
+	    	case opType.movein:   		
+	    		JSONObject userItem = (JSONObject) request.get("MIGRATED");	    			    			    		
+    			String uname = (String) userItem.get("UNAME");
+    			String loc = (String) userItem.get("LOCATION");
+    			JSONArray statusList = (JSONArray) userItem.get("STATUS_LIST");
+    				    			
+    			int uid = DBConnection.isThere(uname, userType.resident, loc);
+    			result = MessageHandler.msgGenerator(DBConnection.writeStatus(uid, statusList));    					    			
+	    		break;	    	
 	    	default:
 	    		System.out.println("[ERROR] Invalid Operation Type: " + reqType);
 	    		break;
-    	}    	
+    	}
+    	return result;
     }                
     
     private String getTime() {

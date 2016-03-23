@@ -61,7 +61,7 @@ public class CpuMonitor {
 		}
 		
 		int avgCPU = totalCPU / ServiceServer.mCPU_Log.size();				
-		int server_side_traffic = DBConnection.storeClientMonitor();				
-		DBConnection.storeServerMonitor(avgCPU, server_side_traffic);				
+		int[] server_side_monitor = DBConnection.storeClientMonitor();				
+		DBConnection.storeServerMonitor(avgCPU, server_side_monitor);				
     }
 }
