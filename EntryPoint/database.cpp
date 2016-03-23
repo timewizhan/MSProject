@@ -47,7 +47,7 @@ int CDatabase::extractData()
 
 	memset(&m_socket.write_message, 0, sizeof(m_socket.write_message));
 	while ((sql_row = mysql_fetch_row(sql_result)) != NULL){
-		printf("cpu util: %s, server-side traffic: %s \n", sql_row[0], sql_row[1]);
+	//	printf("cpu util: %s, server-side traffic: %s \n", sql_row[0], sql_row[1]);
 
 		int _cpu_util = 0;
 		int _server_side_traffic = 0;
@@ -73,7 +73,7 @@ int CDatabase::extractData()
 
 //	::Sleep(1);
 
-	printf("\n");
+//	printf("\n");
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	m_iQueryStat = mysql_query(connection, "select * from client_side_monitor");
@@ -88,8 +88,8 @@ int CDatabase::extractData()
 
 	memset(&m_socket.write_message, 0, sizeof(m_socket.write_message));
 	while ((sql_row = mysql_fetch_row(sql_result)) != NULL){
-		printf("user: %s, location: %s, timestamp: %s, client-side traffic: %s \n"
-			, sql_row[0], sql_row[1], sql_row[2], sql_row[3]);
+	//	printf("user: %s, location: %s, timestamp: %s, client-side traffic: %s \n"
+	//		, sql_row[0], sql_row[1], sql_row[2], sql_row[3]);
 
 		strcpy_s(m_socket.write_message.user, 40, sql_row[0]);				//user name
 		strcpy_s(m_socket.write_message.location, 40, sql_row[1]);			//location

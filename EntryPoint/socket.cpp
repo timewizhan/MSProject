@@ -26,7 +26,7 @@ void CSocket::init_socket(){
 	//변수 초기화
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = inet_addr("165.132.120.144");
+	server_addr.sin_addr.s_addr = inet_addr("165.132.122.243");	//2번 PC - BROKER
 	server_addr.sin_port = htons(3333);
 
 	clen = sizeof(server_addr);
