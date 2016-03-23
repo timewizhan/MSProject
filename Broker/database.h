@@ -105,6 +105,7 @@ public:
 	norm_server_data ExtractNormServerData(string sQuery);
 	norm_cst_data ExtractNormCstData(string sQuery);
 	double ExtractNormDistData(string sQuery);
+	double ExtractNormSocialLevelData(string sQuery);
 	vector<weight_data> ExtractWeightData();
 	vector <match_result_data> ExtractMatchResult();
 	void DeleteDuplicateValues(string sQuery);

@@ -260,6 +260,30 @@ double CDatabase::ExtractNormDistData(string sQuery){
 	return dResValue;
 }
 
+double CDatabase::ExtractNormSocialLevelData(string sQuery){
+
+	m_iQueryStat = mysql_query(connection, sQuery.c_str());
+	if (m_iQueryStat != 0) {
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	sql_result = mysql_store_result(connection);
+
+	double dResValue = 0;
+	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+		//	stResValue.sUser = sql_row[0];
+		dResValue = stod(sql_row[1]);
+		//	stResValue.dEp2 = stod(sql_row[2]);
+		//	stResValue.dEp3 = stod(sql_row[3]);
+	}
+
+	mysql_free_result(sql_result);
+
+	return dResValue;
+}
+
 vector<weight_data> CDatabase::ExtractWeightData(){
 
 	string sQuery = "select * from weight_table";

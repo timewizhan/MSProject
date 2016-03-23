@@ -238,6 +238,7 @@ void CMatch::InsertWeightTable(){
 	double b = 0.5;
 	double c = 1.0;
 	double d = 1.0;
+	double e = 1.0;
 	CDatabase	databaseInstance;
 	databaseInstance.InitDB();
 //	vector <norm_server_data> vecNormServData = databaseInstance.ExtractNormServerData();
@@ -253,6 +254,9 @@ void CMatch::InsertWeightTable(){
 	double dEp1Dist = 0;
 	double dEp2Dist = 0;
 	double dEp3Dist = 0;
+	double dEp1SocialLvl = 0;
+	double dEp2SocialLvl = 0;
+	double dEp3SocialLvl = 0;
 	double dWeight_EP1 = 0;
 	double dWeight_EP2 = 0;
 	double dWeight_EP3 = 0;
@@ -280,8 +284,12 @@ void CMatch::InsertWeightTable(){
 		sQuery = "select user, ep1 from normalized_distance_table where user ='" + sUser + "'";
 		dEp1Dist = databaseInstance.ExtractNormDistData(sQuery);
 
+		//Social Level
+		sQuery = "select user, ep1 from normalized_social_level_table where user ='" + sUser + "'";
+		dEp1SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
+
 		//weight
-		dWeight_EP1 = a*dCpuUtil + b*dSst + c*dCst + d*dEp1Dist;
+		dWeight_EP1 = a*dCpuUtil + b*dSst + c*dCst + d*dEp1Dist + e*dEp1SocialLvl;
 
 
 	//user1, ep2
@@ -301,8 +309,12 @@ void CMatch::InsertWeightTable(){
 		sQuery = "select user, ep2 from normalized_distance_table where user ='" + sUser + "'";
 		dEp2Dist = databaseInstance.ExtractNormDistData(sQuery);
 
+		//Social Level
+		sQuery = "select user, ep2 from normalized_social_level_table where user ='" + sUser + "'";
+		dEp2SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
+
 		//weight
-		dWeight_EP2 = a*dCpuUtil + b*dSst + c*dCst + d*dEp2Dist;
+		dWeight_EP2 = a*dCpuUtil + b*dSst + c*dCst + d*dEp2Dist + e*dEp2SocialLvl;
 	
 
 	//user1, ep3
@@ -322,8 +334,12 @@ void CMatch::InsertWeightTable(){
 		sQuery = "select user, ep3 from normalized_distance_table where user ='" + sUser + "'";
 		dEp3Dist = databaseInstance.ExtractNormDistData(sQuery);
 
+		//Social Level
+		sQuery = "select user, ep3 from normalized_social_level_table where user ='" + sUser + "'";
+		dEp3SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
+
 		//weight
-		dWeight_EP3 = a*dCpuUtil + b*dSst + c*dCst + d*dEp3Dist;
+		dWeight_EP3 = a*dCpuUtil + b*dSst + c*dCst + d*dEp3Dist + e*dEp3SocialLvl;
 
 
 
