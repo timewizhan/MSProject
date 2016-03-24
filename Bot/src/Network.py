@@ -1,4 +1,5 @@
 from socket import *
+from Log import *
 import time
 
 TYPE_AF_INET 	= AF_INET
@@ -52,6 +53,10 @@ class NetworkSettingComponent:
 	def getProtocolType(self):
 		return self.ProtocolType
 
+
+TYPE_NT_BROKER = 1
+TYPE_NT_EP = 2
+TYPE_NT_DBCS = 3
 
 class AbstractNetwork:
 	DEFAULT_RECV_BUF_SIZE = 8192
@@ -112,13 +117,16 @@ class AbstractNetwork:
 		DEFAULT_RECV_BUF_SIZE = 2 << 16
 		return self.socketToConnect.recv(DEFAULT_RECV_BUF_SIZE)
 
-	def startNetworkingWithData(self, data):
+	def startNetworkingWithData(self, data, nttype):
 		recvData = ""
 
 		if not self.connectToServer():
 			return recvData
 
 		try:
+			Recorder = CRecorder()
+			Recorder.startRecord()
+
 			ret = self.sendDataToServer(data)
 			if ret != 1:
 				raise NetworkError(ret)
@@ -128,7 +136,17 @@ class AbstractNetwork:
 			recvData = self.recvDataFromServer()
 			sizeOfRecvData = len(recvData)
 			if sizeOfRecvData < 1:
-				raise NetworkError(sizeOfRecvData)				
+				raise NetworkError(sizeOfRecvData)
+
+			Recorder.endRecord()
+			responseTime = Recorder.gerResultTime()
+
+			if nttype == TYPE_NT_BROKER:
+				Log.debug("BROKER RES : " + str(responseTime))
+			elif nttype == TYPE_NT_EP:
+				Log.debug("ENTRYPOINT RES : " + str(responseTime))
+			else:
+				Log.debug("DBPOOLSERVER RES : " + str(responseTime))
 
 		except NetworkError as e:
 			print e
@@ -148,7 +166,7 @@ class Broker(AbstractNetwork):
 		AbstractNetwork.__del__(self)
 
 	def startNetworkingWithData(self, data):
-		return AbstractNetwork.startNetworkingWithData(self, data)
+		return AbstractNetwork.startNetworkingWithData(self, data, TYPE_NT_BROKER)
 
 class EntryPoint(AbstractNetwork):
 	def __init__(self, ipAddress):
@@ -162,20 +180,20 @@ class EntryPoint(AbstractNetwork):
 		AbstractNetwork.__del__(self)
 
 	def startNetworkingWithData(self, data):
-		return AbstractNetwork.startNetworkingWithData(self, data)
+		return AbstractNetwork.startNetworkingWithData(self, data, TYPE_NT_EP)
 
 class DBPoolServer(AbstractNetwork):
 	def __init__(self):
 		'''
 			DBPoolServer Port are fixed
 		'''
-		dbPoolServerIPAddress = "165.132.122.243"
-		dbPoolServerPort = 7777
-		AbstractNetwork.__init__(self, dbPoolServerIPAddress, entrypointPort)
+		#dbPoolServerIPAddress = "192.168.56.1"
+		dbPoolServerIPAddress = "165.132.123.83"
+		dbPoolServerPort = 6000
+		AbstractNetwork.__init__(self, dbPoolServerIPAddress, dbPoolServerPort)
 
 	def __del__(self):
 		AbstractNetwork.__del__(self)
 
 	def startNetworkingWithData(self, data):
-		return AbstractNetwork.startNetworkingWithData(self, data)
-
+		return AbstractNetwork.startNetworkingWithData(self, data, TYPE_NT_DBCS)

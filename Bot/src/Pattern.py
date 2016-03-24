@@ -1,4 +1,4 @@
-from DataBase import *
+#from DataBase import *
 from Structure import *
 from Network import *
 import random
@@ -33,11 +33,11 @@ class TimePattern(AbstractPattern):
 			return self.startToMakeTimePattern()
 
 	def startToMakeTimePattern(self):
-		writtenTimeList = self.getAllDataFromDataBase()
-		if len(writtenTimeList) == 0:
+		writtenTimeHourList = self.getAllDataFromDataBase()
+		if len(writtenTimeHourList) == 0:
 			return
 		
-		self.generalizeAllDataAsOneDay(writtenTimeList)
+		self.generalizeAllDataAsOneDay(writtenTimeHourList)
 		return self.getWorkCountByEachHour()
 
 	def getAllDataFromDataBase(self):
@@ -47,14 +47,22 @@ class TimePattern(AbstractPattern):
 		recvFromServer = DBPSServer.startNetworkingWithData(sql)
 		del DBPSServer
 
-		return recvFromServer.split()
+		datalist = recvFromServer.split()
+		hourList = []
+		for i in range(0, len(datalist)):
+			if i % 2 == 0:
+				continue
+			
+			timevaluelist = datalist[i].split(':')
+			hourList.append(int(timevaluelist[0]))
+		
+		return hourList
 
-	def generalizeAllDataAsOneDay(self, writtenTimeList):
-		lengthOfWrittenTimeList = len(writtenTimeList)
-		for i in range(0, lengthOfWrittenTimeList):
-			dateTimeValue = writtenTimeList[i][0]
+	def generalizeAllDataAsOneDay(self, writtenTimeHourList):
+		lengthOfWrittenTimeHourList = len(writtenTimeHourList)
+		for i in range(0, lengthOfWrittenTimeHourList):
+			hourValue = writtenTimeHourList[i]
 
-			hourValue = dateTimeValue.hour
 			if not self.checkProperHourValue(hourValue):
 				continue
 
@@ -134,19 +142,22 @@ class BehaviorPattern(AbstractPattern):
 
 	def decideBehaviorByEachHour(self, countlistToWorkInOneDay):
 		workListInOneDay = []
+		#pdb.set_trace()
+
+		friendList = self.getAllDataFromDataBase()
 
 		for selectedHour in range(0, self.TOTAL_TIME_COUNT):
 			countToWork = countlistToWorkInOneDay[selectedHour]
 
-			workListInHour = self.decideWorkByBehaviorCount(countToWork)
+			friendListByRatio = self.getFriendByRatio(friendList)
+			workListInHour = self.decideWorkByBehaviorCount(countToWork, friendListByRatio)
 			workListInOneDay.append(workListInHour)
 
 		return workListInOneDay
 
-	def decideWorkByBehaviorCount(self, countToWork):
-		friendListByRatio = self.getFriendByRatio()
-
+	def decideWorkByBehaviorCount(self, countToWork, friendListByRatio):
 		jobToWorkInHour = []
+
 		for i in range(0, countToWork):
 			jobToWork = []
 
@@ -173,9 +184,7 @@ class BehaviorPattern(AbstractPattern):
 
 		return jobToWorkInHour
 
-	def getFriendByRatio(self):
-		friendList = self.getAllDataFromDataBase()
-		
+	def getFriendByRatio(self, friendList):
 		lengthOfFriendList = len(friendList)
 		if lengthOfFriendList < 1:
 			return

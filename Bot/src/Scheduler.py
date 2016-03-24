@@ -2,7 +2,7 @@ from Structure import JobHashMap
 from Timer import *
 from JsonTools import *
 from Pattern import *
-from DataBase import *
+#from DataBase import *
 from MsgSets import *
 from Network import *
 from Recorder import *
@@ -31,6 +31,7 @@ class Scheduler:
 		continued =	firstStep = True
 		
 		# Make an initial pattern
+		#pdb.set_trace()
 		self.patternDelegator.startToGetPattern(self.jobHashMap)
 
 		while continued:

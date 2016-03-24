@@ -1,6 +1,6 @@
 from multiprocessing import Process
 import os, sys, time
-
+import pdb
 ####################################
 def getCurrentDir():
 	return os.getcwd()
@@ -21,13 +21,19 @@ def findBotFile():
 	return os.path.exists(botFilePath)
 
 def getUsersInfoFromDB(botNumber):
+	#pdb.set_trace()
 	sql = "SELECT \"userName\", \"userPlace\" FROM public.\"completeUserid\" WHERE \"classifier\"=" + botNumber
 
 	DBPSServer = DBPoolServer()
 	recvFromServer = DBPSServer.startNetworkingWithData(sql)
 	del DBPSServer
 
-	usersInfoList = recvFromServer.split()
+	usersInfoList = []
+	userInfoList = recvFromServer.split()
+	for i in range(0, len(userInfoList)):
+		userInfo = userInfoList[i].split('=')
+		usersInfoList.append(userInfo)
+
 	return usersInfoList
 
 def fn_process(*argv):
@@ -51,6 +57,8 @@ def operateMultiProcess(usersInfoList):
 		eachBot.start()
 		print "[Debug] Process [%d] : [%s] is started" % (procNumber + 1, usersInfoList[procNumber][0])
 		procNumber += 1
+		if procNumber > 500:
+			break
 		time.sleep(1)
 
 	for eachBot in procList:
@@ -81,7 +89,8 @@ if __name__ == "__main__":
 
 	currentPath = getCurrentDir()
 	setEnvPath(currentPath)
-	from DataBase import *
+	#from DataBase import *
+	from Network import *
 
 	print "**************************************"
 	print "*************Generate Bot*************"
