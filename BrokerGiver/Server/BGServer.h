@@ -27,13 +27,15 @@ class CBGServer
 	DWORD InitServerSock(DWORD dwPort);
 	DWORD InitIOCompletionPort(DWORD dwNumberOfConcurrentThreads);
 	DWORD InitWorkerThread();
+	DWORD InitBrokerThread();
 
 	/*
 		InitServerValue method have internel method
 		neccesary method (bind, listen)
 	*/
-	DWORD InitServerValue(DWORD dwPort, DWORD dwBackLog);
+	DWORD InitServerValue(DWORD dwPort);
 	DWORD AcceptServer(ST_CLIENT_SOCKET &refstClientSocket);
+	VOID ListenToReplacement();
 	DWORD CompleteReadFromClient(ST_CLIENT_SOCKET &refstClientSocket);
 
 public:
@@ -44,6 +46,7 @@ public:
 	DWORD StopServer();
 };
 
+unsigned int WINAPI WorkerBrokerThread(void *pData);
 unsigned int WINAPI WorkerCompletionThread(void *pIOCPData);
 
 #endif

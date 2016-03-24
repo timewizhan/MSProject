@@ -1,6 +1,8 @@
 #include "BGServer.h"
 #include "BGServerError.h"
 #include "BGWorkerThread.h"
+#include "BGBrokerThread.h"
+#include "BGSpinLock.h"
 #include "..\Common\Log.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,6 +82,24 @@ DWORD CBGServer::AcceptServer(ST_CLIENT_SOCKET &refstClientSocket)
 	DebugLog("Client Socket : %d, Address : %s", refstClientSocket.hClientSock, szClientAddress);
 
 	return E_RET_SUCCESS;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+VOID CBGServer::ListenToReplacement()
+{
+	DWORD dwReqType;
+	bool bContinue = true;
+	while (bContinue)
+	{
+		dwReqType = GetLockBrokerReqType();
+		if (dwReqType == 1) {
+			DebugLog("Currently, Broker replacement is now working");
+			::Sleep(1000);
+			continue;
+		}
+		bContinue = false;
+	}
+	
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,8 +198,16 @@ DWORD CBGServer::InitWorkerThread()
 	return dwRet;
 }
 
+DWORD CBGServer::InitBrokerThread()
+{
+	m_stServerWorkerThreads.hBrokerThread = (HANDLE)_beginthreadex(NULL, 0, WorkerBrokerThread, NULL, 0, NULL);
+	DebugLog("Broker Thread is created");
+
+	return E_RET_SUCCESS;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-DWORD CBGServer::InitServerValue(DWORD dwPort, DWORD dwBackLog)
+DWORD CBGServer::InitServerValue(DWORD dwPort)
 {
 	DWORD dwRet = E_RET_SUCCESS;
 	std::vector<std::string> vecstrGetAddress;
@@ -201,7 +229,6 @@ DWORD CBGServer::InitServerValue(DWORD dwPort, DWORD dwBackLog)
 	int nRet;
 	DebugLog("Init Server Address : %s", vecstrGetAddress[0].c_str());
 	DebugLog("Init Server Port : %d", dwPort);
-	DebugLog("Init Server BackLog : %d", dwBackLog);
 	nRet = ::bind(m_stServerInit.hServerSock, (SOCKADDR *)&m_stServerInit.stServerAddrIn, sizeof(m_stServerInit.stServerAddrIn));
 	if (nRet == SOCKET_ERROR) {
 		ErrorLog("Fail to operate socket bind");
@@ -250,8 +277,14 @@ DWORD CBGServer::StartServer(DWORD dwPort, DWORD dwBackLog)
 		ErrorLog("Fail to initailize Server Sock");
 		return E_RET_FAIL;
 	}
+	
+	dwRet = InitBrokerThread();
+	if (dwRet != E_RET_SUCCESS) {
+		ErrorLog("Fail to initailize Broker Sock");
+		return E_RET_FAIL;
+	}
 
-	dwRet = InitServerValue(dwPort, dwBackLog);
+	dwRet = InitServerValue(dwPort);
 	if (dwRet != E_RET_SUCCESS) {
 		ErrorLog("Fail to configure server value");
 		return E_RET_FAIL;
@@ -262,6 +295,8 @@ DWORD CBGServer::StartServer(DWORD dwPort, DWORD dwBackLog)
 	{
 		try
 		{
+			ListenToReplacement();
+
 			ST_CLIENT_SOCKET stClientSocket;
 			dwRet = AcceptServer(stClientSocket);
 			if (dwRet != E_RET_SUCCESS) {
@@ -287,6 +322,7 @@ DWORD CBGServer::StartServer(DWORD dwPort, DWORD dwBackLog)
 		All Thread is waiting for stopping their operation
 	*/
 	WaitForMultipleObjects(m_stServerWorkerThreads.dwNumberOfThread, m_stServerWorkerThreads.phWorkerThread, TRUE, INFINITE);
+	WaitForSingleObject(m_stServerWorkerThreads.hBrokerThread, INFINITE);
 	
 	return dwRet;
 }
@@ -294,6 +330,26 @@ DWORD CBGServer::StartServer(DWORD dwPort, DWORD dwBackLog)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 DWORD CBGServer::StopServer()
 {
+	return E_RET_SUCCESS;
+}
+
+
+/*
+	Worker broker thread is used for receving data from broker
+*/
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+unsigned int WINAPI WorkerBrokerThread(void *pData)
+{
+	CBGBrokerThread *pBGBrokerThread;
+	pBGBrokerThread = new CBGBrokerThread();
+
+	try
+	{
+		pBGBrokerThread->StartBrokerThread();
+	}
+	catch (std::exception &e) {
+		ErrorLog("%s", e.what());
+	}
 	return E_RET_SUCCESS;
 }
 

@@ -93,6 +93,7 @@
     <ClCompile Include="..\DataBase\MySQL.cpp" />
     <ClCompile Include="..\HelpTool\HelpTool.cpp" />
     <ClCompile Include="..\BGServerMain.cpp" />
+    <ClCompile Include="..\Server\BGBrokerThread.cpp" />
     <ClCompile Include="..\Server\BGServer.cpp" />
     <ClCompile Include="..\Server\BGServerError.cpp" />
     <ClCompile Include="..\Server\BGWorkerThread.cpp" />
@@ -105,9 +106,11 @@
     <ClInclude Include="..\DataBase\DataBaseType.h" />
     <ClInclude Include="..\DataBase\MySQL.h" />
     <ClInclude Include="..\HelpTool\HelpTool.h" />
+    <ClInclude Include="..\Server\BGBrokerThread.h" />
     <ClInclude Include="..\Server\BGServer.h" />
     <ClInclude Include="..\Server\BGServerError.h" />
     <ClInclude Include="..\Server\BGServerStruct.h" />
+    <ClInclude Include="..\Server\BGSpinLock.h" />
     <ClInclude Include="..\Server\BGWorkerStruct.h" />
     <ClInclude Include="..\Server\BGWorkerThread.h" />
     <ClInclude Include="..\Server\Protocol.h" />

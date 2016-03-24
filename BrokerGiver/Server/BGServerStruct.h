@@ -27,13 +27,13 @@ struct ST_SERVER_INIT
 struct ST_SERVER_WORKER_THREAD
 {
 	HANDLE *phWorkerThread;
+	HANDLE hBrokerThread;
 	DWORD	dwNumberOfThread;
 };
 
 struct ST_SERVER_IOCP_DATA
 {
 	HANDLE	hCompletionPort;
-
 };
 
 #define MAX_CLIENT_MSG_BUF 1024

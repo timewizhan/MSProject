@@ -50,6 +50,9 @@
     <ClCompile Include="..\DataBase\MySQL.cpp">
       <Filter>DataBase</Filter>
     </ClCompile>
+    <ClCompile Include="..\Server\BGBrokerThread.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\Common.h">
@@ -90,6 +93,12 @@
     </ClInclude>
     <ClInclude Include="..\DataBase\MySQL.h">
       <Filter>DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\BGBrokerThread.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\BGSpinLock.h">
+      <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

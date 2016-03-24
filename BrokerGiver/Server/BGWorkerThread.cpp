@@ -14,7 +14,7 @@ CBGWorkerThread::CBGWorkerThread(SOCKET ClientSocket)
 	::memset(&m_stWorkerThread, 0x00, sizeof(ST_WORKER_THREAD));
 	m_stWorkerThread.hClientSocket = ClientSocket;
 
-	m_stDBLoginToken.strDatabaseName	= "broker2";
+	m_stDBLoginToken.strDatabaseName	= "broker_table";
 	m_stDBLoginToken.strDatabaseIP		= "165.132.122.243";
 	m_stDBLoginToken.strPort			= "3306";
 	m_stDBLoginToken.strUserName		= "root";
@@ -128,7 +128,7 @@ void CBGWorkerThread::RequestDataBase(ST_CLIENT_REQ &refstReqClient, ST_DB_RESUL
 	}
 
 	ST_DB_SQL stDBSql;
-	stDBSql.strSQL = "SELECT ip from redirection_table WHERE user_id=\"" + refstReqClient.strDst + "\"";
+	stDBSql.strSQL = "SELECT ip from prev_matching_table WHERE user=\"" + refstReqClient.strDst + "\"";
 
 	ST_DB_RESULT stDBResult;
 	dwRet = QueryFromDB(hDataBase, stDBSql, stDBResult);
