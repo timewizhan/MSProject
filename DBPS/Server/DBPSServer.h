@@ -30,6 +30,7 @@ class CDBPSServer
 	DWORD InitIOCompletionPort(DWORD dwNumberOfConcurrentThreads);
 	DWORD InitWorkerThread();
 	DWORD InitDBCQueue(DWORD dwNumberOfConnection);
+	DWORD DestoryDBCQueue(DWORD dwNumberOfConnection);
 
 	/*
 		InitServerValue method have internel method

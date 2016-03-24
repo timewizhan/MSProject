@@ -15,7 +15,7 @@ class CDBPSWorkerThread
 	DWORD SendDataToClient(std::string &refstrSendData);
 	
 	void ReceiveDataFromClient(ST_RECV_DATA &refstRecvData, char *pReceiveBuf);
-	void MakeJsonResData(ST_DB_RESULT &refstDBResult, std::string &refstrSendData);
+	void MakeSTRResData(ST_DB_RESULT &refstDBResult, std::string &refstrSendData);
 	void RequestDataBase(ST_RECV_DATA &refstRecvData, ST_DB_RESULT &refstDBResult);
 public:
 	CDBPSWorkerThread(SOCKET ClientSocket);

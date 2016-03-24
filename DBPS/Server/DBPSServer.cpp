@@ -4,8 +4,7 @@
 #include "..\Common\Log.h"
 #include "..\Queue\DBCQueue.h"
 
-//CDBCQueue<ST_DBConnection>* CDBCQueue<ST_DBConnection>::m_pCDBCQueue = nullptr;
-CDBCQueue* CDBCQueue::m_pCDBCQueue = nullptr;
+CDBCQueue* g_pCDBCQueue = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 CDBPSServer::CDBPSServer() :
@@ -191,6 +190,9 @@ DWORD CDBPSServer::InitWorkerThread()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 DWORD CDBPSServer::InitDBCQueue(DWORD dwNumberOfConnection)
 {
+	extern CDBCQueue* g_pCDBCQueue;
+	g_pCDBCQueue = (new CDBCQueue())->getQueueInstance();
+
 	for (unsigned int i = 0; i < dwNumberOfConnection; i++) {
 		ST_DBConnection stDBConnection;
 		HANDLE hDataBase = CreateDBInstance(E_DB_POSTGRES);
@@ -198,9 +200,23 @@ DWORD CDBPSServer::InitDBCQueue(DWORD dwNumberOfConnection)
 		stDBConnection.hDataBase = hDataBase;
 
 		DebugLog("Create DB Connection [%d]", i + 1);
-		CDBCQueue::getQueueInstance().pushToQueue(stDBConnection);
+		g_pCDBCQueue->pushToQueue(stDBConnection);
 		::Sleep(1000);
 	}
+	return E_RET_SUCCESS;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+DWORD CDBPSServer::DestoryDBCQueue(DWORD dwNumberOfConnection)
+{
+	for (unsigned int i = 0; i < dwNumberOfConnection; i++) {
+		ST_DBConnection stDBConnection;
+		g_pCDBCQueue->popFromQueue(stDBConnection);
+		QuitDB(stDBConnection.hDataBase);
+		::Sleep(1000);
+	}
+
+	delete g_pCDBCQueue;
 	return E_RET_SUCCESS;
 }
 
@@ -311,6 +327,7 @@ DWORD CDBPSServer::StartServer(DWORD dwPort, DWORD dwNumberOfConnection)
 				Abnormally Exception
 			*/
 			ErrorLog("%s", e.what());
+			DestoryDBCQueue(dwNumberOfConnection);
 			return dwRet;
 		}
 	}
@@ -319,6 +336,7 @@ DWORD CDBPSServer::StartServer(DWORD dwPort, DWORD dwNumberOfConnection)
 		All Thread is waiting for stopping their operation
 	*/
 	WaitForMultipleObjects(m_stServerWorkerThreads.dwNumberOfThread, m_stServerWorkerThreads.phWorkerThread, TRUE, INFINITE);
+	DestoryDBCQueue(dwNumberOfConnection);
 	
 	return dwRet;
 }

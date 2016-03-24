@@ -9,7 +9,7 @@ int main(int argc, char **argv)
 	//dwRet = InitLog(E_LOG_FILE);
 
 	if (argc < 2) {
-		DebugLog("[Usage] : Server Port, Server BackLog");
+		DebugLog("[Usage] : Server Port, Server Connection");
 		return E_RET_FAIL;
 	}
 
@@ -22,13 +22,13 @@ int main(int argc, char **argv)
 	argv[1] : Port
 	argv[2] : Backlog
 	*/
-	std::string strPort, strBackLog;
-	DWORD dwPort, dwBackLog;
+	std::string strPort, strConnectionLog;
+	DWORD dwPort, dwConnection;
 	strPort = argv[1];
 	dwPort = ::atoi(strPort.c_str());
 
-	strBackLog = argv[2];
-	dwBackLog = ::atoi(strBackLog.c_str());
+	strConnectionLog = argv[2];
+	dwConnection = ::atoi(strConnectionLog.c_str());
 
 	CDBPSServer *pCDBPSServer = NULL;
 	pCDBPSServer = new CDBPSServer();
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 		DebugLog("****** Around You Server Start *********");
 		DebugLog("****************************************");
 
-		dwRet = pCDBPSServer->StartServer(dwPort, dwBackLog);
+		dwRet = pCDBPSServer->StartServer(dwPort, dwConnection);
 		if (dwRet != E_RET_SUCCESS) {
 			throw std::exception("Fail to start server");
 		}

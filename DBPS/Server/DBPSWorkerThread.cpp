@@ -9,6 +9,8 @@
 
 #define DEFAULT_RECV_DATA 32
 
+extern CDBCQueue* g_pCDBCQueue;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 CDBPSWorkerThread::CDBPSWorkerThread(SOCKET ClientSocket)
 {
@@ -37,7 +39,7 @@ DWORD CDBPSWorkerThread::SendDataToClient(std::string &refstrSendData)
 			continue;
 		}
 		else if (nRet == nSizeOfData) {
-			DebugLog("Success to send data to client [%s]", refstrSendData.c_str());
+			DebugLog("Success to send data to client [%d]", refstrSendData.size());
 			bContinue = FALSE;
 			continue;
 		}
@@ -57,29 +59,34 @@ void CDBPSWorkerThread::ReceiveDataFromClient(ST_RECV_DATA &refstRecvData, char 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void CDBPSWorkerThread::MakeJsonResData(ST_DB_RESULT &refstDBResult, std::string &refstrSendData)
+void CDBPSWorkerThread::MakeSTRResData(ST_DB_RESULT &refstDBResult, std::string &refstrSendData)
 {
 	Json::Value JsonRoot;
 
 	std::string strListResult;
 	for (unsigned int i = 0; i < refstDBResult.vecstDBResultLines.size(); i++) {
-		ST_DB_RESULT_LINE stDBResultList;
-		std::string strColume = stDBResultList.vecstrResult[0];
-		strListResult += strColume + " ";
+		ST_DB_RESULT_LINE stDBResultList = refstDBResult.vecstDBResultLines[i];
+
+		std::string strLine;
+		for (unsigned int j = 0; j < stDBResultList.vecstrResult.size(); j++) {
+			std::string strColume = stDBResultList.vecstrResult[j];
+
+			if (j == 0) {
+				strLine += strColume;
+			}
+			else {
+				strLine += "=" + strColume;
+			}	
+		}
+		strListResult += strLine + " ";
 	}
-	JsonRoot["RESPONSE"] = strListResult;
-
-	Json::StyledWriter JsonWriter;
-	std::string strSendData;
-	strSendData = JsonWriter.write(JsonRoot);
-
-	refstrSendData = strSendData;
+	refstrSendData = strListResult;
 }
 
 void CDBPSWorkerThread::RequestDataBase(ST_RECV_DATA &refstRecvData, ST_DB_RESULT &refstDBResult)
 {
 	ST_DBConnection stDBConnection;
-	CDBCQueue::getQueueInstance().popFromQueue(stDBConnection);
+	g_pCDBCQueue->popFromQueue(stDBConnection);
 
 	ST_DB_SQL stDBSql;
 	stDBSql.strSQL = refstRecvData.strRecvData;
@@ -91,6 +98,7 @@ void CDBPSWorkerThread::RequestDataBase(ST_RECV_DATA &refstRecvData, ST_DB_RESUL
 		ErrorLog("Fail to query data from DataBase");
 		return;
 	}
+	g_pCDBCQueue->pushToQueue(stDBConnection);
 	refstDBResult = stDBResult;
 }
 
@@ -107,7 +115,7 @@ DWORD CDBPSWorkerThread::StartWorkerThread(char *pReceiveBuf, DWORD dwByteTransf
 		RequestDataBase(stRecvData, stDBResult);
 
 		std::string strSendData;
-		MakeJsonResData(stDBResult, strSendData);
+		MakeSTRResData(stDBResult, strSendData);
 		dwRet = SendDataToClient(strSendData);
 	}
 	catch (std::exception &e)
