@@ -27,6 +27,7 @@ void CSocket::init_socket(){
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_addr.s_addr = inet_addr("165.132.122.243");	//2¹ø PC - BROKER
+//	server_addr.sin_addr.s_addr = inet_addr("165.132.120.144");
 	server_addr.sin_port = htons(3333);
 
 	clen = sizeof(server_addr);
@@ -65,7 +66,7 @@ void CSocket::InitSocketWithSNSServer(){
 void CSocket::SendStoreCmdMessage(){
 
 	string sJSONMessage;
-	sJSONMessage = "{\"TYPE\":\"5\"}";
+	sJSONMessage = "{\"TYPE\":\"5\"}\r\n";
 	//send message
 	if (send(SNSServerCsocket, (char*)&sJSONMessage, sizeof(sJSONMessage), 0)<0){
 		perror("write error : ");
@@ -80,7 +81,9 @@ void CSocket::RecvStoreCompleteMessage(){
 	while (1){
 		int data_len = recv(SNSServerCsocket, (char*)&arrRecvCompleteMsg, sizeof(arrRecvCompleteMsg), 0);
 
-		if (!strcmp(arrRecvCompleteMsg, "store_complete")){
+		cout << "RECIEVED: " << arrRecvCompleteMsg;
+
+		if (!strcmp(arrRecvCompleteMsg, "store_complete\r\n")){
 			break;
 		}
 	}
@@ -90,7 +93,7 @@ void CSocket::RecvStoreCompleteMessage(){
 void CSocket::SendMatchStoreCompleteMessage(){
 
 	string sJSONMessage;
-	sJSONMessage = "{\"TYPE\":\"6\"}";
+	sJSONMessage = "{\"TYPE\":\"6\"}\r\n";
 	//send message
 	if (send(SNSServerCsocket, (char*)&sJSONMessage, sizeof(sJSONMessage), 0)<0){
 		perror("write error : ");
@@ -106,7 +109,7 @@ void CSocket::RecvDRCompleteMessage(){
 	while (1){
 		int data_len = recv(SNSServerCsocket, (char*)&arrRecvCompleteMsg, sizeof(arrRecvCompleteMsg), 0);
 
-		if (!strcmp(arrRecvCompleteMsg, "data_replacement_complete")){
+		if (!strcmp(arrRecvCompleteMsg, "data_replacement_complete\r\n")){
 			break;
 		}
 	}

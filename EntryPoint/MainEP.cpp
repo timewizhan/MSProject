@@ -10,11 +10,13 @@
 
 int main()
 {
+	Sleep(3000);
+	//Sleep(30000);
 	while (1){
 	
-		Sleep(3600000);
+	//	Sleep(3600000);
 		EP_Test4 et;
-		//	et.initEntryPoint();
+		Sleep(5000*2);
 	}
 
 	return 0;
