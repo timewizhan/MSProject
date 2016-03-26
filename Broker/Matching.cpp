@@ -233,7 +233,7 @@ double CMatch::RadToDeg(double dRad){
 void CMatch::InsertWeightTable(){
 
 	// Weight 계산
-	// [a: normalized cpu, b: normalized server-side traffic, c: normalized client-side traffic, d: distance] = 가중치
+	// [a: normalized cpu, b: normalized server-side traffic, c: normalized client-side traffic, d: distance, e: social level] = 가중치
 	double a = 0.5;
 	double b = 0.5;
 	double c = 1.0;
@@ -285,11 +285,12 @@ void CMatch::InsertWeightTable(){
 		dEp1Dist = databaseInstance.ExtractNormDistData(sQuery);
 
 		//Social Level
-		sQuery = "select user, ep1 from normalized_social_level_table where user ='" + sUser + "'";
-		dEp1SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
+	//	sQuery = "select user, ep1 from normalized_social_level_table where user ='" + sUser + "'";
+	//	dEp1SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
 
 		//weight
-		dWeight_EP1 = a*dCpuUtil + b*dSst + c*dCst + d*dEp1Dist + e*dEp1SocialLvl;
+	//	dWeight_EP1 = a*dCpuUtil + b*dSst + c*dCst + d*dEp1Dist + e*dEp1SocialLvl;
+		dWeight_EP1 = a*dCpuUtil + b*dSst + c*dCst + d*dEp1Dist;
 
 
 	//user1, ep2
@@ -310,11 +311,12 @@ void CMatch::InsertWeightTable(){
 		dEp2Dist = databaseInstance.ExtractNormDistData(sQuery);
 
 		//Social Level
-		sQuery = "select user, ep2 from normalized_social_level_table where user ='" + sUser + "'";
-		dEp2SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
+	//	sQuery = "select user, ep2 from normalized_social_level_table where user ='" + sUser + "'";
+	//	dEp2SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
 
 		//weight
-		dWeight_EP2 = a*dCpuUtil + b*dSst + c*dCst + d*dEp2Dist + e*dEp2SocialLvl;
+	//	dWeight_EP2 = a*dCpuUtil + b*dSst + c*dCst + d*dEp2Dist + e*dEp2SocialLvl;
+		dWeight_EP2 = a*dCpuUtil + b*dSst + c*dCst + d*dEp2Dist;
 	
 
 	//user1, ep3
@@ -335,11 +337,12 @@ void CMatch::InsertWeightTable(){
 		dEp3Dist = databaseInstance.ExtractNormDistData(sQuery);
 
 		//Social Level
-		sQuery = "select user, ep3 from normalized_social_level_table where user ='" + sUser + "'";
-		dEp3SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
+	//	sQuery = "select user, ep3 from normalized_social_level_table where user ='" + sUser + "'";
+	//	dEp3SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
 
 		//weight
-		dWeight_EP3 = a*dCpuUtil + b*dSst + c*dCst + d*dEp3Dist + e*dEp3SocialLvl;
+	//	dWeight_EP3 = a*dCpuUtil + b*dSst + c*dCst + d*dEp3Dist + e*dEp3SocialLvl;
+		dWeight_EP3 = a*dCpuUtil + b*dSst + c*dCst + d*dEp3Dist;
 
 
 
