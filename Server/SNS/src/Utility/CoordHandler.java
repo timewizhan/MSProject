@@ -26,7 +26,7 @@ public class CoordHandler {
 			} while (!isValid);
 			in.close();
 		} catch (IOException e) {
-			System.out.println("[setLocation]IOException e: " + e.getMessage());
+			System.out.println("[setLocation]IOException: " + e.getMessage());
 		}		
 		return loc.toUpperCase();
 	}
@@ -47,9 +47,9 @@ public class CoordHandler {
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("[checkCoord]FileNotFoundException e: " + e.getMessage());			
+			System.out.println("[checkCoord]FileNotFoundException: " + e.getMessage());			
 		} catch (IOException e) {
-			System.out.println("[checkCoord]IOException e: " + e.getMessage());
+			System.out.println("[checkCoord]IOException: " + e.getMessage());
 		}
 		return isValid;
 	}
@@ -66,9 +66,9 @@ public class CoordHandler {
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("[readCoord]FileNotFoundException e: " + e.getMessage());			
+			System.out.println("[readCoord]FileNotFoundException: " + e.getMessage());			
 		} catch (IOException e) {
-			System.out.println("[readCoord]IOException e: " + e.getMessage());
+			System.out.println("[readCoord]IOException: " + e.getMessage());
 		}
 		coord.setServerCoord(loc);
 	}

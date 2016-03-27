@@ -104,16 +104,16 @@ public class WorkerRunnable implements Runnable {
 			default:
 				System.out.println("[ERROR] Invalid Operation Type: " + reqType);			
 				break;
-		}		
+		}
 		return result;
 	}
     
     private String commandHanlder(JSONObject request) throws SQLException {
     	int reqType = Integer.parseInt((String) request.get("TYPE"));
     	String result = null;
-    	    	
+    	
     	switch (reqType) {
-	    	case opType.monitor:
+	    	case opType.monitor: 
 	    		CpuMonitor.storeMonitored();
 	    		result = MessageHandler.store_complete;	    		
 	    		break;	    	
@@ -143,8 +143,13 @@ public class WorkerRunnable implements Runnable {
     			int uid = DBConnection.isThere(uname, userType.resident, loc);
     			result = MessageHandler.msgGenerator(DBConnection.writeStatus(uid, statusList));    					    			
 	    		break;	    	
+	    	case opType.restart:
+	    		CpuMonitor.startCpuMonitor();
+	    		result = MessageHandler.restart_cpu_monitoring;
+	    		break;	    		
 	    	default:
 	    		System.out.println("[ERROR] Invalid Operation Type: " + reqType);
+	    		result = MessageHandler.invalid_operation_type;
 	    		break;
     	}
     	return result;

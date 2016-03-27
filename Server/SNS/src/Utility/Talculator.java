@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Talculator {
 
-	public static String[] getPeriod () {
+	public static String[] getPeriod () {		
 		Date date = new Date();			
 		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");						
 		Calendar cal = Calendar.getInstance();
@@ -21,8 +21,8 @@ public class Talculator {
 	
 		String[] period = new String[2];
 		period[0] = start;
-		period[1] = end;
-		
+		period[1] = end;			
+				
 		return period;
 	}
 }

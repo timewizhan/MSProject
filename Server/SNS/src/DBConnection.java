@@ -257,16 +257,16 @@ public class DBConnection {
 					+ "(?,?,?)");
 			
 			conn.setAutoCommit(false);
-				
-			int userTraffic = 0;
+							
 			for (int i = 0; i < uInfo.length; i++) {								
-				userTraffic = uInfo[i].getTraffic();
-				prepared.setString(1, uInfo[i].getName());
-				prepared.setString(2, uInfo[i].getLoc());
-				prepared.setInt(3, userTraffic);
-				prepared.addBatch();
-				
-				server_side_traffic += userTraffic;
+				int userTraffic = uInfo[i].getTraffic();
+				if (userTraffic != 0) {
+					prepared.setString(1, uInfo[i].getName());
+					prepared.setString(2, uInfo[i].getLoc());
+					prepared.setInt(3, userTraffic);
+					prepared.addBatch();
+					server_side_traffic += userTraffic;
+				}								
 			}
 						
 			prepared.executeBatch();
@@ -802,7 +802,7 @@ public class DBConnection {
 						
 			while(rs.next()) {
 				int t_uid = rs.getInt("uid");
-				int t_traffic = rs.getInt("sum(traffic)");				
+				int t_traffic = rs.getInt("sum(traffic)");				 
 				tMap.put(t_uid, t_traffic);				
 			}					
 		} catch (PropertyVetoException e) {
