@@ -260,13 +260,13 @@ public class DBConnection {
 							
 			for (int i = 0; i < uInfo.length; i++) {								
 				int userTraffic = uInfo[i].getTraffic();
-				if (userTraffic != 0) {
-					prepared.setString(1, uInfo[i].getName());
-					prepared.setString(2, uInfo[i].getLoc());
-					prepared.setInt(3, userTraffic);
-					prepared.addBatch();
-					server_side_traffic += userTraffic;
-				}								
+				if (userTraffic == 0)
+					continue;
+				prepared.setString(1, uInfo[i].getName());
+				prepared.setString(2, uInfo[i].getLoc());
+				prepared.setInt(3, userTraffic);
+				prepared.addBatch();
+				server_side_traffic += userTraffic;										
 			}
 						
 			prepared.executeBatch();

@@ -19,7 +19,7 @@ public class MessageHandler {
 	public final static String store_complete = "store_complete";
 	public final static String data_replacement_complete = "data_replacement_complete";
 	public final static String restart_cpu_monitoring = "restart_cpu_monitoring";
-	public final static String invalid_operation_type = "invalid_operation_type";
+	public final static String invalid_operation_type = "invalid_operation_type";	
 	
 	public static JSONObject msgParser(Socket socket) {		
 		String result = "";	

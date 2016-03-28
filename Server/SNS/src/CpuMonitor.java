@@ -1,4 +1,3 @@
-
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 import java.util.concurrent.Executors;
@@ -9,7 +8,8 @@ import com.sun.management.OperatingSystemMXBean;
 
 public class CpuMonitor {	
 	public static void startCpuMonitor() {
-		ServiceServer.mScheduler = Executors.newSingleThreadScheduledExecutor();
+		if (ServiceServer.mScheduler == null)
+			ServiceServer.mScheduler = Executors.newSingleThreadScheduledExecutor();
 		try {
 			monitorCpuLoad();
 		} catch (InterruptedException e) {
