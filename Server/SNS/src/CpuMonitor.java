@@ -8,12 +8,13 @@ import com.sun.management.OperatingSystemMXBean;
 
 public class CpuMonitor {	
 	public static void startCpuMonitor() {
-		if (ServiceServer.mScheduler == null)
+		if (ServiceServer.mScheduler == null) {
 			ServiceServer.mScheduler = Executors.newSingleThreadScheduledExecutor();
-		try {
-			monitorCpuLoad();
-		} catch (InterruptedException e) {
-			System.out.println("[startCpuMonitor]e: " + e.getMessage());
+			try {
+				monitorCpuLoad();
+			} catch (InterruptedException e) {
+				System.out.println("[startCpuMonitor]e: " + e.getMessage());
+			}
 		}
 	}
 	
@@ -40,8 +41,7 @@ public class CpuMonitor {
 						ServiceServer.mAVG_CPU_Log.add(total / ServiceServer.mCPU_Log.size());
 						ServiceServer.mCPU_Log.clear();
 						ServiceServer.mCPU_Log.add(load);
-					}					
-					//System.out.println("[CPU Usage] " + load * 100);
+					}				
 				}
 			}
 		};		

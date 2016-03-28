@@ -33,17 +33,17 @@ public class WorkerRunnable implements Runnable {
         try {
         	if (reqType < 5) {
         		sleepFlag = true;
-	        	int result = operationHandler(request);	        		        	
-	        	response = MessageHandler.msgGenerator(result);
+	        	int result = operationHandler(request);
 	        	System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc()
-	        			+ " handled the request from " 
-						+ "[" + request.get("SRC")
-						+ "/" + opType.getOperationName(reqType) + "]");
+    			+ " is handling the request from " 
+				+ "[" + request.get("SRC")
+				+ "(" + opType.getOperationName(reqType) + ")" + "]");
+	        	response = MessageHandler.msgGenerator(result);	        	
         	} else {        		
-        		response = commandHanlder(request);
         		System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc()
-        				+ " handled the command "
-						+ "[" + opType.getOperationName(reqType) + "]");
+				+ " is handling the command "
+				+ "[" + opType.getOperationName(reqType) + "]");
+        		response = commandHanlder(request);        		
         	}
         	out = new BufferedWriter(new OutputStreamWriter(
 					mClientSocket.getOutputStream(), "UTF-8"));	
@@ -121,32 +121,35 @@ public class WorkerRunnable implements Runnable {
 	    	case opType.mMONITOR: 
 	    		CpuMonitor.storeMonitored();
 	    		System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc()
-	    							+ " successfully stored monitoring result");
+	    							+ " stored monitoring result");
 	    		result = MessageHandler.mSTORE_COMPLETE;	    		
 	    		break;	    	
 	    	case opType.mMOVEOUT:
-	    		matchInfo[] match = DBConnection.getMatchResult();	    			    		
+	    		matchInfo[] match = DBConnection.getMatchResult();	   			    		
 	    		
-	    		for (int i = 0; i < match.length; i++) {
-	    			String uname = match[i].getName();
-	    			int curr = match[i].getCurr();	    				    				    			
-	    			JSONObject migrated = DBConnection.getMigrated(uname);
-	    			
-	    			DBConnection.deleteMigrated(uname);
-	    			
-	    			int res = MessageHandler.sendMigrated(curr, migrated);	    			
-	    			if (res == 0)
-	    				System.out.println(getTime() + ServiceServer.mCoord.getServerLoc()
-	    									+ "failed sending the data " + "[" + uname +"]");
-	    			else
-	    				System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc() 
-	    									+ " sent the data "
-	    									+ "[" + uname + "]");	    										    										
+	    		if (match != null) {
+		    		for (int i = 0; i < match.length; i++) {
+		    			String uname = match[i].getName();
+		    			int curr = match[i].getCurr();	    				    				    			
+		    			JSONObject migrated = DBConnection.getMigrated(uname);
+		    			
+		    			DBConnection.deleteMigrated(uname);
+		    			
+		    			int res = MessageHandler.sendMigrated(curr, migrated);	    			
+		    			if (res == 0)
+		    				System.out.println(getTime() + ServiceServer.mCoord.getServerLoc()
+		    									+ "failed sending the data " + "[" + uname +"]");
+		    			else
+		    				System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc() 
+		    									+ " sent the data "
+		    									+ "[" + uname + "]");	    										    										
+		    		}
 	    		}
+	    		
 	    		result = MessageHandler.mDATA_REPLACEMENT_COMPLETE;
 	    		CpuMonitor.startCpuMonitor();
 	    		System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc() 
-									+ " restarts cpu monitoring");										
+									+ " restarted the cpu monitoring");
 	    		break;
 	    	case opType.mMOVEIN:   		
 	    		JSONObject userItem = (JSONObject) request.get("MIGRATED");	    			    			    		
