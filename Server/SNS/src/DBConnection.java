@@ -40,7 +40,7 @@ public class DBConnection {
 		// c3p0 can work with defaults
 		mCDPS.setMinPoolSize(3);
 		mCDPS.setAcquireIncrement(5);
-		mCDPS.setMaxPoolSize(18);
+		mCDPS.setMaxPoolSize(50);
 		mCDPS.setMaxStatements(0);				
 	}
 	
@@ -192,13 +192,13 @@ public class DBConnection {
 			statusInfo result = getStatus(t_uid, num);
 		
 			int[] t_sids = result.getSIDs();
-			String [] t_status = result.getStatusList();
-	
-			if (t_sids.length > 0) {
-				String total_t_status = "";			
-				for (int i = 0; i < t_status.length; i++)
-					total_t_status.concat(t_status[i]);				
-									
+			
+			if (t_sids != null) {
+				String total_t_status = "";
+				String [] t_status = result.getStatusList();
+				for (int i = 0; i < t_status.length; i++) {				
+					total_t_status.concat(t_status[i]);			
+				}															
 				return storeLatent(uid, t_sids, reqSize, total_t_status.length());								
 			} else
 				return mFail;							
@@ -212,11 +212,13 @@ public class DBConnection {
 			statusInfo result = getStatus(t_uid, num);
 			
 			int [] t_sids = result.getSIDs();		
-			Random rand = new Random();
-			if (t_sids.length > 0) {
+						
+			if (t_sids != null) {
 				int picked = 0;
-				if (t_sids.length != 1)
-					picked = rand.nextInt(t_sids.length - 1);											
+				if (t_sids.length != 1) {
+					Random rand = new Random();
+					picked = rand.nextInt(t_sids.length - 1);
+				}
 				return storeReply(uid, t_sids[picked], msg, reqSize);
 			} else
 				return mFail;
