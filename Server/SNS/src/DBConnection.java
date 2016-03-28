@@ -194,14 +194,14 @@ public class DBConnection {
 			int[] t_sids = result.getSIDs();
 			String [] t_status = result.getStatusList();
 	
-			
-			String total_t_status = "";			
-			for (int i = 0; i < t_status.length; i++)
-				total_t_status.concat(t_status[i]);
-							
-			storeLatent(uid, t_sids, reqSize, total_t_status.length());
-		
-			return mSuccess;
+			if (t_sids.length > 0) {
+				String total_t_status = "";			
+				for (int i = 0; i < t_status.length; i++)
+					total_t_status.concat(t_status[i]);				
+									
+				return storeLatent(uid, t_sids, reqSize, total_t_status.length());								
+			} else
+				return mFail;							
 		} else
 			return mFail;
 	}
@@ -596,7 +596,7 @@ public class DBConnection {
 		return new statusInfo(sids, status, time, traffic);
 	}
 	
-	private static void storeLatent(int uid, int[] sids, int reqSize, int slen) throws SQLException {
+	private static int storeLatent(int uid, int[] sids, int reqSize, int slen) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;				
 		int t_sids[] = sids;
@@ -635,6 +635,7 @@ public class DBConnection {
 					System.out.println("[storeLatent/conn]SQLException: " + e.getMessage());					
 				}						
 		}
+		return mSuccess;
 	}
 	
 	private static int storeReply(int uid, int sid, String msg, int reqSize) throws SQLException {
