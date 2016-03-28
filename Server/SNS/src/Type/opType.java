@@ -1,53 +1,54 @@
 package Type;
 
 public class opType {
-	public final static int tweet = 1;
-	public final static int read = 2;
-	public final static int reply = 3;
-	public final static int retweet = 4;
+	public final static int mTWEET = 1;
+	public final static int mREAD = 2;
+	public final static int mREPLY = 3;
+	public final static int mRETWEET = 4;
 	
-	public final static int monitor = 5;
-	public final static int moveout = 6;	
-	public final static int restart = 7;
-	public final static int movein = 8;
+	public final static int mMONITOR = 5;
+	public final static int mMOVEOUT = 6;	
+	public final static int mRESTART = 7;
+	public final static int mMOVEIN = 8;
 
-	private final static String[] op_list = {"TWEET", "READ", "REPLY", "RETWEET",
+	private final static String[] mOP_LIST = {"TWEET", "READ", "REPLY", "RETWEET",
 											"MONITOR", "MOVEOUT", "RESTART", "MOVEIN"};	
-	private final static String invalid_op = "IVALID OPERATION";
+	private final static String mINVALID_OP = "IVALID OPERATION";
 	
-	public final static int num_read = 10;
-	public final static int num_share = 5;
-		
-	public static String getOperationName(int index) {		
+	public final static int mNUM_READ = 10;
+	public final static int mNUM_SHARE = 5;				
+	
+	public static String getOperationName(int reqType) {		
 		String opname = null;
-		
-		switch(index) {
-			case tweet:
-				opname = op_list[tweet];
+		int index = reqType - 1;
+				
+		switch(reqType) {
+			case mTWEET:
+				opname = mOP_LIST[index];
 				break;				
-			case read:
-				opname = op_list[read];
+			case mREAD:
+				opname = mOP_LIST[index];
 				break;				
-			case reply:
-				opname = op_list[reply];
+			case mREPLY:
+				opname = mOP_LIST[index];
 				break;
-			case retweet:
-				opname = op_list[retweet];
+			case mRETWEET:
+				opname = mOP_LIST[index];
 				break;
-			case monitor:
-				opname = op_list[monitor];
+			case mMONITOR:
+				opname = mOP_LIST[index];
 				break;
-			case moveout:
-				opname = op_list[moveout];
+			case mMOVEOUT:
+				opname = mOP_LIST[index];
 				break;
-			case restart:
-				opname = op_list[restart];
+			case mRESTART:
+				opname = mOP_LIST[index];
 				break;
-			case movein:
-				opname = op_list[movein];
+			case mMOVEIN:
+				opname = mOP_LIST[index];
 				break;
 			default:
-				opname = invalid_op;
+				opname = mINVALID_OP;
 				break;
 		}
 		

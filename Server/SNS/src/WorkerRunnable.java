@@ -37,13 +37,14 @@ public class WorkerRunnable implements Runnable {
 	        	response = MessageHandler.msgGenerator(result);
 	        	System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc()
 	        			+ " handled the request from " 
-						+ "[" + request.get("SRC") + "/" + opType.getOperationName(reqType) + "]");
+						+ "[" + request.get("SRC")
+						+ "/" + opType.getOperationName(reqType) + "]");
         	} else {        		
         		response = commandHanlder(request);
         		System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc()
         				+ " handled the command "
 						+ "[" + opType.getOperationName(reqType) + "]");
-        	}        	        			
+        	}
         	out = new BufferedWriter(new OutputStreamWriter(
 					mClientSocket.getOutputStream(), "UTF-8"));	
 			
@@ -89,24 +90,24 @@ public class WorkerRunnable implements Runnable {
 		String msg = (String) request.get("MSG");
 		
 		switch (reqType) {                                                                                                                                                                                                      
-			case opType.tweet:				
+			case opType.mTWEET:				
 				uid = DBConnection.isThere(src, userType.resident, loc);			
 				result = DBConnection.writeStatus(uid, msg, reqSize);				
 				break;
-			case opType.read:
+			case opType.mREAD:
 				uid = DBConnection.isThere(src, userType.visitor, loc);
-				result = DBConnection.readStatus(uid, dst, reqSize, opType.num_read);				
+				result = DBConnection.readStatus(uid, dst, reqSize, opType.mNUM_READ);				
 				break; 
-			case opType.reply:
+			case opType.mREPLY:
 				uid = DBConnection.isThere(src, userType.visitor, loc);			
-				result = DBConnection.writeReply(uid, dst, msg, reqSize, opType.num_read);				
+				result = DBConnection.writeReply(uid, dst, msg, reqSize, opType.mNUM_READ);				
 				break;
-			case opType.retweet:
+			case opType.mRETWEET:
 				uid = DBConnection.isThere(src, userType.visitor, loc);
-				result = DBConnection.readStatus(uid, dst, reqSize, opType.num_share);				
+				result = DBConnection.readStatus(uid, dst, reqSize, opType.mNUM_SHARE);				
 				break;		
 			default:
-				System.out.println(getTime() + " ERROR: Invalid Operation Type " + reqType);				
+				System.out.println(getTime() + " ERROR: Invalid Operation " + reqType);				
 				break;
 		}
 		return result;
@@ -117,13 +118,13 @@ public class WorkerRunnable implements Runnable {
     	String result = null;
     	
     	switch (reqType) {
-	    	case opType.monitor: 
+	    	case opType.mMONITOR: 
 	    		CpuMonitor.storeMonitored();
 	    		System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc()
 	    							+ " successfully stored monitoring result");
-	    		result = MessageHandler.store_complete;	    		
+	    		result = MessageHandler.mSTORE_COMPLETE;	    		
 	    		break;	    	
-	    	case opType.moveout:
+	    	case opType.mMOVEOUT:
 	    		matchInfo[] match = DBConnection.getMatchResult();	    			    		
 	    		
 	    		for (int i = 0; i < match.length; i++) {
@@ -134,20 +135,20 @@ public class WorkerRunnable implements Runnable {
 	    			DBConnection.deleteMigrated(uname);
 	    			
 	    			int res = MessageHandler.sendMigrated(curr, migrated);	    			
-	    			if (res != 1)
+	    			if (res == 0)
 	    				System.out.println(getTime() + ServiceServer.mCoord.getServerLoc()
-	    									+ "received data replacement failed msg " + "[" + uname +"]");
+	    									+ "failed sending the data " + "[" + uname +"]");
 	    			else
 	    				System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc() 
-	    									+ " successfully sent the data of " 
-	    									+ "[" + uname + "]");
+	    									+ " sent the data "
+	    									+ "[" + uname + "]");	    										    										
 	    		}
-	    		result = MessageHandler.data_replacement_complete;
+	    		result = MessageHandler.mDATA_REPLACEMENT_COMPLETE;
 	    		CpuMonitor.startCpuMonitor();
 	    		System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc() 
-									+ " restart cpu monitoring");										
+									+ " restarts cpu monitoring");										
 	    		break;
-	    	case opType.movein:   		
+	    	case opType.mMOVEIN:   		
 	    		JSONObject userItem = (JSONObject) request.get("MIGRATED");	    			    			    		
     			String uname = (String) userItem.get("UNAME");
     			String loc = (String) userItem.get("LOCATION");
@@ -157,18 +158,18 @@ public class WorkerRunnable implements Runnable {
     			result = MessageHandler.msgGenerator(DBConnection.writeStatus(uid, statusList)); 
     			
     			System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc() 
-									+ " successfully received the data of " 
-									+ "[" + uname + "]");
+									+ " received the data "									
+									+ "[" + uname + "]");									
 	    		break;	    	
-	    	case opType.restart:
+	    	case opType.mRESTART:
 	    		CpuMonitor.startCpuMonitor();
-	    		result = MessageHandler.restart_cpu_monitoring;
+	    		result = MessageHandler.mRESTART_CPU_MONITORING;
 	    		System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc() 
-									+ " restart cpu monitoring");
+									+ " restarts cpu monitoring");
 	    		break;	    		
 	    	default:
-	    		System.out.println(getTime() + " ERROR: Invalid Operation Type " + reqType);
-	    		result = MessageHandler.invalid_operation_type;
+	    		System.out.println(getTime() + " ERROR: Invalid Operation " + reqType);
+	    		result = opType.getOperationName(reqType);
 	    		break;
     	}
     	return result;

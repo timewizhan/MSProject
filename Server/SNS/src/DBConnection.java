@@ -360,10 +360,7 @@ public class DBConnection {
 				String uname = rs.getString("user");
 				int prev = rs.getInt("prev_ep");
 				int curr = rs.getInt("curr_ep");
-				
-				if (curr >= 1)
-					curr = curr - 1;
-				
+												
 				match[i] = new matchInfo();
 				match[i].setInfo(uname, prev, curr);
 				i++;
