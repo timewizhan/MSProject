@@ -50,9 +50,6 @@ class TimePattern(AbstractPattern):
 		datalist = recvFromServer.split()
 		hourList = []
 		for i in range(0, len(datalist)):
-			if i % 2 == 0:
-				continue
-			
 			timevaluelist = datalist[i].split(':')
 			hourList.append(int(timevaluelist[0]))
 		
