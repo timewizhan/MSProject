@@ -18,6 +18,8 @@ class AbstractPattern:
 		pass
 		
 class TimePattern(AbstractPattern):
+	MAX_TWEET_NUM = 1000
+
 	def __init__(self, userID):
 		self.initialize()
 		self.userID = userID
@@ -49,10 +51,7 @@ class TimePattern(AbstractPattern):
 
 		datalist = recvFromServer.split()
 		hourList = []
-		for i in range(0, len(datalist)):
-			if i % 2 == 0:
-				continue
-			
+		for i in range(0, len(datalist)):			
 			timevaluelist = datalist[i].split(':')
 			hourList.append(int(timevaluelist[0]))
 		
@@ -81,9 +80,7 @@ class TimePattern(AbstractPattern):
 		
 		countlistToWorkInOneDay = []
 		for selectedTime in range(0, self.TOTAL_TIME_COUNT):
-			writtenCount 	= self.getWrittenCountBySelectedTime(totalWrittenCount, selectedTime)
-			randomCount 	= self.getWrittenValueByRandom(writtenCount)
-			finalCount 		= self.getWrittenValueByRatio(totalWrittenCount, selectedTime, randomCount)
+			finalCount 		= self.getWrittenValueByRatio(totalWrittenCount, selectedTime)
 
 			countlistToWorkInOneDay.append(finalCount)
 
@@ -94,34 +91,14 @@ class TimePattern(AbstractPattern):
 		for i in range(0, self.TOTAL_TIME_COUNT):	
 			totalValue += self.jobCountByTimeList[i]
 
-		return totalValue
+		return totalValue	
 
-	def getWrittenCountBySelectedTime(self, totalWrittenCount, selectedTime):
-		TOTAL_MINUTE_COUNT = 60
-
+	def getWrittenValueByRatio(self, totalWrittenCount, selectedTime):
 		selectedTimeCount = self.jobCountByTimeList[selectedTime]
-		firstValue = (selectedTimeCount * TOTAL_MINUTE_COUNT) / totalWrittenCount
-		return int(firstValue)
-
-	def getWrittenValueByRandom(self, countValue):
-		if countValue == 0:
-			return countValue
-
-		return random.randrange(1, countValue + 1)
-
-	def getWrittenValueByRatio(self, totalWrittenCount, selectedTime, countValue):
-		selectedTimeCount = self.jobCountByTimeList[selectedTime]
-		selectedTimeRatio = (selectedTimeCount * 100/ totalWrittenCount)
+		selectedTimeRatio = (selectedTimeCount * self.MAX_TWEET_NUM/ totalWrittenCount)
 		return int(round(selectedTimeRatio))
 
-
 class BehaviorPattern(AbstractPattern):
-	WORK_FOR_ME 	= 1
-	WORK_FOR_YOU 	= 2
-
-	READ_TYPE 		= 1
-	WRITE_TYPE 		= 2
-
 	MSG_WRITE 		= 1
 	MSG_REPLY 		= 2
 	MSG_LIKE 		= 3
@@ -141,108 +118,154 @@ class BehaviorPattern(AbstractPattern):
 		return self.decideBehaviorByEachHour(countlistToWorkInOneDay)
 
 	def decideBehaviorByEachHour(self, countlistToWorkInOneDay):
+		numData = self.getNumDataFromDataBase()
+		totalTweetMyself = numData[0]
+		totalTweetOther = numData[1]
+		totalReTweet = numData[2]
+		sumTotal = totalTweetMyself + totalTweetOther + totalReTweet
+
+		myselfRatio = totalTweetMyself / sumTotal
+		friendRatio = (totalTweetOther + totalReTweet) / sumTotal
+
 		workListInOneDay = []
-		#pdb.set_trace()
+		#pdb.set_trace()		
 
-		friendList = self.getAllDataFromDataBase()
-
+		friendInfoList = self.getAllDataFromDataBase()		
+		
 		for selectedHour in range(0, self.TOTAL_TIME_COUNT):
 			countToWork = countlistToWorkInOneDay[selectedHour]
 
-			friendListByRatio = self.getFriendByRatio(friendList)
-			workListInHour = self.decideWorkByBehaviorCount(countToWork, friendListByRatio)
+			finalWriteMyself = int(round(countToWork * myselfRatio))
+			
+			writeFriend = int(round(countToWork * friendRatio))
+
+			#assume that read/write ratio = 70 / 30			
+			readFriend = int(round(countToWork * (70/30)))
+
+			finalWriteFriend = 0
+			wFriendList = []
+			for i in friendInfoList:
+				friendName = i.getName()
+				socialLevel = i.getSocialLevel()
+
+				numWrite = int(round(writeFriend * socialLevel))
+				if numWrite == 0:
+					continue
+				
+				friendWork = FriendWork(friendName, numWrite)
+				wFriendList.append(friendWork)
+				
+				finalWriteFriend += numWrite				
+			
+
+			finalReadFriend = 0
+			rFriendList = []						
+			for i in friendInfoList:
+				friendName = i.getName()
+				socialLevel = i.getSocialLevel()
+
+				numRead = int(round(readFriend * socialLevel))
+				if numRead == 0:
+					continue
+								
+				friendWork = FriendWork(friendName, numRead)
+				rFriendList.append(friendWork)
+				
+				finalReadFriend += numRead							
+
+			operationList = []
+			
+			if finalWriteFriend != 0:
+				operationList.append("MW")
+
+			if finalWriteFriend != 0:
+				operationList.append("FW")
+
+			if finalReadFriend != 0:
+				operationList.append("FR")
+
+			workListInHour = []
+
+			while(operationList):
+				operationIndex = random.randrange(0, len(operationList))
+				operationValue = operationList[operationIndex]
+
+				if operationValue == "MW":
+					workListInHour.append("")
+					workListInHour.append(self.MSG_WRITE)
+
+					finalWriteMyself -= 1
+
+					if finalWriteMyself == 0:
+						operationList.pop(operationIndex)
+
+				if operationValue == "FW":
+					friendIndex = random.randrange(0, len(wFriendList))
+					friendName = wFriendList[friendIndex].getName()
+
+					workListInHour.append(friendName)
+					workListInHour.append(self.MSG_REPLY)
+
+					wFriendList[friendIndex].decreaseNumOperation()
+
+					if wFriendList[friendIndex].getNumOperation() == 0:
+						wFriendList.pop(friendIndex)
+
+					finalWriteFriend -= 1
+
+					if finalWriteFriend == 0:
+						operationList.pop(operationIndex)
+
+				if operationValue == "FR":
+					friendIndex = random.randrange(0, len(rFriendList))
+					friendName = rFriendList[friendIndex].getName()
+
+					workListInHour.append(friendName)
+					workListInHour.append(self.MSG_NOTHING)
+
+					rFriendList[friendIndex].decreaseNumOperation()
+
+					if rFriendList[friendIndex].getNumOperation() == 0:
+						rFriendList.pop(friendIndex)
+
+					finalReadFriend -= 1
+
+					if finalReadFriend == 0:
+						operationList.pop(operationIndex)
+			
 			workListInOneDay.append(workListInHour)
 
 		return workListInOneDay
 
-	def decideWorkByBehaviorCount(self, countToWork, friendListByRatio):
-		jobToWorkInHour = []
-
-		for i in range(0, countToWork):
-			jobToWork = []
-
-			forType = self.selectBetweenMeAndYou()
-			jobToWork.append(forType)
-
-			forRWType = self.selectBetweenReadAndWrite()
-			jobToWork.append(forRWType)
-
-			nameToWork = ""
-			if forType == self.WORK_FOR_YOU:
-				nameToWork = self.selectFriendInRatioList(friendListByRatio)
-				jobToWork.append(nameToWork)
-			else:
-				jobToWork.append(nameToWork)
-
-			if forRWType == self.WRITE_TYPE:
-				writeType = self.selectAmongWriteType()
-				jobToWork.append(writeType)				
-			else:
-				jobToWork.append(self.MSG_NOTHING)
-
-			jobToWorkInHour.append(jobToWork)
-
-		return jobToWorkInHour
-
-	def getFriendByRatio(self, friendList):
-		lengthOfFriendList = len(friendList)
-		if lengthOfFriendList < 1:
-			return
-
-		DEFAULT_RATIO = 12
-		ratioValue = int(round((lengthOfFriendList * 12) / 100))
-		return self.selectFriendByRandom(friendList, ratioValue)
-
-	def selectFriendByRandom(self, friendList, ratioValue):
-		randomMaxValue = len(friendList)
-
-		selectedFriendList = []
-		for i in range(1, ratioValue):
-			randomValue = random.randrange(1, randomMaxValue)
-
-			friendName = friendList[randomValue]
-			selectedFriendList.append(friendName)
-
-		return selectedFriendList
-
-	def getAllDataFromDataBase(self):
-		sql = "SELECT \"DestinationName\" FROM public.\"UserLink\" WHERE \"SourceName\"=\'" + self.userID +"\'"
+	def getAllDataFromDataBase(self):		
+		sql = "SELECT \"DestinationName\", \"SocialLevel\" FROM public.\"SocialLevelPerUser\" WHERE \"SourceName\"=\'" + self.userID +"\'"
 
 		DBPSServer = DBPoolServer()
 		recvFromServer = DBPSServer.startNetworkingWithData(sql)
 		del DBPSServer
 
-		return recvFromServer.split()
+		splittedList = recvFromServer.split()
 
-	def selectFriendInRatioList(self, friendListByRatio):
-		randValue = random.randrange(1, len(friendListByRatio))
-		return friendListByRatio[randValue]
+		friendInfoList = []
+		for i in range(len(splittedList)):
+			finalSplittedList = splittedList[i].split('=')
+			
+			friendName = finalSplittedList[0]
+			socialLevel = finalSplittedList[1]
+			
+			friendInfo = FriendInfo(friendName, socialLevel)
+			friendInfoList.append(friendInfo)
 
+		return friendInfoList
 
-	def selectBetweenMeAndYou(self):
-		FOR_ME = 45
-		randomValue = random.randrange(1, 100)
-		if randomValue <= FOR_ME:
-			return self.WORK_FOR_ME
-		else:
-			return self.WORK_FOR_YOU
+	def getNumDataFromDataBase(self):
+		sql = "SELECT SUM(\"TweetMyself\"), SUM(\"TweetOther\"), SUM(\"ReTweet\") FROM public.\"UserLink\" WHERE \"SourceName\"=\'" + self.userID + "\' GROUP BY \"SourceName\""
 
-	def selectBetweenReadAndWrite(self):
-		FOR_READ = 70
-		randomValue = random.randrange(1, 100)
-		if randomValue <= FOR_READ:
-			return self.READ_TYPE
-		else:
-			return self.WRITE_TYPE
+		DBPSServer = DBPoolServer()
+		recvFromServer = DBPSServer.startNetworkingWithData(sql)
+		del DBPSServer
 
-	def selectAmongWriteType(self):
-		randomValue = random.randrange(1, 100)
-		if randomValue <= 70:
-			return self.MSG_WRITE
-		elif randomValue <= 90:
-			return self.MSG_REPLY
-		else:
-			return self.MSG_LIKE
+		return recvFromServer.split('=')
 
 class LocationPattern(AbstractPattern):
 	def __init__(self):
@@ -300,4 +323,3 @@ class PatternDelegator:
 		jobForEachWork.setRWType(eachWork[1])
 		jobForEachWork.setWhoName(eachWork[2])
 		jobForEachWork.setWriteType(eachWork[3])
-

@@ -7,6 +7,7 @@ from MsgSets import *
 from Network import *
 from Recorder import *
 import time
+import os
 
 import pdb
 
@@ -33,6 +34,16 @@ class Scheduler:
 		# Make an initial pattern
 		#pdb.set_trace()
 		self.patternDelegator.startToGetPattern(self.jobHashMap)
+
+		# After generating the pattern
+		# Send the report to the manager
+		# and wait for the start message
+		processID = os.getpid()
+		reportToSend = makeManagerJsonData(processID)
+		recvMsgFromManager = self.networkingWithManager(reportToSend)
+
+		print "[Debug] Received the start message from the manager [%s]" % (recvMsgFromManager)
+		print "[Debug] Start the bot operation"
 
 		while continued:
 			try:
@@ -125,6 +136,10 @@ class Scheduler:
 		epServer = EntryPoint(dstIPAddress)
 		return epServer.startNetworkingWithData(dataToSend)
 
+	def networkingWithManager(self, reportToSend):
+		mnServer = Manager()
+		return mnServer.startNetworkingWithReport(reportToSend)
+
 def getCommonType(jobToWork):
 	'''
 		Protocol (Bot <-> Broker)
@@ -184,4 +199,12 @@ def makeBrokerJsonData(userID, jobToWork):
 		whoName = userID
 	jsonGenerator.appendElement("DST", whoName)
 
+	return jsonGenerator.toString()
+
+def makeManagerJsonData(proessID):
+	jsonGenerator = JsonGenerator()
+
+	jsonGenerator.appendElement("pid", processID)
+	jsonGenerator.appendElement("action", 1)
+	
 	return jsonGenerator.toString()

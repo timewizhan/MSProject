@@ -1,6 +1,7 @@
 from socket import *
 from Log import *
 import time
+import socket
 
 TYPE_AF_INET 	= AF_INET
 TYPE_AF_INET6 	= AF_INET6
@@ -131,7 +132,7 @@ class AbstractNetwork:
 			if ret != 1:
 				raise NetworkError(ret)
 
-			time.sleep(1)
+			#time.sleep(0.001)
 
 			recvData = self.recvDataFromServer()
 			sizeOfRecvData = len(recvData)
@@ -147,6 +148,29 @@ class AbstractNetwork:
 				Log.debug("ENTRYPOINT RES : " + str(responseTime))
 			else:
 				Log.debug("DBPOOLSERVER RES : " + str(responseTime))
+
+		except NetworkError as e:
+			print e
+
+		return recvData
+
+	def startNetworkingWithReport(self, data):
+		recvData = ""
+
+		if not self.connectToServer():
+			return recvData
+
+		try:
+			ret = self.sendDataToServer(data)
+			if ret != 1:
+				raise NetworkError(ret)
+
+			time.sleep(1)
+
+			recvData = self.recvDataFromServer()
+			sizeOfRecvData = len(recvData)
+			if sizeOfRecvData < 1:
+				raise NetworkError(sizeOfRecvData)			
 
 		except NetworkError as e:
 			print e
@@ -197,3 +221,15 @@ class DBPoolServer(AbstractNetwork):
 
 	def startNetworkingWithData(self, data):
 		return AbstractNetwork.startNetworkingWithData(self, data, TYPE_NT_DBCS)
+
+class Manager(AbstractNetwork):
+	def __init__(self):
+		managerIPAddress = socket.gethostbyname(socket.gethostname())
+		managerPort = 7200
+		AbstractNetwork.__init__(self, managerIPAddress, managerPort)
+	
+	def __del__(self):
+		AbstractNetwork.__del__(self)
+
+	def startNetworkingWithReport(self, data):
+		return AbstractNetwork.startNetworkingWithReport(self, data)

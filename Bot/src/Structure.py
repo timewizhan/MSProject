@@ -74,3 +74,29 @@ class JobHashMap:
 
 	def checkLengthOfTimeList(self, timeList):
 		return len(timeList)
+
+class FriendInfo:
+	def __init__(self, friendName, socialLevel):
+		self.friendName = friendName
+		self.socialLevel = socialLevel
+
+	def getName(self):
+		return self.friendName
+
+	def getSocialLevel(self):
+		return self.socialLevel
+
+class FriendWork:
+	def __init__(self, friendName, numOperation):
+		self.friendName = friendName
+		self.numOperation = numOperation
+
+	def getName(self):
+		return self.friendName
+
+	def getNumOperation(self):
+		return self.numOperation
+
+	def decreseNumOperation(self):
+		if self.numOperation != 0:
+			self.numOperation -= 1
