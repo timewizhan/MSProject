@@ -15,7 +15,7 @@ void CBroker::InitBroker(){
 	
 //	cFileWrite.FileOpen();
 	while (1){
-	
+		printf("[Start While Statement] \n");
 		if (!CDataQueue::getDataQueue()->getQueue().empty())
 		{
 			printf("Warning! DataQueue is not empty. \n");

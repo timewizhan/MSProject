@@ -17,6 +17,7 @@
 #define DB_USER "root"
 #define DB_PASS "cclabj0gg00"
 #define DB_NAME "snsdb"
+//#define DB_NAME "ep2"
 
 class CDatabase{
 
@@ -32,16 +33,17 @@ public:
 
 //	int query_stat;
 	int m_iQueryStat;
-	CSocket m_socket;
+//	CSocket m_socket;
 
 	CDatabase();
 	~CDatabase();
 	int initDB();
 	void CloseDB();
-	int extractData();
-	void StoreData();
+	int extractData(CSocket cBrokerSocket);
+	void StoreData(CSocket cBrokerSocket);
 	void InsertMatchResultTable(match_result_data stRecvedResData);
 	//	void insertData(string name, string location, int timestamp, int traffic);
+	void DeleteTables();
 
 };
 

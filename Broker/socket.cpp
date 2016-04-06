@@ -67,7 +67,7 @@ void CSocket::InitBrokerGiverSocket(){
 	//변수 초기화
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	server_addr.sin_addr.s_addr = inet_addr("165.132.122.243");
 	server_addr.sin_port = htons(8888);
 
 	clen = sizeof(server_addr);
@@ -79,18 +79,22 @@ void CSocket::InitBrokerGiverSocket(){
 }
 
 void CSocket::SendStopMsg(){
-	string sStopMsg = "1";
+	char szSendStopMsg[2] = "1";
+
 	//send message
-	if (send(BrokerGiverSock, (char*)&sStopMsg, sizeof(sStopMsg), 0)<0){
+	printf("[Send stop msg to broker] \n");
+	if (send(BrokerGiverSock, szSendStopMsg, sizeof(szSendStopMsg), 0)<0){
 		perror("write error : ");
 		exit(1);
 	}
 }
 
 void CSocket::SendResumeMsg(){
-	string sResumeMsg = "0";
+	char szSendResumeMsg[2] = "0";
+
 	//send message
-	if (send(BrokerGiverSock, (char*)&sResumeMsg, sizeof(sResumeMsg), 0)<0){
+	printf("[Send resume msg to broker] \n");
+	if (send(BrokerGiverSock, szSendResumeMsg, sizeof(szSendResumeMsg), 0)<0){
 		perror("write error : ");
 		exit(1);
 	}
@@ -198,15 +202,15 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 							int EP3_FD = 0;
 							for (int i = 0; i < NUM_OF_EP; i++){
 
-								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.85")){	//EP1: 165.132.123.85  
+								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.85")){	//EP1: 165.132.123.85 / Host: 165.132.122.244 
 								
 									EP1_FD = stEpInfo[i].iFDNum;
 								}
-								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.86")) {	//EP2: 165.132.123.86
+								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.86")) {	//EP2: 165.132.123.86 / Host : 165.132.122.245
 								
 									EP2_FD = stEpInfo[i].iFDNum;
 								}
-								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.87")) {	//EP3: 165.132.123.87
+								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.87")) {	//EP3: 165.132.123.87 / Host : 165.132.123.73
 								
 									EP3_FD = stEpInfo[i].iFDNum;
 								}
@@ -292,19 +296,23 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 
 					
 							char arrDRComplete[50];
+						//	printf("1");
 							send(EP1_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+						//	cout << "1-2 : " << stMatchResData.arrUser;
 							data_len = recv(EP1_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
 							if (data_len < 0){
 								printf("Couldn't Receive Data Replacement Complete Message From EP1 \n");
 							}
-
+							printf("2");
 							send(EP2_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+							cout << "2-1:" << stMatchResData.arrUser <<endl;
 							data_len = recv(EP2_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
 							if (data_len < 0){
 								printf("Couldn't Receive Data Replacement Complete Message From EP2 \n");
 							}
-
+							printf("3");
 							send(EP3_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
+							cout << "3-1:" << stMatchResData.arrUser << endl;
 							data_len = recv(EP3_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
 							if (data_len < 0){
 								printf("Couldn't Receive Data Replacement Complete Message From EP3 \n");
