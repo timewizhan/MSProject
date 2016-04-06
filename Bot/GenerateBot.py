@@ -46,7 +46,7 @@ def fn_process(*argv):
 	completedCommand = botFilePath + " " + command_argv_name + " " + command_argv_place
 	os.system(completedCommand)
 
-def operateMultiProcess(usersInfoList):
+def operateMultiProcess(usersInfoList, botTotal):
 	procList = []
 
 	for i in range(0, len(usersInfoList)):
@@ -56,16 +56,18 @@ def operateMultiProcess(usersInfoList):
 	for eachBot in procList:
 		eachBot.start()
 		print "[Debug] Process [%d] : [%s] is started" % (procNumber + 1, usersInfoList[procNumber][0])
-		procNumber += 1
-		if procNumber > 500:
+		
+		if procNumber >= int(botTotal):
 			break
+		
 		time.sleep(1)
+		procNumber += 1
 
 	for eachBot in procList:
 		eachBot.join()
 	 
 
-def mainStart(botNumber):
+def mainStart(botNumber, botTotal):
 	if not findBotFile():
 		print "[Error] Can't find botFile"
 		sys.exit(1)
@@ -76,15 +78,15 @@ def mainStart(botNumber):
 			print "[Error] There is no user data"
 			sys.exit(1)
 
-		operateMultiProcess(usersInfoList)
+		operateMultiProcess(usersInfoList, botTotal)
 	except Exception as e:
 		print "[Error] Abnormally exit"
 		sys.exit(1)
 
 
 if __name__ == "__main__":
-	if len(sys.argv) < 2:
-		print "Usage : [Bot Number]"
+	if len(sys.argv) < 3:
+		print "Usage : [Bot Number] [Bot Total Number]"
 		sys.exit(1)
 
 	currentPath = getCurrentDir()
@@ -97,7 +99,8 @@ if __name__ == "__main__":
 	print "**************************************"
 
 	botNumber = sys.argv[1]
-	mainStart(botNumber)
+	botTotal = sys.argv[2]
+	mainStart(botNumber, botTotal)
 
 	print "**************************************"
 	print "****************Finish****************"
