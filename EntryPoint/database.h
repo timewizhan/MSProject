@@ -17,7 +17,7 @@
 #define DB_USER "root"
 #define DB_PASS "cclabj0gg00"
 #define DB_NAME "snsdb"
-//#define DB_NAME "ep2"
+//#define DB_NAME "ep1"
 
 class CDatabase{
 

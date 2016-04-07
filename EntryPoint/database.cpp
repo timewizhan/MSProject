@@ -58,7 +58,7 @@ int CDatabase::extractData(CSocket cBrokerSocket)
 		cBrokerSocket.write_message.server_side_traffic = _server_side_traffic;
 		//		printf("test: %d %d", _cpu_util,_server_side_traffic);
 		//구조체의 나머지 부분은 NULL 로 채운다. flag도 값 넣어줘야함
-		cBrokerSocket.write_message.ep_num = 2;
+		cBrokerSocket.write_message.ep_num = 1;
 		//		m_socket.write_message.side_flag = "s";
 		strcpy_s(cBrokerSocket.write_message.side_flag, 2, "s");
 		memset(&cBrokerSocket.write_message.user, 0, sizeof(cBrokerSocket.write_message.user));
@@ -97,7 +97,7 @@ int CDatabase::extractData(CSocket cBrokerSocket)
 		cBrokerSocket.write_message.traffic = atoi(sql_row[3]);			//traffic
 
 		//구조체의 나머지 부분은 NULL 로 채운다. flag도 값 넣어줘야함
-		cBrokerSocket.write_message.ep_num = 2;							//EP number
+		cBrokerSocket.write_message.ep_num = 1;							//EP number
 		strcpy_s(cBrokerSocket.write_message.side_flag, 2, "c");
 		//	m_socket.write_message.side_flag = "c";						//server-side or client-side
 		cBrokerSocket.write_message.cpu_util = 0;						//cpu utilization
@@ -115,7 +115,7 @@ int CDatabase::extractData(CSocket cBrokerSocket)
 	memset(&cBrokerSocket.write_message.user, 0, sizeof(cBrokerSocket.write_message.user));			//나머지 값들은 허수 전송
 	memset(&cBrokerSocket.write_message.location, 0, sizeof(cBrokerSocket.write_message.location));
 	cBrokerSocket.write_message.cpu_util = 0;
-	cBrokerSocket.write_message.ep_num = 2;
+	cBrokerSocket.write_message.ep_num = 1;
 	cBrokerSocket.write_message.server_side_traffic = 0;
 	cBrokerSocket.write_message.timestamp = 0;
 	cBrokerSocket.write_message.traffic = 0;
@@ -136,6 +136,7 @@ void CDatabase::StoreData(CSocket cBrokerSocket){
 	while (1){
 		//데이터 받아서 디비에 저장
 		match_result_data stRecvedResData = cBrokerSocket.recv_message();
+		cout << " - Receive :" << stRecvedResData.arrUser << endl;
 		if (!strcmp(stRecvedResData.arrUser, "end_match_result_transmission")){
 			break;
 		}
@@ -165,8 +166,7 @@ void CDatabase::DeleteTables(){
 
 	string arrQuery[] = {
 		"delete from server_side_monitor",
-		"delete from client_side_monitor",
-		"delete from match_result_table"
+		"delete from client_side_monitor"		
 	};
 
 	for (int i = 0; i < sizeof(arrQuery) / sizeof(string); i++){
