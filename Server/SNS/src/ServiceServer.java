@@ -13,8 +13,8 @@ public class ServiceServer {
 	private final static int mMaxCon = 2147483647;
 	
 	private ServerSocket mServerSocket;
-	private ExecutorService mThreadPool = Executors.newFixedThreadPool(800);
-//	private ExecutorService mThreadPool = Executors.newCachedThreadPool();
+	private ExecutorService mThreadPool = Executors.newFixedThreadPool(10);
+//	private ExecutorService mThreadPool = Executors.newFixedThreadPool(800);
 	
 	public static coordInfo mCoord;
 	public static ScheduledExecutorService mScheduler;	

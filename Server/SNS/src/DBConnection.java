@@ -40,7 +40,7 @@ public class DBConnection {
 		// c3p0 can work with defaults
 		mCDPS.setMinPoolSize(3);
 		mCDPS.setAcquireIncrement(5);
-		mCDPS.setMaxPoolSize(18);
+		mCDPS.setMaxPoolSize(50);
 		mCDPS.setMaxStatements(0);				
 	}
 	
@@ -192,16 +192,16 @@ public class DBConnection {
 			statusInfo result = getStatus(t_uid, num);
 		
 			int[] t_sids = result.getSIDs();
-			String [] t_status = result.getStatusList();
-	
 			
-			String total_t_status = "";			
-			for (int i = 0; i < t_status.length; i++)
-				total_t_status.concat(t_status[i]);
-							
-			storeLatent(uid, t_sids, reqSize, total_t_status.length());
-		
-			return mSuccess;
+			if (t_sids != null) {
+				String total_t_status = "";
+				String [] t_status = result.getStatusList();
+				for (int i = 0; i < t_status.length; i++) {				
+					total_t_status.concat(t_status[i]);			
+				}															
+				return storeLatent(uid, t_sids, reqSize, total_t_status.length());								
+			} else
+				return mFail;							
 		} else
 			return mFail;
 	}
@@ -212,11 +212,13 @@ public class DBConnection {
 			statusInfo result = getStatus(t_uid, num);
 			
 			int [] t_sids = result.getSIDs();		
-			Random rand = new Random();
-			if (t_sids.length > 0) {
+						
+			if (t_sids != null) {
 				int picked = 0;
-				if (t_sids.length != 1)
-					picked = rand.nextInt(t_sids.length - 1);											
+				if (t_sids.length != 1) {
+					Random rand = new Random();
+					picked = rand.nextInt(t_sids.length - 1);
+				}
 				return storeReply(uid, t_sids[picked], msg, reqSize);
 			} else
 				return mFail;
@@ -257,16 +259,16 @@ public class DBConnection {
 					+ "(?,?,?)");
 			
 			conn.setAutoCommit(false);
-				
-			int userTraffic = 0;
+							
 			for (int i = 0; i < uInfo.length; i++) {								
-				userTraffic = uInfo[i].getTraffic();
+				int userTraffic = uInfo[i].getTraffic();
+				if (userTraffic == 0)
+					continue;
 				prepared.setString(1, uInfo[i].getName());
 				prepared.setString(2, uInfo[i].getLoc());
 				prepared.setInt(3, userTraffic);
 				prepared.addBatch();
-				
-				server_side_traffic += userTraffic;
+				server_side_traffic += userTraffic;										
 			}
 						
 			prepared.executeBatch();
@@ -360,10 +362,7 @@ public class DBConnection {
 				String uname = rs.getString("user");
 				int prev = rs.getInt("prev_ep");
 				int curr = rs.getInt("curr_ep");
-				
-				if (curr >= 1)
-					curr = curr - 1;
-				
+												
 				match[i] = new matchInfo();
 				match[i].setInfo(uname, prev, curr);
 				i++;
@@ -599,7 +598,7 @@ public class DBConnection {
 		return new statusInfo(sids, status, time, traffic);
 	}
 	
-	private static void storeLatent(int uid, int[] sids, int reqSize, int slen) throws SQLException {
+	private static int storeLatent(int uid, int[] sids, int reqSize, int slen) throws SQLException {
 		Connection conn = null;
 		PreparedStatement prepared = null;				
 		int t_sids[] = sids;
@@ -638,6 +637,7 @@ public class DBConnection {
 					System.out.println("[storeLatent/conn]SQLException: " + e.getMessage());					
 				}						
 		}
+		return mSuccess;
 	}
 	
 	private static int storeReply(int uid, int sid, String msg, int reqSize) throws SQLException {
@@ -802,7 +802,7 @@ public class DBConnection {
 						
 			while(rs.next()) {
 				int t_uid = rs.getInt("uid");
-				int t_traffic = rs.getInt("sum(traffic)");				
+				int t_traffic = rs.getInt("sum(traffic)");				 
 				tMap.put(t_uid, t_traffic);				
 			}					
 		} catch (PropertyVetoException e) {
