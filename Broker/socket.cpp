@@ -296,39 +296,40 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 
 					
 							char arrDRComplete[50];
-						//	printf("1");
+					//		printf("1 \n");
 							send(EP1_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
-						//	cout << "1-2 : " << stMatchResData.arrUser;
-							data_len = recv(EP1_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
-							if (data_len < 0){
-								printf("Couldn't Receive Data Replacement Complete Message From EP1 \n");
-							}
-							printf("2");
+					//		cout << "1-2 : " << stMatchResData.arrUser << endl;
+					//		data_len = recv(EP1_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
+					//		if (data_len < 0){
+					//			printf("Couldn't Receive Data Replacement Complete Message From EP1 \n");
+					//		}
+					//		printf("2 \n");
 							send(EP2_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
-							cout << "2-1:" << stMatchResData.arrUser <<endl;
-							data_len = recv(EP2_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
-							if (data_len < 0){
-								printf("Couldn't Receive Data Replacement Complete Message From EP2 \n");
-							}
-							printf("3");
+					//		cout << "2-1:" << stMatchResData.arrUser <<endl;
+					//		data_len = recv(EP2_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
+					//		if (data_len < 0){
+					//			printf("Couldn't Receive Data Replacement Complete Message From EP2 \n");
+					//		}
+					//		printf("3 \n");
 							send(EP3_FD, (char*)&stMatchResData, sizeof(stMatchResData), 0);
-							cout << "3-1:" << stMatchResData.arrUser << endl;
-							data_len = recv(EP3_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
-							if (data_len < 0){
-								printf("Couldn't Receive Data Replacement Complete Message From EP3 \n");
-							}
+					//		cout << "3-1:" << stMatchResData.arrUser << endl;
+					//		data_len = recv(EP3_FD, (char*)&arrDRComplete, sizeof(arrDRComplete), 0);
+					//		if (data_len < 0){
+					//			printf("Couldn't Receive Data Replacement Complete Message From EP3 \n");
+					//		}
 
 							//9. 1시간마다 EP가 동시에 돌아가게 하기 위해 동기화 메세지 다시 보내기
-							printf("[Sending Sync Signal to EPs] \n");
-							char arrSyncMsg[10];
-							memset(&arrSyncMsg, 0, sizeof(arrSyncMsg));
-							strcpy_s(arrSyncMsg, 9, "SyncMsg");
+					//		printf("[Sending Sync Signal to EPs] \n");
+					//		char arrSyncMsg[10];
+					//		memset(&arrSyncMsg, 0, sizeof(arrSyncMsg));
+					//		strcpy_s(arrSyncMsg, 9, "SyncMsg");
 
-							send(EP1_FD, (char*)&arrSyncMsg, sizeof(arrSyncMsg), 0);
-							send(EP2_FD, (char*)&arrSyncMsg, sizeof(arrSyncMsg), 0);
-							send(EP3_FD, (char*)&arrSyncMsg, sizeof(arrSyncMsg), 0);
+					//		send(EP1_FD, (char*)&arrSyncMsg, sizeof(arrSyncMsg), 0);
+					//		send(EP2_FD, (char*)&arrSyncMsg, sizeof(arrSyncMsg), 0);
+					//		send(EP3_FD, (char*)&arrSyncMsg, sizeof(arrSyncMsg), 0);
 
 							//Broker Giver에게 재시작하라는 메세지 전송
+							InitBrokerGiverSocket();
 							SendResumeMsg();
 							
 
