@@ -1,0 +1,12 @@
+#ifndef _QUEUE_RET_
+#define _QUEUE_RET_
+
+enum E_QUEUE_RET
+{
+	E_QUEUE_ENOUGH = 1,
+	E_QUEUE_NOT_ENOUGH,
+
+	E_QUEUE_UNKNOWN
+};
+
+#endif
