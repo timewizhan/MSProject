@@ -21,7 +21,7 @@ public class Talculator {
 	
 		String[] period = new String[2];
 		period[0] = start;
-		period[1] = end;			
+		period[1] = end;				
 				
 		return period;
 	}

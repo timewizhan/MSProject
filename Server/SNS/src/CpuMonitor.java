@@ -25,8 +25,7 @@ public class CpuMonitor {
 		ServiceServer.mCPU_Log.clear();
 		ServiceServer.mAVG_CPU_Log.clear();
 		
-		Runnable monitor = new Runnable() {
-			
+		Runnable monitor = new Runnable() {			
 			@Override
 			public void run() {
 				double load = osBean.getSystemCpuLoad();
@@ -53,6 +52,8 @@ public class CpuMonitor {
 	}
 	
 	public static void storeMonitored() throws SQLException {
+		DBConnection.deleteMonitorResult();		
+		
     	CpuMonitor.stopScheduler(ServiceServer.mScheduler);
 						
 		int totalCPU = 0;		
@@ -60,8 +61,8 @@ public class CpuMonitor {
 			totalCPU += ServiceServer.mCPU_Log.get(i);
 		}
 		
-		int avgCPU = totalCPU / ServiceServer.mCPU_Log.size();				
-		int[] server_side_monitor = DBConnection.storeClientMonitor();				
+		int avgCPU = totalCPU / ServiceServer.mCPU_Log.size();						
+		int[] server_side_monitor = DBConnection.storeClientMonitor();		
 		DBConnection.storeServerMonitor(avgCPU, server_side_monitor);				
     }
 }

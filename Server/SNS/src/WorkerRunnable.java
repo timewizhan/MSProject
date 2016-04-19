@@ -33,7 +33,7 @@ public class WorkerRunnable implements Runnable {
         try {
         	if (reqType < 5) {
         		sleepFlag = true;
-	        	int result = operationHandler(request);
+	        	int result = operationHandler(reqType, request);
 	        	System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc()
     			+ " is handling the request from " 
 				+ "[" + request.get("SRC")
@@ -43,7 +43,7 @@ public class WorkerRunnable implements Runnable {
         		System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc()
 				+ " is handling the command "
 				+ "[" + opType.getOperationName(reqType) + "]");
-        		response = commandHanlder(request);        		
+        		response = commandHanlder(reqType, request);	
         	}
         	out = new BufferedWriter(new OutputStreamWriter(
 					mClientSocket.getOutputStream(), "UTF-8"));	
@@ -78,12 +78,11 @@ public class WorkerRunnable implements Runnable {
 		}
     }
     
-    private int operationHandler(JSONObject request) throws PropertyVetoException, SQLException, IOException, InterruptedException {		
+    private int operationHandler(int reqType, JSONObject request) throws PropertyVetoException, SQLException, IOException, InterruptedException {		
 		int uid = -1;
 		int reqSize = request.toString().length();
 		int result = 0;		
-						
-		int reqType = Integer.parseInt((String) request.get("TYPE"));		
+										
 		String src = (String) request.get("SRC");		
 		String dst = (String) request.get("DST");
 		String loc = (String) request.get("LOC");
@@ -100,7 +99,7 @@ public class WorkerRunnable implements Runnable {
 				break; 
 			case opType.mREPLY:
 				uid = DBConnection.isThere(src, userType.visitor, loc);			
-				result = DBConnection.writeReply(uid, dst, msg, reqSize, opType.mNUM_READ);				
+				result = DBConnection.writeReply(uid, dst, msg, reqSize, opType.mNUM_SHARE);				
 				break;
 			case opType.mRETWEET:
 				uid = DBConnection.isThere(src, userType.visitor, loc);
@@ -113,12 +112,11 @@ public class WorkerRunnable implements Runnable {
 		return result;
 	}
     
-    private String commandHanlder(JSONObject request) throws SQLException {
-    	int reqType = Integer.parseInt((String) request.get("TYPE"));
+    private String commandHanlder(int reqType, JSONObject request) throws SQLException {    	
     	String result = null;
     	
     	switch (reqType) {
-	    	case opType.mMONITOR: 
+	    	case opType.mMONITOR:
 	    		CpuMonitor.storeMonitored();
 	    		System.out.println(getTime() + " " + ServiceServer.mCoord.getServerLoc()
 	    							+ " stored monitoring result");

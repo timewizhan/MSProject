@@ -13,8 +13,7 @@ public class ServiceServer {
 	private final static int mMaxCon = 2147483647;
 	
 	private ServerSocket mServerSocket;
-	private ExecutorService mThreadPool = Executors.newFixedThreadPool(10);
-//	private ExecutorService mThreadPool = Executors.newFixedThreadPool(800);
+	private ExecutorService mThreadPool = Executors.newFixedThreadPool(500);
 	
 	public static coordInfo mCoord;
 	public static ScheduledExecutorService mScheduler;	
@@ -33,7 +32,7 @@ public class ServiceServer {
 	}
 	
 	public ServiceServer(String loc) throws IOException {		
-		mCoord = new coordInfo();		
+		mCoord = new coordInfo();
 		CoordHandler.readCoord(mCoord, loc);
 		
 		mCPU_Log = new ArrayList<Double>();
