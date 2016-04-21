@@ -102,6 +102,19 @@ VOID CHealthThread::CheckKeepAlive()
 	}
 }
 
+VOID CHealthThread::DeleteSelectedConnection(DWORD dwSelectedValue)
+{
+	VecConnection::iterator iterVec;
+	DWORD dwCurrent = 0;
+	for (iterVec = m_vecConnection.begin(); iterVec != m_vecConnection.end(); iterVec++, dwCurrent++) {
+		if (dwCurrent != dwSelectedValue) {
+			continue;
+		}
+		m_vecConnection.erase(iterVec);
+		DebugLog("Delete Health Manager Connection [%d]", m_vecConnection.size());
+	}
+}
+
 DWORD CHealthThread::ProcessInterSectionTask(SOCKET ClientSock)
 {
 	std::string strRecvData;
@@ -136,6 +149,7 @@ DWORD CHealthThread::ProcessCommunicationTask()
 
 	struct timeval stTimeVal;
 	stTimeVal.tv_sec = 1;
+	stTimeVal.tv_usec = 0;
 
 	DWORD dwRet = E_RET_SUCCESS;
 	BOOL bContinue = TRUE;
@@ -146,11 +160,12 @@ DWORD CHealthThread::ProcessCommunicationTask()
 		substReadset = stReadset;
 
 		int nRet;
-		nRet = ::select(0, &stReadset, NULL, NULL, &stTimeVal);
-		if (dwRet == SELECT_TIMEOUT) {
+		
+		nRet = ::select(0, &substReadset, NULL, NULL, &stTimeVal);
+		if (nRet == SELECT_TIMEOUT) {
 			continue;
 		}
-		else if (dwRet == SOCKET_ERROR) {
+		else if (nRet == SOCKET_ERROR) {
 			DWORD dwRet = ::GetLastError();
 			ErrorLog("Fail to operate select function [%d]", dwRet);
 			continue;
@@ -163,20 +178,23 @@ DWORD CHealthThread::ProcessCommunicationTask()
 				ErrorLog("Fail to accept manager connection");
 				continue;
 			}
+			DebugLog("Health Connection is created");
 
 			m_vecConnection.push_back(stConnectionInfo);
 			FD_SET(stConnectionInfo.stClientSocket.hClientSock, &stReadset);
 			continue;
 		}
 
-		for (unsigned i = 0; m_vecConnection.size(); i++) {
+		for (unsigned i = 0; i < m_vecConnection.size(); i++) {
 			SOCKET ClientSock = m_vecConnection[i].stClientSocket.hClientSock;
 
 			if (FD_ISSET(ClientSock, &substReadset)) {
 				DWORD dwRet;
 				dwRet = ProcessInterSectionTask(ClientSock);
 				if (dwRet != E_RET_SUCCESS) {
-					ErrorLog("Fail to process intersection task");
+					FD_CLR(ClientSock, &substReadset);
+					DeleteSelectedConnection(i);
+					break;
 				}
 			}
 		}

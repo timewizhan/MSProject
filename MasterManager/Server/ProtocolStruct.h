@@ -27,6 +27,10 @@ struct ST_PROTO_MM_COMPLETE_READY : public ST_PROTO_ROOT
 	DWORD dwManagerNumber;
 };
 
+struct ST_PROTO_MM_COMPLETE_START : public ST_PROTO_ROOT
+{
+};
+
 struct ST_PROTO_MM_COMMAND_START : public ST_PROTO_ROOT
 {
 };

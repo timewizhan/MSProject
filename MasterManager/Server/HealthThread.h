@@ -19,6 +19,8 @@ class CHealthThread
 	VOID CheckKeepAlive();
 	VOID ChangeConnectionState(SOCKET ClientSock, ST_PROTO_ROOT *pProtoRoot);
 
+	VOID DeleteSelectedConnection(DWORD dwSelectedValue);
+
 	DWORD RecvDataFromManager(SOCKET ClientSock, std::string &refstrRecvData);
 	DWORD ParseDataFromManager(std::string &refstrRecvMsg, ST_PROTO_ROOT *pProtoRoot);
 	

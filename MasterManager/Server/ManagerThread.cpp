@@ -41,9 +41,11 @@ DWORD CManagerThread::RecvDataFromManager(SOCKET ClientSock, std::string &refstr
 
 	DWORD dwRecvCount;
 	dwRecvCount = ::recv(ClientSock, szBuf, sizeof(szBuf), 0);
-	if (dwRecvCount < 1) {
+	if (dwRecvCount == SOCKET_ERROR) {
+		DebugLog("Manager Socket Error");
 		return E_RET_FAIL;
 	}
+	DebugLog("Recv Datat From Manager [%s]", szBuf);
 
 	refstrRecvData = szBuf;
 	return E_RET_SUCCESS;
@@ -67,6 +69,10 @@ DWORD CManagerThread::ParseDataFromManager(std::string &refstrRecvMsg, ST_PROTO_
 		pProtoCompleteReady->dwAction = dwAction;
 		pProtoCompleteReady->dwManagerNumber = jsonRecvData["number"].asInt();
 	}
+	else if (dwAction == E_PROTO_MM_COMPLETE_START) {
+		ST_PROTO_MM_COMPLETE_START *pProtoCompleteStart = (ST_PROTO_MM_COMPLETE_START *)pProtoRoot;
+		pProtoCompleteStart->dwAction = dwAction;
+	}
 	else {
 		return E_RET_FAIL;
 	}
@@ -77,19 +83,25 @@ DWORD CManagerThread::ParseDataFromManager(std::string &refstrRecvMsg, ST_PROTO_
 
 VOID CManagerThread::ChangeConnectionState(SOCKET ClientSock, ST_PROTO_ROOT *pProtoRoot)
 {
-	ST_PROTO_MM_COMPLETE_READY *pProtoCompleteReady = (ST_PROTO_MM_COMPLETE_READY *)pProtoRoot;
-
+	DWORD dwAction = pProtoRoot->dwAction;
 	for (unsigned i = 0; i < m_vecConnection.size(); i++) {
 		SOCKET sNestedSock = m_vecConnection[i].stClientSocket.hClientSock;
 		if (sNestedSock != ClientSock) {
 			continue;
 		}
 
-		if (m_vecConnection[i].dwConnectionNumber == 0) {
-			m_vecConnection[i].dwConnectionNumber = pProtoCompleteReady->dwManagerNumber;
+		if (dwAction == E_PROTO_MM_COMPLETE_READY) {
+			ST_PROTO_MM_COMPLETE_READY *pProtoCompleteReady = (ST_PROTO_MM_COMPLETE_READY *)pProtoRoot;
+			if (m_vecConnection[i].dwConnectionNumber == 0) {
+				m_vecConnection[i].dwConnectionNumber = pProtoCompleteReady->dwManagerNumber;
+			}
+
+			m_vecConnection[i].stConnectionState.dwState = E_CONN_COMPLETE_READY;
+		}
+		else if (dwAction == E_PROTO_MM_COMPLETE_START) {
+			m_vecConnection[i].stConnectionState.dwState = E_CONN_COMPLETE_START;
 		}
 
-		m_vecConnection[i].stConnectionState.dwState = E_CONN_COMPLETE_READY;
 		break;
 	}
 }
@@ -111,6 +123,7 @@ DWORD CManagerThread::ProcessInterSectionTask(SOCKET ClientSock)
 
 	dwRet = ParseDataFromManager(strRecvData, pProtoRoot);
 	if (dwRet != E_RET_SUCCESS) {
+		ErrorLog("Cannot parse data of Manager");
 		return dwRet;
 	}
 
@@ -196,7 +209,7 @@ DWORD CManagerThread::BuildSendMsg(std::string &refstrJsonData, ST_PROTO_ROOT *p
 		ST_PROTO_MM_COMMAND_READY *pstProtoMMCommandReady = (ST_PROTO_MM_COMMAND_READY *)pProtoRoot;
 
 		jsonRoot["action"] = static_cast<int>(dwAction);
-		jsonRoot["action"] = static_cast<int>(pstProtoMMCommandReady->dwNumberOfBots);
+		jsonRoot["number"] = static_cast<int>(pstProtoMMCommandReady->dwNumberOfBots);
 	}
 	else if (dwAction == E_PROTO_MM_COMMAND_STOP) {
 		ST_PROTO_MM_COMMAND_STOP *pstProtoMMCommandStop = (ST_PROTO_MM_COMMAND_STOP *)pProtoRoot;
@@ -205,6 +218,11 @@ DWORD CManagerThread::BuildSendMsg(std::string &refstrJsonData, ST_PROTO_ROOT *p
 	}
 	else if (dwAction == E_PROTO_MM_COMPLETE_READY) {
 		ST_PROTO_MM_COMPLETE_READY *pstProtoMMCompleteReady = (ST_PROTO_MM_COMPLETE_READY *)pProtoRoot;
+
+		jsonRoot["action"] = static_cast<int>(dwAction);
+	}
+	else if (dwAction == E_PROTO_MM_COMMAND_START) {
+		ST_PROTO_MM_COMMAND_START *pstProtoMMCompleteReady = (ST_PROTO_MM_COMMAND_START *)pProtoRoot;
 
 		jsonRoot["action"] = static_cast<int>(dwAction);
 	}
@@ -277,6 +295,7 @@ VOID CManagerThread::CheckAndOperateControlCommand()
 		return;
 	}
 
+	DebugLog("Request ready command to all manager");
 	ST_PROTO_ROOT *pProtoRoot = new (std::nothrow) ST_PROTO_ROOT();
 	if (!pProtoRoot) {
 		return;
@@ -338,6 +357,44 @@ DWORD CManagerThread::CheckAndOperateCompleteReady()
 	return dwRet;
 }
 
+DWORD CManagerThread::BroadCastStartCommand()
+{
+	ST_PROTO_ROOT *pProtoRoot = new (std::nothrow) ST_PROTO_ROOT();
+	if (!pProtoRoot) {
+		return E_RET_FAIL;
+	}
+
+	DWORD dwTotalConnection = m_vecConnection.size();
+	for (unsigned i = 0; i < dwTotalConnection; i++) {
+		m_vecConnection[i].stConnectionState.dwState = E_CONN_BROADCAST_SEND;
+	}
+
+	pProtoRoot->dwAction = E_PROTO_MM_COMMAND_START;
+
+	std::string strSendData;
+	BuildSendMsg(strSendData, pProtoRoot);
+
+	DWORD dwRet;
+	dwRet = BroadCastMsgToManager(strSendData);
+	if (dwRet != E_RET_SUCCESS) {
+		return E_RET_FAIL;
+	}
+
+	return E_RET_SUCCESS;
+}
+
+VOID CManagerThread::DeleteSelectedConnection(DWORD dwSelectedValue)
+{
+	VecConnection::iterator iterVec;
+	DWORD dwCurrent = 0;
+	for (iterVec = m_vecConnection.begin(); iterVec != m_vecConnection.end(); iterVec++, dwCurrent++) {
+		if (dwCurrent != dwSelectedValue) {
+			continue;
+		}
+		m_vecConnection.erase(iterVec);
+		DebugLog("Delete Manager Connection [%d]", m_vecConnection.size());
+	}
+}
 
 DWORD CManagerThread::ProcessCommunicationTask(DWORD dwCountOfManager)
 {
@@ -348,7 +405,8 @@ DWORD CManagerThread::ProcessCommunicationTask(DWORD dwCountOfManager)
 	FD_SET(m_stServerContext.stServerInfo.hServerSock, &stReadset);
 
 	struct timeval stTimeVal;
-	stTimeVal.tv_sec = 1;
+	stTimeVal.tv_sec = 10;
+	stTimeVal.tv_usec = 0;
 
 	DWORD dwRet = E_RET_SUCCESS;
 	BOOL bContinue = TRUE;
@@ -357,17 +415,22 @@ DWORD CManagerThread::ProcessCommunicationTask(DWORD dwCountOfManager)
 		// Waiting for all manager connection
 		if (dwCountOfManager == m_vecConnection.size()) {
 			CheckAndOperateControlCommand();
-			CheckAllReadyState();
+
+			dwRet = CheckAllReadyState();
+			if (dwRet == E_RET_SUCCESS) {
+				DebugLog("Broadcast to all manager for start command");
+				BroadCastStartCommand();
+			}
 		}
 
 		substReadset = stReadset;
 
 		int nRet;
-		nRet = ::select(0, &stReadset, NULL, NULL, &stTimeVal);
-		if (dwRet == SELECT_TIMEOUT) {
+		nRet = ::select(0, &substReadset, NULL, NULL, &stTimeVal);
+		if (nRet == SELECT_TIMEOUT) {
 			continue;
 		}
-		else if (dwRet == SOCKET_ERROR) {
+		else if (nRet == SOCKET_ERROR) {
 			DWORD dwRet = ::GetLastError();
 			ErrorLog("Fail to operate select function [%d]", dwRet);
 			continue;
@@ -380,20 +443,24 @@ DWORD CManagerThread::ProcessCommunicationTask(DWORD dwCountOfManager)
 				ErrorLog("Fail to accept manager connection");
 				continue;
 			}
+			DebugLog("Manager Connection is created");
+
 			m_vecConnection.push_back(stConnectionInfo);
 			FD_SET(stConnectionInfo.stClientSocket.hClientSock, &stReadset);
 
 			continue;
 		}
 
-		for (unsigned i = 0; m_vecConnection.size(); i++) {
+		for (unsigned i = 0; i < m_vecConnection.size(); i++) {
 			SOCKET ClientSock = m_vecConnection[i].stClientSocket.hClientSock;
 
 			if (FD_ISSET(ClientSock, &substReadset)) {
 				DWORD dwRet;
 				dwRet = ProcessInterSectionTask(ClientSock);
 				if (dwRet != E_RET_SUCCESS) {
-					ErrorLog("Fail to process intersection task");
+					FD_CLR(ClientSock, &substReadset);
+					DeleteSelectedConnection(i);
+					break;
 				}
 			}
 		}
@@ -404,6 +471,8 @@ DWORD CManagerThread::ProcessCommunicationTask(DWORD dwCountOfManager)
 
 DWORD CManagerThread::StartThread(ST_THREADS_PARAM *pstThreadsParam)
 {
+	DWORD dwCountOfManager = pstThreadsParam->dwCountOfManager;
+
 	InitManagerServer(pstThreadsParam->dwPort);
 
 	BOOL bContinue = TRUE;
@@ -411,7 +480,7 @@ DWORD CManagerThread::StartThread(ST_THREADS_PARAM *pstThreadsParam)
 	{
 		try
 		{
-			ProcessCommunicationTask(pstThreadsParam->dwCountOfManager);
+			ProcessCommunicationTask(dwCountOfManager);
 		}
 		catch (std::exception &e) {
 			ErrorLog("%s", e.what());
@@ -423,3 +492,4 @@ DWORD CManagerThread::StartThread(ST_THREADS_PARAM *pstThreadsParam)
 
 	return E_RET_SUCCESS;
 }
+

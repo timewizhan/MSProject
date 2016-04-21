@@ -29,9 +29,12 @@ class CManagerThread
 	DWORD CheckAllReadyState();
 	DWORD CheckAndOperateCompleteReady();
 
+	VOID DeleteSelectedConnection(DWORD dwSelectedValue);
+
 	DWORD SendToManager(std::string &refstrSendMsg, SOCKET sockManager);
 	DWORD RecvDataFromManager(SOCKET ClientSock, std::string &refstrRecvData);
 	DWORD BroadCastMsgToManager(std::string &refstrSendData);
+	DWORD BroadCastStartCommand();
 
 	DWORD ProcessCommunicationTask(DWORD dwCountOfManager);
 	DWORD ProcessInterSectionTask(SOCKET ClientSock);

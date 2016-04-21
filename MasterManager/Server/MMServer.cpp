@@ -45,14 +45,14 @@ VOID CMMServer::InitManagerThread(DWORD dwPort, DWORD dwCountOfManager)
 
 	HANDLE hThread = NULL;
 	hThread = (HANDLE)_beginthreadex(NULL, 0, WorkerManagerThread, (void *)&stThreadsParam, 0, NULL);
-	::Sleep(1000);
 	if (!hThread) {
 		DebugLog("Bots Thread is not created");
 		return;
 	}
+	::Sleep(1000);
 
 	m_stThreadManager.hThread[1] = hThread;
-	DebugLog("Bots Thread is created");
+	DebugLog("Manager Thread is created");
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,9 +90,9 @@ VOID CMMServer::HandleError(DWORD dwRet) throw(std::exception)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 DWORD CMMServer::StartServer(ST_INIT_ARG &refstInitArg)
 {
-	//InitControlThread();
+	InitControlThread();
 	InitManagerThread(refstInitArg.dwMMPort, refstInitArg.dwCountOfManager);
-	//InitHealthThread(refstInitArg.dwHealthPort);
+	InitHealthThread(refstInitArg.dwHealthPort);
 
 	BOOL bStartServer = TRUE;
 	while (bStartServer)
@@ -103,7 +103,9 @@ DWORD CMMServer::StartServer(ST_INIT_ARG &refstInitArg)
 				Main Thread is waiting for all thread (Master Manager Thread, bots Thread)
 			*/
 			DWORD dwRet;
+			//dwRet = ::WaitForMultipleObjects(2, m_stThreadManager.hThread, true, INFINITE);
 			dwRet = ::WaitForMultipleObjects(COUNT_THREAD, m_stThreadManager.hThread, true, INFINITE);
+			//dwRet = ::WaitForSingleObject(m_stThreadManager.hThread[2], INFINITE);
 			HandleError(dwRet);
 		}
 		catch (std::exception &e)

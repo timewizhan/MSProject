@@ -82,6 +82,10 @@ DWORD CMMControlThread::StartThread()
 	try
 	{
 		InputCommand();
+
+		/*DebugLog("Command Input");
+		std::string strInput = "start 1";
+		SetCommand(strInput);*/
 	}
 	catch (std::exception &e) {
 		ErrorLog("%s", e.what());
