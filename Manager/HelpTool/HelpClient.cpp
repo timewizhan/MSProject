@@ -27,10 +27,9 @@ DWORD CHelpClient::InitClientSock(ST_CLIENT_CONTEXT &refstServerContext, ST_SERV
 	}
 
 	refstServerContext.stServerInfo.sockAddr.sin_family = AF_INET;
-	::inet_pton(AF_INET, refstServerAddr.strIPAddress.c_str(), &refstServerContext.stServerInfo.sockAddr.sin_addr.s_addr);
-	refstServerContext.stServerInfo.sockAddr.sin_port = htons(refstServerAddr.dwPort);
-	::memset(&refstServerContext.stServerInfo.sockAddr, 0x00, sizeof(SOCKADDR_IN));
-
+	::inet_pton(AF_INET, refstServerAddr.strIPAddress.c_str(), (void *)&refstServerContext.stServerInfo.sockAddr.sin_addr);
+	refstServerContext.stServerInfo.sockAddr.sin_port = htons(static_cast<u_short>(refstServerAddr.dwPort));
+	
 	return E_RET_SUCCESS;
 }
 
@@ -40,7 +39,6 @@ DWORD CHelpClient::ConnectToServer(ST_CLIENT_CONTEXT &refstServerContext)
 	dwRet = ::connect(refstServerContext.stServerInfo.hServerSock, (SOCKADDR *)&refstServerContext.stServerInfo.sockAddr, sizeof(refstServerContext.stServerInfo.sockAddr));
 	if (dwRet != SOCKET_ERROR) {
 		dwRet = ::WSAGetLastError();
-		ErrorLog("Fail to connect to MM server [%d]", dwRet);
 		return E_RET_FAIL;
 	}
 

@@ -21,9 +21,9 @@ CHealthThread::~CHealthThread()
 	}
 }
 
-VOID CHealthThread::InitServerConnection()
+VOID CHealthThread::InitServerConnection(ST_SERVER_ADDR &refstServerAddr)
 {
-	m_pHelpClient->InitClientSock(m_stClientContext, m_stServerAddr);
+	m_pHelpClient->InitClientSock(m_stClientContext, refstServerAddr);
 }
 
 VOID CHealthThread::CloseConnection()
@@ -51,6 +51,8 @@ BOOL CHealthThread::ConnectToServer()
 		}
 		bContinue = FALSE;
 	}
+
+	DebugLog("Success to create connection with MM Health Server");
 	return TRUE;
 }
 
@@ -68,7 +70,7 @@ DWORD CHealthThread::SendToMMServer(std::string &refstrSendMsg)
 			continue;
 		}
 		else if (nRet == nSizeOfData) {
-			DebugLog("Success to send data to client");
+			//DebugLog("Success to send data to MM Health Check Server");
 			bContinue = FALSE;
 			continue;
 		}
@@ -115,6 +117,7 @@ DWORD CHealthThread::ProcessPostTask(std::string &refstrRecvData)
 
 	dwRet = SendToMMServer(refstrRecvData);
 	if (dwRet != E_RET_SUCCESS) {
+		DebugLog("Fail to send data to MM Health Check Server");
 		return dwRet;
 	}
 
@@ -122,11 +125,11 @@ DWORD CHealthThread::ProcessPostTask(std::string &refstrRecvData)
 }
 
 
-VOID CHealthThread::ProcessCycleTask(ST_THREADS_PARAM *pstThreadsParam) throw(std::exception)
+VOID CHealthThread::ProcessCycleTask(DWORD dwManagerNumber)
 {
 	DWORD dwRet;
 	std::string strSendData;
-	dwRet = ProcessPreTask(strSendData, pstThreadsParam->dwManagerNumber);
+	dwRet = ProcessPreTask(strSendData, dwManagerNumber);
 	if (dwRet != E_RET_SUCCESS) {
 		throw std::exception("Fail to operate ProcessPreTask");
 	}
@@ -139,7 +142,12 @@ VOID CHealthThread::ProcessCycleTask(ST_THREADS_PARAM *pstThreadsParam) throw(st
 
 DWORD CHealthThread::StartThread(ST_THREADS_PARAM *pstThreadsParam)
 {
-	InitServerConnection();
+	ST_SERVER_ADDR stServerAddr;
+	stServerAddr.strIPAddress = pstThreadsParam->strIPAddress;
+	stServerAddr.dwPort = pstThreadsParam->dwPort;
+
+	DWORD dwManagerNumber = pstThreadsParam->dwManagerNumber;
+	InitServerConnection(stServerAddr);
 
 	BOOL bConnected = FALSE;
 	BOOL bContinue = TRUE;
@@ -151,7 +159,7 @@ DWORD CHealthThread::StartThread(ST_THREADS_PARAM *pstThreadsParam)
 				bConnected = ConnectToServer();
 			}
 
-			ProcessCycleTask(pstThreadsParam);
+			ProcessCycleTask(dwManagerNumber);
 		}
 		catch (std::exception &e) {
 			ErrorLog("%s", e.what());

@@ -8,8 +8,8 @@ int main(int argc, char **argv)
 	DWORD dwRet = E_RET_FAIL;
 	dwRet = InitLog(E_LOG_CONSOLE);
 
-	if (argc < 6) {
-		DebugLog("[Usage] : [Master Manager Port] [Manager Port] [Health Port] [Manager Number] [Bot Generator File Path]");
+	if (argc < 7) {
+		DebugLog("[Usage] : [Master Manager Port] [Manager Port] [Health Port] [Manager Number] [Master Manager IP] [Bot Generator File Path]");
 		return E_RET_FAIL;
 	}
 
@@ -31,7 +31,8 @@ int main(int argc, char **argv)
 	stInitArg.dwHealthPort		= ::atoi(argv[2]);
 	stInitArg.dwMPort			= ::atoi(argv[3]);
 	stInitArg.dwManagerNumber	= ::atoi(argv[4]);
-	stInitArg.strBotGenFilePath	= argv[5];
+	stInitArg.strMMIPAddress	= argv[5];
+	stInitArg.strBotGenFilePath	= argv[6];
 
 	CMServer *pMServer = new CMServer();
 	if (!pMServer) {

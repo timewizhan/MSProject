@@ -12,9 +12,6 @@ m_pHelpClient(NULL)
 	if (!m_pHelpClient) {
 		ErrorLog("Fail to allocate HelpClient memory");
 	}
-
-	::memset(&m_stClientContext, 0x00, sizeof(m_stClientContext));
-	::memset(&m_stServerAddr, 0x00, sizeof(m_stClientContext));
 }
 
 CMMThread::~CMMThread()
@@ -24,9 +21,9 @@ CMMThread::~CMMThread()
 	}
 }
 
-VOID CMMThread::InitServerConnection()
+VOID CMMThread::InitServerConnection(ST_SERVER_ADDR &refstServerAddr)
 {
-	m_pHelpClient->InitClientSock(m_stClientContext, m_stServerAddr);
+	m_pHelpClient->InitClientSock(m_stClientContext, refstServerAddr);
 }
 
 BOOL CMMThread::ConnectToServer() 
@@ -49,6 +46,8 @@ BOOL CMMThread::ConnectToServer()
 		}
 		bContinue = FALSE;
 	}
+
+	DebugLog("Success to create connection with MM Server");
 	return TRUE;
 }
 
@@ -66,7 +65,7 @@ DWORD CMMThread::SendToMMServer(std::string &refstrSendMsg)
 			continue;
 		}
 		else if (nRet == nSizeOfData) {
-			DebugLog("Success to send data to client");
+			DebugLog("Success to send data to MM Server");
 			bContinue = FALSE;
 			continue;
 		}
@@ -91,6 +90,7 @@ DWORD CMMThread::RecvFromMMServer(std::string &refstrRecvMsg)
 	}
 
 	refstrRecvMsg = szBuf;
+	DebugLog("Receive From MM Server [%s]", refstrRecvMsg.c_str());
 
 	return E_RET_SUCCESS;
 }
@@ -122,6 +122,11 @@ DWORD CMMThread::BuildSendMsg(std::string &refstrJsonData, DWORD dwManagerNumber
 
 		jsonRoot["action"] = E_PROTO_MM_COMPLETE_READY;
 		jsonRoot["number"] = static_cast<int>(dwManagerNumber);
+	}
+	else if (dwAction == E_PROTO_BOT_COMPLETE_START) {
+		ST_PROTO_BOT_COMPLETE_START *pProtoCommandCompleteStart = (ST_PROTO_BOT_COMPLETE_START *)pProtoRoot;
+
+		jsonRoot["action"] = E_PROTO_MM_COMPLETE_START;
 	}
 	else {
 		jsonRoot["action"] = E_PROTO_INNTER_UNKNOWN;
@@ -183,6 +188,10 @@ DWORD CMMThread::ParseDataFromBots(std::string &refstrRecvMsg, ST_PROTO_ROOT *pP
 		ST_PROTO_INNER_COMPLETE_READY *pProtoCommandReady = (ST_PROTO_INNER_COMPLETE_READY *)pProtoRoot;
 		pProtoCommandReady->dwAction = dwAction;
 	}
+	else if (dwAction == E_PROTO_BOT_COMPLETE_START) {
+		ST_PROTO_BOT_COMPLETE_START *pProtoCommandStart = (ST_PROTO_BOT_COMPLETE_START *)pProtoRoot;
+		pProtoCommandStart->dwAction = dwAction;
+	}
 	else {
 		// nothing 
 		pProtoRoot->dwAction = dwAction;
@@ -216,28 +225,32 @@ DWORD CMMThread::ProcessPreTask(std::string &refstrSendData, DWORD dwManagerNumb
 		return dwRet;
 	}
 
-	delete pProtoRoot;
 	return dwRet;
 }
 
-DWORD CMMThread::ProcessInnerTask(std::string &refstrSendData, std::string &refstrRecvData, ST_THREADS_PARAM *pstThreadsParam)
+DWORD CMMThread::ProcessInnerTask(std::string &refstrSendData, std::string &refstrRecvData, ST_THREADS_PARAM &refstThreadsParam)
 {
 	DWORD dwWrittenSize;
 	BOOL bSuccess;
-	bSuccess = ::WriteFile(pstThreadsParam->stSharedMemInfo.hOnlyWritePipe, refstrSendData.c_str(), refstrSendData.size(), &dwWrittenSize, NULL);
+
+	bSuccess = ::WriteFile(refstThreadsParam.stSharedMemInfo.hOnlyWritePipe, refstrSendData.c_str(), refstrSendData.size(), &dwWrittenSize, NULL);
 	if (!bSuccess) {
 		return E_RET_FAIL;
 	}
 
+	DebugLog("Send to Bot thread By Pipe [%s]", refstrSendData.c_str());
+	::FlushFileBuffers(refstThreadsParam.stSharedMemInfo.hOnlyWritePipe);
+
 	DWORD dwReadSize;
 	char szRecvData[128] = { 0 };
-	bSuccess = ::ReadFile(pstThreadsParam->stSharedMemInfo.hOnlyReadPipe, szRecvData, sizeof(szRecvData), &dwReadSize, NULL);
+	bSuccess = ::ReadFile(refstThreadsParam.stSharedMemInfo.hOnlyReadPipe, szRecvData, sizeof(szRecvData), &dwReadSize, NULL);
 	if (!bSuccess) {
 		return E_RET_FAIL;
 	}
 	
 	refstrRecvData = szRecvData;
 	refstrRecvData.resize(dwReadSize);
+	DebugLog("Receive from Bot thread By Pipe [%s]", refstrRecvData.c_str());
 
 	return E_RET_SUCCESS;
 }
@@ -267,27 +280,30 @@ DWORD CMMThread::ProcessPostTask(std::string &refstrRecvData, DWORD dwManagerNum
 		return dwRet;
 	}
 
-	delete pProtoRoot;
 	return dwRet;
 }
 
 
-VOID CMMThread::ProcessCycleTask(ST_THREADS_PARAM *pstThreadsParam) throw(std::exception)
+VOID CMMThread::ProcessCycleTask(ST_THREADS_PARAM &refstThreadsParam)
 {
+	DebugLog("Working ProcessPreTask");
 	DWORD dwRet;
 	std::string strSendData;
-	dwRet = ProcessPreTask(strSendData, pstThreadsParam->dwManagerNumber);
+	dwRet = ProcessPreTask(strSendData, refstThreadsParam.dwManagerNumber);
 	if (dwRet != E_RET_SUCCESS) {
 		throw std::exception("Fail to operate ProcessPreTask");
 	}
 
+	DebugLog("Working ProcessInnerTask");
+
 	std::string strRecvData;
-	dwRet = ProcessInnerTask(strSendData, strRecvData, pstThreadsParam);
+	dwRet = ProcessInnerTask(strSendData, strRecvData, refstThreadsParam);
 	if (dwRet != E_RET_SUCCESS) {
 		throw std::exception("Fail to operate ProcessInnerTask");
 	}
 
-	dwRet = ProcessPostTask(strRecvData, pstThreadsParam->dwManagerNumber);
+	DebugLog("Working ProcessPostTask");
+	dwRet = ProcessPostTask(strRecvData, refstThreadsParam.dwManagerNumber);
 	if (dwRet != E_RET_SUCCESS) {
 		throw std::exception("Fail to operate ProcessPostTask");
 	}
@@ -295,7 +311,13 @@ VOID CMMThread::ProcessCycleTask(ST_THREADS_PARAM *pstThreadsParam) throw(std::e
 
 DWORD CMMThread::StartThread(ST_THREADS_PARAM *pstThreadsParam)
 {
-	InitServerConnection();
+	ST_THREADS_PARAM stThreadParam = *pstThreadsParam;
+
+	ST_SERVER_ADDR stServerAddr;
+	stServerAddr.strIPAddress = stThreadParam.strIPAddress;
+	stServerAddr.dwPort = stThreadParam.dwPort;
+
+	InitServerConnection(stServerAddr);
 
 	BOOL bConnected = FALSE;
 	BOOL bContinue = TRUE;
@@ -307,7 +329,7 @@ DWORD CMMThread::StartThread(ST_THREADS_PARAM *pstThreadsParam)
 				bConnected = ConnectToServer();
 			}
 
-			ProcessCycleTask(pstThreadsParam);
+			ProcessCycleTask(stThreadParam);
 		}
 		catch (std::exception &e) {
 			ErrorLog("%s", e.what());

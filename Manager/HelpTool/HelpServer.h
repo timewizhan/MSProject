@@ -13,7 +13,7 @@ class CHelpServer
 public:
 	CHelpServer();
 
-	DWORD InitServerSock(ST_SERVER_CONTEXT &refstServerContext);
+	DWORD InitServerSock(ST_SERVER_CONTEXT	&refstServerContext);
 
 	/*
 		InitServerValue method have internel method

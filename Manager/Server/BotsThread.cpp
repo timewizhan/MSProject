@@ -14,7 +14,7 @@ CBotsThread::CBotsThread()
 	m_pHelpTool = new CHelpTool();
 }
 
-VOID CBotsThread::InitBotsServer(DWORD dwPort) throw(std::exception)
+VOID CBotsThread::InitBotsServer(DWORD dwPort)
 {
 	DWORD dwRet;
 	dwRet = m_pHelpServer->InitServerSock(m_stServerContext);
@@ -46,6 +46,10 @@ DWORD CBotsThread::BuildSendMsg(std::string &refstrJsonData, ST_PROTO_ROOT *pPro
 	}
 	else if (dwAction == E_PROTO_BOT_COMMAND_START) {
 		ST_PROTO_BOT_COMMAND_START *pstProtoBotCommandStart = (ST_PROTO_BOT_COMMAND_START *)pProtoRoot;
+		jsonRoot["action"] = static_cast<int>(dwAction);
+	}
+	else if (dwAction == E_PROTO_BOT_COMPLETE_START) {
+		ST_PROTO_BOT_COMPLETE_START *pstProtoBotCompleteStart = (ST_PROTO_BOT_COMPLETE_START *)pProtoRoot;
 		jsonRoot["action"] = static_cast<int>(dwAction);
 	}
 	else {
@@ -107,7 +111,7 @@ VOID CBotsThread::PushDataToQueue(ST_PROTO_ROOT *pProtoRoot)
 	ST_PROTO_BOT_COMPLETE_READY *pstProtoBotCompleteReady = (ST_PROTO_BOT_COMPLETE_READY *)pProtoRoot;
 
 	ST_BOT_CONNECTION stBotConnection;
-	stBotConnection.dwBotPID;
+	stBotConnection.dwBotPID = pstProtoBotCompleteReady->dwPID;
 
 	CQueueBot<ST_BOT_CONNECTION>::getInstance().pushQueueConnection(stBotConnection);
 }
@@ -136,35 +140,39 @@ DWORD CBotsThread::ProcessInterSectionTask(SOCKET ClientSock)
 	return E_RET_SUCCESS;
 }
 
-DWORD CBotsThread::SendToMMThread(std::string &refstrSendData, ST_THREADS_PARAM *pstThreadsParam)
+DWORD CBotsThread::SendToMMThread(std::string &refstrSendData, ST_THREADS_PARAM &refstThreadParam)
 {
 	DWORD dwWrittenSize;
 	BOOL bSuccess;
-	bSuccess = ::WriteFile(pstThreadsParam->stSharedMemInfo.hOnlyWritePipe, refstrSendData.c_str(), refstrSendData.size(), &dwWrittenSize, NULL);
+	bSuccess = ::WriteFile(refstThreadParam.stSharedMemInfo.hOnlyWritePipe, refstrSendData.c_str(), refstrSendData.size(), &dwWrittenSize, NULL);
 	if (!bSuccess) {
 		return E_RET_FAIL;
 	}
 
+	DebugLog("Send to Bot thread By Pipe [%s]", refstrSendData.c_str());
+	::FlushFileBuffers(refstThreadParam.stSharedMemInfo.hOnlyWritePipe);
+
 	return E_RET_SUCCESS;
 }
 
-DWORD CBotsThread::RecvFromMMThread(std::string &refstrRecvData, ST_THREADS_PARAM *pstThreadsParam)
+DWORD CBotsThread::RecvFromMMThread(std::string &refstrRecvData, ST_THREADS_PARAM &refstThreadParam)
 {
 	BOOL bSuccess;
 	DWORD dwReadSize;
 	char szRecvData[128] = { 0 };
-	bSuccess = ::ReadFile(pstThreadsParam->stSharedMemInfo.hOnlyReadPipe, szRecvData, sizeof(szRecvData), &dwReadSize, NULL);
+	bSuccess = ::ReadFile(refstThreadParam.stSharedMemInfo.hOnlyReadPipe, szRecvData, sizeof(szRecvData), &dwReadSize, NULL);
 	if (!bSuccess) {
 		return E_RET_FAIL;
 	}
 
 	refstrRecvData = szRecvData;
 	refstrRecvData.resize(dwReadSize);
+	DebugLog("Receive from MM thread By Pipe [%s]", refstrRecvData.c_str());
 
 	return E_RET_SUCCESS;
 }
 
-DWORD CBotsThread::ParseDataFromMMThread(std::string &refstrRecvMsg, ST_PROTO_ROOT *pProtoRoot)
+DWORD CBotsThread::ParseDataFromMMThread(std::string &refstrRecvMsg, ST_PROTO_ROOT *pProtoRoot, DWORD &refdwBotNumber)
 {
 	Json::Reader jsonReader;
 	Json::Value jsonRecvData;
@@ -181,6 +189,7 @@ DWORD CBotsThread::ParseDataFromMMThread(std::string &refstrRecvMsg, ST_PROTO_RO
 		ST_PROTO_INNER_COMMAND_READY *pProtoCommandReady = (ST_PROTO_INNER_COMMAND_READY *)pProtoRoot;
 		pProtoCommandReady->dwAction = dwAction;
 		pProtoCommandReady->dwNumberOfBots = jsonRecvData["number"].asInt();
+		refdwBotNumber = pProtoCommandReady->dwNumberOfBots;
 	}
 	else if (dwAction == E_PROTO_INNER_COMMAND_START) {
 		ST_PROTO_INNER_COMMAND_START *pProtoCommandStart = (ST_PROTO_INNER_COMMAND_START *)pProtoRoot;
@@ -198,15 +207,27 @@ DWORD CBotsThread::ParseDataFromMMThread(std::string &refstrRecvMsg, ST_PROTO_RO
 	return E_RET_SUCCESS;
 }
 
-DWORD CBotsThread::ExecuteBotGen(ST_THREADS_PARAM *pstThreadsParam, ST_PROTO_ROOT *pProtoRoot, DWORD &refdwBotNumber)
+DWORD CBotsThread::ExecuteBotGen(ST_THREADS_PARAM &refstThreadParam, ST_PROTO_ROOT *pProtoRoot, DWORD &refdwBotNumber)
 {
 	if (pProtoRoot->dwAction != E_PROTO_INNER_COMMAND_READY) {
 		return E_RET_SUCCESS;
 	}
 
 	ST_PROTO_INNER_COMMAND_READY *pstProtoInnerCommandReady = (ST_PROTO_INNER_COMMAND_READY *)pProtoRoot;
-	std::string strParam = std::to_string(pstProtoInnerCommandReady->dwNumberOfBots);
-	::ShellExecuteA(NULL, "open", pstThreadsParam->strFilePath.c_str(), strParam.c_str(), NULL, SW_SHOW);
+	std::string strParam = std::to_string(refstThreadParam.dwManagerNumber) + " " + std::to_string(pstProtoInnerCommandReady->dwNumberOfBots);
+
+	std::string strFullFilePath = refstThreadParam.strFilePath.c_str();
+	DWORD dwLastPos = strFullFilePath.find_last_of("\\");
+	
+	std::string strWorkingDir = strFullFilePath.substr(0, dwLastPos);
+	std::string strFileName = strFullFilePath.substr(dwLastPos + 1, strFullFilePath.size() - dwLastPos);
+
+	_chdir(strWorkingDir.c_str());
+
+	DebugLog("Execute Bot Generator : Working Dir : [%s]", strWorkingDir.c_str());
+	DebugLog("Execute Bot Generator : File Name : [%s]", strFileName.c_str());
+	DebugLog("Execute Bot Generator : Param : [%s]", strParam.c_str());
+	::ShellExecuteA(NULL, "open", strFileName.c_str(), strParam.c_str(), strWorkingDir.c_str(), SW_SHOW);
 
 	refdwBotNumber = pstProtoInnerCommandReady->dwNumberOfBots;
 	return E_RET_SUCCESS;
@@ -247,7 +268,7 @@ DWORD CBotsThread::SendToBot(std::string &refstrSendMsg, SOCKET sockManager)
 			continue;
 		}
 		else if (nRet == nSizeOfData) {
-			DebugLog("Success to send data to client");
+			DebugLog("Success to send data to bot");
 			bContinue = FALSE;
 			continue;
 		}
@@ -278,7 +299,7 @@ VOID CBotsThread::TerminateBot()
 	m_pHelpTool->TerminateProcessByALLPID(vecPID);
 }
 
-DWORD CBotsThread::BranchByAction(ST_THREADS_PARAM *pstThreadsParam, ST_PROTO_ROOT *pProtoRoot, DWORD &refdwBotNumber)
+DWORD CBotsThread::BranchByAction(ST_THREADS_PARAM &refstThreadParam, ST_PROTO_ROOT *pProtoRoot, DWORD &refdwBotNumber)
 {
 	DWORD dwRet = E_RET_FAIL;
 
@@ -286,11 +307,12 @@ DWORD CBotsThread::BranchByAction(ST_THREADS_PARAM *pstThreadsParam, ST_PROTO_RO
 	if (dwAction == E_PROTO_INNER_COMMAND_READY) {
 		// If the action is E_PROTO_INNER_COMMAND_READY, this thread execute bot generator
 		// otherwise, pass it
-		dwRet = ExecuteBotGen(pstThreadsParam, pProtoRoot, refdwBotNumber);
+		dwRet = ExecuteBotGen(refstThreadParam, pProtoRoot, refdwBotNumber);
 		if (dwRet != E_RET_SUCCESS) {
 			return dwRet;
 		}
 
+		DebugLog("Wait for Bot connection");
 		dwRet = ProcessCommunicationTask(refdwBotNumber);
 		if (dwRet != E_RET_SUCCESS) {
 			return dwRet;
@@ -302,6 +324,9 @@ DWORD CBotsThread::BranchByAction(ST_THREADS_PARAM *pstThreadsParam, ST_PROTO_RO
 		if (dwRet != E_RET_SUCCESS) {
 			return dwRet;
 		}
+
+		DebugLog("Send start command to Bots [%s]", strSendData.c_str());
+
 		dwRet = BroadCastMsgToBot(strSendData);
 		if (dwRet != E_RET_SUCCESS) {
 			return dwRet;
@@ -317,32 +342,32 @@ DWORD CBotsThread::BranchByAction(ST_THREADS_PARAM *pstThreadsParam, ST_PROTO_RO
 	return dwRet;
 }
 
-DWORD CBotsThread::ProcessPreTask(ST_THREADS_PARAM *pstThreadsParam, DWORD &refdwBotNumber)
+DWORD CBotsThread::ProcessPreTask(ST_THREADS_PARAM &refstThreadParam, DWORD &refdwBotNumber, DWORD &refdwAction)
 {
 	DWORD dwRet = E_RET_FAIL;
 
 	std::string strRecvMsg;
-	dwRet = RecvFromMMThread(strRecvMsg, pstThreadsParam);
+	dwRet = RecvFromMMThread(strRecvMsg, refstThreadParam);
 	if (dwRet != E_RET_SUCCESS) {
 		return dwRet;
 	}
-
+	
 	ST_PROTO_ROOT *pProtoRoot = new (std::nothrow) ST_PROTO_ROOT();
 	if (!pProtoRoot) {
 		return dwRet;
 	}
 
-	dwRet = ParseDataFromMMThread(strRecvMsg, pProtoRoot);
+	dwRet = ParseDataFromMMThread(strRecvMsg, pProtoRoot, refdwBotNumber);
 	if (dwRet != E_RET_SUCCESS) {
 		return dwRet;
 	}
 
-	dwRet = BranchByAction(pstThreadsParam, pProtoRoot, refdwBotNumber);
+	refdwAction = pProtoRoot->dwAction;
+	dwRet = BranchByAction(refstThreadParam, pProtoRoot, refdwBotNumber);
 	if (dwRet != E_RET_SUCCESS) {
 		return dwRet;
 	}
 
-	delete pProtoRoot;
 	return dwRet;
 }
 
@@ -354,21 +379,29 @@ DWORD CBotsThread::ProcessCommunicationTask(DWORD &refdwBotNumber)
 	FD_SET(m_stServerContext.stServerInfo.hServerSock, &stReadset);
 
 	DWORD dwRet = E_RET_SUCCESS;
+	DWORD dwConnection = 0;
 	BOOL bContinue = TRUE;
 	while (bContinue) {
 		substReadset = stReadset;
-		::select(0, &stReadset, NULL, NULL, NULL);
+		::select(0, &substReadset, NULL, NULL, NULL);
 
 		if (FD_ISSET(m_stServerContext.stServerInfo.hServerSock, &substReadset)) {
 			ST_CLIENT_SOCKET stClientSocket;
-			m_pHelpServer->AcceptServer(m_stServerContext, stClientSocket);
-			m_vecConnection.push_back(stClientSocket);
+			dwRet = m_pHelpServer->AcceptServer(m_stServerContext, stClientSocket);
+			if (dwRet != E_RET_SUCCESS) {
+				ErrorLog("Fail to accept manager connection");
+				continue;
+			}
+			dwConnection++;
 
+			DebugLog("Bot Connection is created [%d]", dwConnection);
+
+			m_vecConnection.push_back(stClientSocket);
 			FD_SET(stClientSocket.hClientSock, &stReadset);
 			continue;
-		}
+		} 
 
-		for (unsigned i = 0; m_vecConnection.size(); i++) {
+		for (unsigned i = 0; i < m_vecConnection.size(); i++) {
 			SOCKET ClientSock = m_vecConnection[i].hClientSock;
 
 			if (FD_ISSET(ClientSock, &substReadset)) {
@@ -377,12 +410,14 @@ DWORD CBotsThread::ProcessCommunicationTask(DWORD &refdwBotNumber)
 				if (dwRet != E_RET_SUCCESS) {
 					ErrorLog("Fail to process intersection task");
 				}
+				DebugLog("QueueBot Size is [%d]", CQueueBot<ST_BOT_CONNECTION>::getInstance().getQueueSize());
 			}
 		}
 		
-		if (CQueueBot<ST_BOT_CONNECTION>::getInstance().getQueueSize() == refdwBotNumber) {
+		if (CQueueBot<ST_BOT_CONNECTION>::getInstance().getQueueSize() >= refdwBotNumber) {
+			DebugLog("Requested Bots have sent message to Bot Thread");
+
 			FD_ZERO(&stReadset);
-			ClearConnection();
 			bContinue = FALSE;
 			continue;
 		}
@@ -392,7 +427,7 @@ DWORD CBotsThread::ProcessCommunicationTask(DWORD &refdwBotNumber)
 }
 
 
-DWORD CBotsThread::ProcessPostTask(ST_THREADS_PARAM *pstThreadsParam)
+DWORD CBotsThread::ProcessPostTask(ST_THREADS_PARAM &refstThreadParam, DWORD &refdwAction)
 {
 	DWORD dwRet = E_RET_FAIL;
 
@@ -401,8 +436,14 @@ DWORD CBotsThread::ProcessPostTask(ST_THREADS_PARAM *pstThreadsParam)
 		return dwRet;
 	}
 
-	ST_PROTO_BOT_COMPLETE_READY *pstProtoBotCompleteReady = (ST_PROTO_BOT_COMPLETE_READY *)pProtoRoot;
-	pstProtoBotCompleteReady->dwAction = E_PROTO_BOT_COMPLETE_READY;
+	if (refdwAction == E_PROTO_INNER_COMMAND_READY) {
+		ST_PROTO_BOT_COMPLETE_READY *pstProtoBotCompleteReady = (ST_PROTO_BOT_COMPLETE_READY *)pProtoRoot;
+		pstProtoBotCompleteReady->dwAction = E_PROTO_BOT_COMPLETE_READY;
+	}
+	else if (refdwAction == E_PROTO_INNER_COMMAND_START) {
+		ST_PROTO_BOT_COMPLETE_START *pstProtoBotCompleteStart = (ST_PROTO_BOT_COMPLETE_START *)pProtoRoot;
+		pstProtoBotCompleteStart->dwAction = E_PROTO_BOT_COMPLETE_START;
+	}
 
 	std::string strSendData;
 	dwRet = BuildSendMsg(strSendData, pProtoRoot);
@@ -410,26 +451,27 @@ DWORD CBotsThread::ProcessPostTask(ST_THREADS_PARAM *pstThreadsParam)
 		return dwRet;
 	}
 
-	dwRet = SendToMMThread(strSendData, pstThreadsParam);
+	dwRet = SendToMMThread(strSendData, refstThreadParam);
 	if (dwRet != E_RET_SUCCESS) {
 		return dwRet;
 	}
 
-	delete pProtoRoot;
+	//delete pProtoRoot;
 	return dwRet;
 }
 
-VOID CBotsThread::ProcessCycleTask(ST_THREADS_PARAM *pstThreadsParam) throw(std::exception)
+VOID CBotsThread::ProcessCycleTask(ST_THREADS_PARAM &refstThreadParam)
 {
 	DWORD dwRet;
 
 	DWORD dwBotNumber;
-	dwRet = ProcessPreTask(pstThreadsParam, dwBotNumber);
+	DWORD dwAction;
+	dwRet = ProcessPreTask(refstThreadParam, dwBotNumber, dwAction);
 	if (dwRet != E_RET_SUCCESS) {
 		throw std::exception("Fail to operate ProcessPreTask");
 	}
 
-	dwRet = ProcessPostTask(pstThreadsParam);
+	dwRet = ProcessPostTask(refstThreadParam, dwAction);
 	if (dwRet != E_RET_SUCCESS) {
 		throw std::exception("Fail to operate ProcessPostTask");
 	}
@@ -437,14 +479,16 @@ VOID CBotsThread::ProcessCycleTask(ST_THREADS_PARAM *pstThreadsParam) throw(std:
 
 DWORD CBotsThread::StartThread(ST_THREADS_PARAM *pstThreadsParam)
 {
-	InitBotsServer(pstThreadsParam->dwPort);
+	ST_THREADS_PARAM stThreadParam = *pstThreadsParam;
+
+	InitBotsServer(stThreadParam.dwPort);
 
 	BOOL bContinue = TRUE;
 	while (bContinue)
 	{
 		try
 		{
-			ProcessCycleTask(pstThreadsParam);
+			ProcessCycleTask(stThreadParam);
 		}
 		catch (std::exception &e) {
 			ErrorLog("%s", e.what());

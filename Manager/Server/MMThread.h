@@ -10,10 +10,9 @@
 class CMMThread
 {
 	ST_CLIENT_CONTEXT	m_stClientContext;
-	ST_SERVER_ADDR		m_stServerAddr;
 	CHelpClient			*m_pHelpClient;
 
-	VOID InitServerConnection();
+	VOID InitServerConnection(ST_SERVER_ADDR &refstServerAddr);
 	BOOL ConnectToServer();
 
 	DWORD BuildSendMsg(std::string &refstrJsonData, DWORD dwManagerNumber, ST_PROTO_ROOT *pProtoRoot);
@@ -25,10 +24,10 @@ class CMMThread
 
 
 	DWORD ProcessPreTask(std::string &refstrSendData, DWORD dwManagerNumber);
-	DWORD ProcessInnerTask(std::string &refstrSendData, std::string &refstrRecvData, ST_THREADS_PARAM *pstThreadsParam);
+	DWORD ProcessInnerTask(std::string &refstrSendData, std::string &refstrRecvData, ST_THREADS_PARAM &refstThreadsParam);
 	DWORD ProcessPostTask(std::string &refstrRecvData, DWORD dwManagerNumber);
 
-	VOID ProcessCycleTask(ST_THREADS_PARAM *pstThreadsParam) throw(std::exception);
+	VOID ProcessCycleTask(ST_THREADS_PARAM &refstThreadsParam);
 public:
 	CMMThread();
 	~CMMThread();

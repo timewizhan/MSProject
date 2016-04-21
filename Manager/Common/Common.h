@@ -1,5 +1,7 @@
-#ifndef _AY_COMMON_
-#define _AY_COMMON_
+#ifndef _COMMON_
+#define _COMMON_
+
+#define FD_SETSIZE      1024
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -10,6 +12,8 @@
 #include <TlHelp32.h>
 #include <tchar.h>
 #include <process.h>
+
+#include <direct.h>
 
 #include <string>
 #include <vector>

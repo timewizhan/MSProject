@@ -21,16 +21,16 @@ CMServer::~CMServer()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-VOID CMServer::InitMMThread(DWORD dwPort, DWORD dwManagerNumber)
+VOID CMServer::InitMMThread(DWORD dwPort, DWORD dwManagerNumber, std::string &refstrIPAddress)
 {
 	ST_THREADS_PARAM stThreadsParam;
 	stThreadsParam.dwPort = dwPort;
 	stThreadsParam.dwManagerNumber = dwManagerNumber;
+	stThreadsParam.strIPAddress = refstrIPAddress;
 	stThreadsParam.stSharedMemInfo = m_stSharedMemInfo;
 
 	HANDLE hThread = NULL;
 	hThread = (HANDLE)_beginthreadex(NULL, 0, WorkerMMThread, (void *)&stThreadsParam, 0, NULL);
-	::Sleep(1000);
 	if (!hThread) {
 		DebugLog("Master Manager Thread is not created");
 		return;
@@ -38,19 +38,20 @@ VOID CMServer::InitMMThread(DWORD dwPort, DWORD dwManagerNumber)
 
 	m_stThreadManager.hThread[0] = hThread;
 	DebugLog("Master Manager Thread is created");
+	::Sleep(1000);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-VOID CMServer::InitBotsThread(DWORD dwPort, std::string &refstrBotGenFilePath)
+VOID CMServer::InitBotsThread(DWORD dwPort, DWORD dwManagerNumber, std::string &refstrBotGenFilePath)
 {
 	ST_THREADS_PARAM stThreadsParam;
 	stThreadsParam.dwPort = dwPort;
+	stThreadsParam.dwManagerNumber = dwManagerNumber;
 	stThreadsParam.strFilePath = refstrBotGenFilePath;
 	stThreadsParam.stSharedMemInfo = m_stSharedMemInfo;
 
 	HANDLE hThread = NULL;
 	hThread = (HANDLE)_beginthreadex(NULL, 0, WorkerBotsThread, (void *)&stThreadsParam, 0, NULL);
-	::Sleep(1000);
 	if (!hThread) {
 		DebugLog("Bots Thread is not created");
 		return;
@@ -58,18 +59,19 @@ VOID CMServer::InitBotsThread(DWORD dwPort, std::string &refstrBotGenFilePath)
 
 	m_stThreadManager.hThread[1] = hThread;
 	DebugLog("Bots Thread is created");
+	::Sleep(1000);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-VOID CMServer::InitHealthThread(DWORD dwPort, DWORD dwManagerNumber)
+VOID CMServer::InitHealthThread(DWORD dwPort, DWORD dwManagerNumber, std::string &refstrIPAddress)
 {
 	ST_THREADS_PARAM stThreadsParam;
 	stThreadsParam.dwPort = dwPort;
 	stThreadsParam.dwManagerNumber = dwManagerNumber;
+	stThreadsParam.strIPAddress = refstrIPAddress;
 
 	HANDLE hThread = NULL;
 	hThread = (HANDLE)_beginthreadex(NULL, 0, WorkerHealthThread, (void *)&stThreadsParam, 0, NULL);
-	::Sleep(1000);
 	if (!hThread) {
 		DebugLog("Bots Thread is not created");
 		return;
@@ -77,10 +79,11 @@ VOID CMServer::InitHealthThread(DWORD dwPort, DWORD dwManagerNumber)
 
 	m_stThreadManager.hThread[2] = hThread;
 	DebugLog("Health Thread is created");
+	::Sleep(1000);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-VOID CMServer::HandleError(DWORD dwRet) throw(std::exception)
+VOID CMServer::HandleError(DWORD dwRet)
 {
 	if (dwRet == WAIT_OBJECT_0) {
 		return;
@@ -128,12 +131,11 @@ DWORD CMServer::StartServer(ST_INIT_ARG &refstInitArg)
 	if (!bExist) {
 		return E_RET_FAIL;
 	}
-	
 
 	InitAnonymousPipe();
-	InitMMThread(refstInitArg.dwMMPort, refstInitArg.dwManagerNumber);
-	InitBotsThread(refstInitArg.dwMPort, refstInitArg.strBotGenFilePath);
-	InitHealthThread(refstInitArg.dwHealthPort, refstInitArg.dwManagerNumber);
+	InitMMThread(refstInitArg.dwMMPort, refstInitArg.dwManagerNumber, refstInitArg.strMMIPAddress);
+	InitBotsThread(refstInitArg.dwMPort, refstInitArg.dwManagerNumber, refstInitArg.strBotGenFilePath);
+	InitHealthThread(refstInitArg.dwHealthPort, refstInitArg.dwManagerNumber, refstInitArg.strMMIPAddress);
 
 	BOOL bStartServer = TRUE;
 	while (bStartServer)
@@ -144,6 +146,7 @@ DWORD CMServer::StartServer(ST_INIT_ARG &refstInitArg)
 				Main Thread is waiting for all thread (Master Manager Thread, bots Thread)
 			*/
 			DWORD dwRet;
+			//dwRet = ::WaitForMultipleObjects(2, m_stThreadManager.hThread, true, INFINITE);
 			dwRet = ::WaitForMultipleObjects(COUNT_THREAD, m_stThreadManager.hThread, true, INFINITE);
 			HandleError(dwRet);
 		}
@@ -164,8 +167,11 @@ DWORD CMServer::StartServer(ST_INIT_ARG &refstInitArg)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 unsigned int WINAPI WorkerMMThread(void *pData)
 {
-	CMMThread *pMMThread;
+	CMMThread *pMMThread = NULL;
 	pMMThread = new (std::nothrow) CMMThread();
+	if (!pMMThread) {
+		return E_RET_FAIL;
+	}
 
 	ST_THREADS_PARAM *pstThreadsParam = (ST_THREADS_PARAM *)pData;
 	try

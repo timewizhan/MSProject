@@ -19,6 +19,7 @@ struct ST_THREADS_PARAM
 {
 	DWORD				dwPort;
 	DWORD				dwManagerNumber;
+	std::string			strIPAddress;
 	std::string			strFilePath;
 	ST_SHARED_MEM_INFO	stSharedMemInfo;
 };

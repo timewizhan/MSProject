@@ -17,6 +17,9 @@ struct ST_PROTO_BOT_COMMAND_START : public ST_PROTO_ROOT
 {
 };
 
+struct ST_PROTO_BOT_COMPLETE_START : public ST_PROTO_ROOT
+{
+};
 
 struct ST_PROTO_MM_COMMAND_READY : public ST_PROTO_ROOT
 {

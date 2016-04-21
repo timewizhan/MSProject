@@ -10,10 +10,9 @@
 class CHealthThread
 {
 	ST_CLIENT_CONTEXT	m_stClientContext;
-	ST_SERVER_ADDR		m_stServerAddr;
 	CHelpClient			*m_pHelpClient;
 
-	VOID InitServerConnection();
+	VOID InitServerConnection(ST_SERVER_ADDR &refstServerAddr);
 	VOID CloseConnection();
 	BOOL ConnectToServer();
 
@@ -24,7 +23,7 @@ class CHealthThread
 	DWORD ProcessPreTask(std::string &refstrSendData, DWORD dwManagerNumber);
 	DWORD ProcessPostTask(std::string &refstrRecvData);
 
-	VOID ProcessCycleTask(ST_THREADS_PARAM *pstThreadsParam) throw(std::exception);
+	VOID ProcessCycleTask(DWORD dwManagerNumber);
 public:
 	CHealthThread();
 	~CHealthThread();

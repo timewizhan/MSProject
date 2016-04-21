@@ -11,7 +11,10 @@ struct ST_INIT_ARG
 	DWORD dwMPort;
 	DWORD dwHealthPort;
 	DWORD dwManagerNumber;
+	std::string strMMIPAddress;
 	std::string strBotGenFilePath;
+
+	ST_INIT_ARG() : dwMMPort(0), dwMPort(0), dwHealthPort(0), dwManagerNumber(0), strMMIPAddress(""), strBotGenFilePath("") {}
 };
 
 class CMServer
@@ -19,12 +22,12 @@ class CMServer
 	ST_THREAD_MANAGER	m_stThreadManager;
 	ST_SHARED_MEM_INFO	m_stSharedMemInfo;
 
-	VOID InitMMThread(DWORD dwPort, DWORD dwManagerNumber);
-	VOID InitBotsThread(DWORD dwPort, std::string &refstrBotGenFilePath);
-	VOID InitHealthThread(DWORD dwPort, DWORD dwManagerNumber);
+	VOID InitMMThread(DWORD dwPort, DWORD dwManagerNumber, std::string &refstrIPAddress);
+	VOID InitBotsThread(DWORD dwPort, DWORD dwManagerNumber, std::string &refstrBotGenFilePath);
+	VOID InitHealthThread(DWORD dwPort, DWORD dwManagerNumber, std::string &refstrIPAddress);
 	VOID InitAnonymousPipe();
 
-	VOID HandleError(DWORD dwRet) throw(std::exception);
+	VOID HandleError(DWORD dwRet);
 
 	BOOL IsBotGenFile(std::string &refstrFilePath);
 	DWORD ExecuteBotGen();

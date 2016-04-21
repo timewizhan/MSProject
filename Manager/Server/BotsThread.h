@@ -22,25 +22,25 @@ class CBotsThread
 	VOID TerminateBot();
 
 	DWORD ParseDataFromBot(std::string &refstrRecvMsg, ST_PROTO_ROOT *pProtoRoot);
-	DWORD ParseDataFromMMThread(std::string &refstrRecvMsg, ST_PROTO_ROOT *pProtoRoot);
+	DWORD ParseDataFromMMThread(std::string &refstrRecvMsg, ST_PROTO_ROOT *pProtoRoot, DWORD &refdwBotNumber);
 
 	DWORD BuildSendMsg(std::string &refstrJsonData, ST_PROTO_ROOT *pProtoRoot);
-	DWORD ExecuteBotGen(ST_THREADS_PARAM *pstThreadsParam, ST_PROTO_ROOT *pProtoRoot, DWORD &refdwBotNumber);
+	DWORD ExecuteBotGen(ST_THREADS_PARAM &refstThreadParam, ST_PROTO_ROOT *pProtoRoot, DWORD &refdwBotNumber);
 
-	DWORD SendToMMThread(std::string &refstrSendData, ST_THREADS_PARAM *pstThreadsParam);
+	DWORD SendToMMThread(std::string &refstrSendData, ST_THREADS_PARAM &refstThreadParam);
 	DWORD SendToBot(std::string &refstrSendMsg, SOCKET sockManager);
-	DWORD RecvFromMMThread(std::string &refstrRecvData, ST_THREADS_PARAM *pstThreadsParam);
+	DWORD RecvFromMMThread(std::string &refstrRecvData, ST_THREADS_PARAM &refstThreadParam);
 	DWORD RecvDataFromBot(SOCKET ClientSock, std::string &refstrRecvData);
 	DWORD BroadCastMsgToBot(std::string &refstrSendData);
 
-	DWORD BranchByAction(ST_THREADS_PARAM *pstThreadsParam, ST_PROTO_ROOT *pProtoRoot, DWORD &refdwBotNumber);
+	DWORD BranchByAction(ST_THREADS_PARAM &refstThreadParam, ST_PROTO_ROOT *pProtoRoot, DWORD &refdwBotNumber);
 
-	DWORD ProcessPreTask(ST_THREADS_PARAM *pstThreadsParam, DWORD &refdwBotNumber);
+	DWORD ProcessPreTask(ST_THREADS_PARAM &refstThreadParam, DWORD &refdwBotNumber, DWORD &refdwAction);
 	DWORD ProcessCommunicationTask(DWORD &refdwBotNumber);
 	DWORD ProcessInterSectionTask(SOCKET ClientSock);
-	DWORD ProcessPostTask(ST_THREADS_PARAM *pstThreadsParam);
+	DWORD ProcessPostTask(ST_THREADS_PARAM &refstThreadParam, DWORD &refdwAction);
 
-	VOID ProcessCycleTask(ST_THREADS_PARAM *pstThreadsParam) throw(std::exception);
+	VOID ProcessCycleTask(ST_THREADS_PARAM &refstThreadParam);
 public:
 	CBotsThread();
 

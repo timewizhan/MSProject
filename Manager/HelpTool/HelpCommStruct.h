@@ -43,7 +43,7 @@ struct ST_SERVER_INFO
 
 struct ST_SERVER_CONTEXT
 {
-	//WSADATA			stWSAData;
+	WSADATA			stWSAData;
 	ST_SERVER_INFO	stServerInfo;
 };
 

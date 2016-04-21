@@ -9,37 +9,22 @@ m_pHelpTool(NULL)
 		ErrorLog("Fail to import HelpTool");
 }
 
-DWORD CHelpServer::InitServerSock(ST_SERVER_CONTEXT &refstServerContext)
+DWORD CHelpServer::InitServerSock(ST_SERVER_CONTEXT	&refstServerContext)
 {
-	
 	DWORD dwRet;
-	WSADATA wsa;
-	
+	dwRet = ::WSAStartup(MAKEWORD(2, 2), &refstServerContext.stWSAData);
+	if (dwRet != 0) {
+		ShowErrorWSAStartup(dwRet);
+		return E_RET_FAIL;
+	}
 
-	try
-	{
-		dwRet = ::WSAStartup(MAKEWORD(2, 2), &wsa);
-		if (dwRet != 0) {
-			ShowErrorWSAStartup(dwRet);
-			return E_RET_FAIL;
-		}
-		refstServerContext.stServerInfo.hServerSock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	}
-	catch (std::exception &e) {
-		printf("%s\n", e.what());
-	}
-	
-	SOCKET Sock = NULL;
-	/*if (Sock == INVALID_SOCKET) {
+	refstServerContext.stServerInfo.hServerSock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (refstServerContext.stServerInfo.hServerSock == INVALID_SOCKET) {
 		dwRet = WSAGetLastError();
 		ShowErrorWSASocket(dwRet);
 		return E_RET_FAIL;
-	}*/
+	}
 	
-	//refstServerContext.stServerInfo.hServerSock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	//refstServerContext.stServerInfo.hServerSock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	
-
 	int nOptionValue = 1;
 	int nResult;
 	nResult = ::setsockopt(refstServerContext.stServerInfo.hServerSock, SOL_SOCKET, SO_REUSEADDR, (char *)&nOptionValue, sizeof(int));
@@ -69,6 +54,7 @@ DWORD CHelpServer::InitServerBind(ST_SERVER_CONTEXT &refstServerContext, DWORD d
 	refstServerContext.stServerInfo.stServerAddrIn.sin_port = ::htons((unsigned short)dwPort);
 
 	std::string strAddress = vecstrGetAddress[0].c_str();
+	//std::string strAddress = "165.132.120.160";
 	::inet_pton(AF_INET, strAddress.c_str(), &refstServerContext.stServerInfo.stServerAddrIn.sin_addr.s_addr);
 
 	int nRet;
