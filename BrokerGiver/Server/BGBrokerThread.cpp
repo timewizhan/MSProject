@@ -46,7 +46,7 @@ DWORD CBGBrokerThread::BindSocket()
 	}
 
 	// Port 6700 is fixed
-	const DWORD dwPort = 6700;
+	const DWORD dwPort = 8888;
 	m_stServerInit.stServerAddrIn.sin_family = AF_INET;
 	m_stServerInit.stServerAddrIn.sin_port = ::htons(static_cast<unsigned short>(dwPort));
 
@@ -54,8 +54,8 @@ DWORD CBGBrokerThread::BindSocket()
 	::inet_pton(AF_INET, strAddress.c_str(), &m_stServerInit.stServerAddrIn.sin_addr.s_addr);
 
 	int nRet;
-	DebugLog("Init Server Address : %s", vecstrGetAddress[0].c_str());
-	DebugLog("Init Server Port : %d", dwPort);
+	DebugLog("Init Broker Server Address : %s", vecstrGetAddress[0].c_str());
+	DebugLog("Init Broker Server Port : %d", dwPort);
 	nRet = ::bind(m_stServerInit.hServerSock, (SOCKADDR *)&m_stServerInit.stServerAddrIn, sizeof(m_stServerInit.stServerAddrIn));
 	if (nRet == SOCKET_ERROR) {
 		ErrorLog("Fail to operate socket bind");
@@ -102,6 +102,7 @@ DWORD CBGBrokerThread::ReadDataFromBroker(ST_CLIENT_SOCKET &refstClientSocket, s
 
 	std::string strRecvData;
 
+	DebugLog("1");
 	DWORD dwRecv, nRet;
 	DWORD dwFlags = 0;
 	nRet = WSARecv(refstClientSocket.hClientSock,
@@ -113,21 +114,25 @@ DWORD CBGBrokerThread::ReadDataFromBroker(ST_CLIENT_SOCKET &refstClientSocket, s
 		NULL);
 	if (nRet == SOCKET_ERROR) {
 		DWORD dwRet = ::WSAGetLastError();
+		DebugLog("Error Code : %d", dwRet);
 		if (dwRet != WSA_IO_PENDING) {
 			ShowErrorWSASocket(dwRet);
 			::closesocket(refstClientSocket.hClientSock);
 			return E_RET_FAIL;
 		}
-
-		/*
-			Working by async
-		*/
-
-		DWORD dwTransferred = 0;
-		WSAGetOverlappedResult(refstClientSocket.hClientSock, pstBrokerConnection, &dwTransferred, true, &dwFlags);
-		strRecvData = pstBrokerConnection->szBuf;
 	}
+	/*
+		Working by async
+	*/
+	DebugLog("Receiving data from broker");
 
+	DWORD dwTransferred = 0;
+	WSAGetOverlappedResult(refstClientSocket.hClientSock, pstBrokerConnection, &dwTransferred, true, &dwFlags);
+	strRecvData = pstBrokerConnection->szBuf;
+	DebugLog("Complete to receive data from broker : %s", strRecvData.c_str());
+
+
+	DebugLog("Ret Code : %d", nRet);
 	refstrReqType = strRecvData;
 	::closesocket(refstClientSocket.hClientSock);
 	return E_RET_SUCCESS;

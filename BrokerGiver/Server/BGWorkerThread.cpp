@@ -1,30 +1,33 @@
 #include "BGWorkerThread.h"
 #include "BGServerError.h"
+#include "BGException.h"
 
 #include "..\Common\Log.h"
+#include "..\Server\DBQueue.h"
+
 #include "json\reader.h"
 #include "json\json.h"
 
-
 #define DEFAULT_RECV_DATA 32
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-CBGWorkerThread::CBGWorkerThread(SOCKET ClientSocket)
-{
-	::memset(&m_stWorkerThread, 0x00, sizeof(ST_WORKER_THREAD));
-	m_stWorkerThread.hClientSocket = ClientSocket;
+extern CDBQueue* g_pCDBQueue;
 
-	m_stDBLoginToken.strDatabaseName	= "broker_table";
-	m_stDBLoginToken.strDatabaseIP		= "165.132.122.243";
-	m_stDBLoginToken.strPort			= "3306";
-	m_stDBLoginToken.strUserName		= "root";
-	m_stDBLoginToken.strPassword		= "cclab";
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+CBGWorkerThread::CBGWorkerThread()
+{
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 CBGWorkerThread::~CBGWorkerThread()
 {
 	closesocket(m_stWorkerThread.hClientSocket);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+VOID CBGWorkerThread::SetClientSocket(SOCKET ClientSocket)
+{
+	::memset(&m_stWorkerThread, 0x00, sizeof(ST_WORKER_THREAD));
+	m_stWorkerThread.hClientSocket = ClientSocket;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +45,7 @@ DWORD CBGWorkerThread::SendDataToClient(std::string &refstrSendData)
 			continue;
 		}
 		else if (nRet == nSizeOfData) {
-			DebugLog("Success to send data to client [%s]", refstrSendData.c_str());
+			DebugLog("Success to send data to client");
 			bContinue = FALSE;
 			continue;
 		}
@@ -62,15 +65,13 @@ void CBGWorkerThread::ReceiveDataFromClient(ST_RECV_DATA &refstRecvData, char *p
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void CBGWorkerThread::ParseReqData(ST_RECV_DATA &refstRecvData, ST_CLIENT_REQ &refstReqClient)
+void CBGWorkerThread::ParseReqData(ST_RECV_DATA &refstRecvData, ST_CLIENT_REQ &refstReqClient) throw(JSONException)
 {
 	Json::Value JsonRoot;
 	Json::Reader reader;
 	bool bParsingRet = reader.parse(refstRecvData.strRecvData, JsonRoot);
 	if (!bParsingRet) {
-		ErrorLog("Fail to parse a received data [%s]", reader.getFormatedErrorMessages());
-		std::cout << reader.getFormatedErrorMessages() << std::endl;
-		return ;
+		throw JSONException(reader.getFormatedErrorMessages());
 	}
 
 	refstReqClient.iType	= JsonRoot.get("TYPE", 0).asInt();
@@ -92,19 +93,19 @@ void CBGWorkerThread::MakeJsonResData(ST_CLIENT_RES &refstResClient, std::string
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void CBGWorkerThread::ExtractResData(ST_DB_RESULT &refstDBResult, ST_CLIENT_RES &refstResClient)
+void CBGWorkerThread::ExtractResData(ST_DB_RESULT &refstDBResult, ST_CLIENT_RES &refstResClient) throw(std::exception)
 {
 	Json::Value JsonRoot;
 
 	if (refstDBResult.vecstDBResultLines.size() < 1) {
-		return;
+		throw std::exception("There is no DB result");
 	}
 
 	ST_DB_RESULT_LINE stDBResultLine;
 	stDBResultLine = refstDBResult.vecstDBResultLines[0];
 
 	if (stDBResultLine.vecstrResult.size() < 1) {
-		return;
+		throw std::exception("There is no DB record result");
 	}
 
 	std::string strIPAddress = stDBResultLine.vecstrResult[0];
@@ -113,47 +114,40 @@ void CBGWorkerThread::ExtractResData(ST_DB_RESULT &refstDBResult, ST_CLIENT_RES 
 
 void CBGWorkerThread::RequestDataBase(ST_CLIENT_REQ &refstReqClient, ST_DB_RESULT &refstDBResult)
 {
-	HANDLE hDataBase = NULL;
-	hDataBase = CreateDBInstance(E_DB_MYSQL);
-	if (hDataBase == NULL) {
-		ErrorLog("Fail to create DB instance");
-		return ;
-	}
+	ST_DBConnection stDBConnection;
 
-	DWORD dwRet;
-	dwRet = ConnectToDB(hDataBase, m_stDBLoginToken);
-	if (dwRet != E_RET_SUCCESS) {
-		ErrorLog("Fail to connet to DB");
-		return ;
+	bool bContinue = true;
+	while (bContinue) {
+		g_pCDBQueue->popFromQueue(stDBConnection);
+		if (stDBConnection.hDataBase == NULL) {
+			::Sleep(1000);
+			continue;
+		}
+		bContinue = false;
 	}
 
 	ST_DB_SQL stDBSql;
 	stDBSql.strSQL = "SELECT ip from prev_matching_table WHERE user=\"" + refstReqClient.strDst + "\"";
 
+	DWORD dwRet;
 	ST_DB_RESULT stDBResult;
-	dwRet = QueryFromDB(hDataBase, stDBSql, stDBResult);
+	dwRet = QueryFromDB(stDBConnection.hDataBase, stDBSql, stDBResult);
 	if (dwRet != E_RET_SUCCESS) {
-		ErrorLog("Fail to query data from DataBase");
-		return;
+		throw DBException(stDBSql.strSQL);
 	}
 
-	dwRet = QuitDB(hDataBase);
-	if (dwRet != E_RET_SUCCESS) {
-		ErrorLog("Fail to quit data from DataBase");
-		return;
-	}
-
+	g_pCDBQueue->pushToQueue(stDBConnection);
 	refstDBResult = stDBResult;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-DWORD CBGWorkerThread::StartWorkerThread(char *pReceiveBuf, DWORD dwByteTransferred)
+DWORD CBGWorkerThread::StartWorkerThread(char *pReceiveBuf, CBGLog *pBGLog)
 {
-	DWORD dwRet;
 	try
 	{
 		ST_RECV_DATA stRecvData;
 		ReceiveDataFromClient(stRecvData, pReceiveBuf);
+		pBGLog->WriteDebugLog(stRecvData.strRecvData);
 
 		ST_CLIENT_REQ stReqClient;
 		ParseReqData(stRecvData, stReqClient);
@@ -166,13 +160,17 @@ DWORD CBGWorkerThread::StartWorkerThread(char *pReceiveBuf, DWORD dwByteTransfer
 
 		std::string strSendData;
 		MakeJsonResData(stResClient, strSendData);
-		dwRet = SendDataToClient(strSendData);
+		pBGLog->WriteDebugLog(strSendData);
+
+		SendDataToClient(strSendData);
 	}
 	catch (std::exception &e)
 	{
-		ErrorLog(e.what());
+		std::string strErrMsg = e.what();
+		pBGLog->WriteErrorLog(strErrMsg);
 		return E_RET_FAIL;
 	}
-	DebugLog("Success to communicate with client");
+
+	pBGLog->WriteDebugLog("Success to communicate with client");
 	return E_RET_SUCCESS;
 } 

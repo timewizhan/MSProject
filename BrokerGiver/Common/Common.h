@@ -11,8 +11,11 @@
 #include <tchar.h>
 #include <process.h>
 
+#include <stdio.h>
+
 #include <string>
 #include <vector>
+#include <queue>
 #include <map>
 
 /*

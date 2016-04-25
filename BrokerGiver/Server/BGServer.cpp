@@ -3,11 +3,14 @@
 #include "BGWorkerThread.h"
 #include "BGBrokerThread.h"
 #include "BGSpinLock.h"
+#include "DBQueue.h"
 #include "..\Common\Log.h"
+#include "..\Common\BGLog.h"
+
+CDBQueue* g_pCDBQueue = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 CBGServer::CBGServer() :
-m_bStartServer(FALSE),
 m_pHelpTool(NULL),
 m_dwAcceptCount(0)
 {
@@ -25,6 +28,12 @@ m_dwAcceptCount(0)
 		ErrorLog("Fail to get Help Tool");
 		return;
 	}
+
+	m_stDBLoginToken.strDatabaseName = "broker_table";
+	m_stDBLoginToken.strDatabaseIP = "165.132.122.243";
+	m_stDBLoginToken.strPort = "3306";
+	m_stDBLoginToken.strUserName = "root";
+	m_stDBLoginToken.strPassword = "cclab";
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,6 +107,7 @@ VOID CBGServer::ListenToReplacement()
 			continue;
 		}
 		bContinue = false;
+		DebugLog("Currently, Broker replacement is now stopped");
 	}
 	
 }
@@ -185,7 +195,8 @@ DWORD CBGServer::InitWorkerThread()
 	DWORD i;
 	for (i = 0; i < dwNumberOfThread; i++) {
 		HANDLE hThread;
-		hThread = (HANDLE)_beginthreadex(NULL, 0, WorkerCompletionThread, (void *)m_stServerIOCPData.hCompletionPort, 0, NULL);
+		m_stServerIOCPData.dwThreadNumber = i;
+		hThread = (HANDLE)_beginthreadex(NULL, 0, WorkerCompletionThread, (void *)&m_stServerIOCPData, 0, NULL);
 		m_stServerWorkerThreads.phWorkerThread[i] = hThread;
 		DebugLog("Thread [%d] is created", i);
 		
@@ -198,11 +209,31 @@ DWORD CBGServer::InitWorkerThread()
 	return dwRet;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 DWORD CBGServer::InitBrokerThread()
 {
 	m_stServerWorkerThreads.hBrokerThread = (HANDLE)_beginthreadex(NULL, 0, WorkerBrokerThread, NULL, 0, NULL);
 	DebugLog("Broker Thread is created");
 
+	return E_RET_SUCCESS;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+DWORD CBGServer::InitDBCQueue(DWORD dwNumberOfConnection)
+{
+	extern CDBQueue* g_pCDBQueue;
+	g_pCDBQueue = (new CDBQueue())->getQueueInstance();
+
+	for (unsigned int i = 0; i < dwNumberOfConnection; i++) {
+		ST_DBConnection stDBConnection;
+		HANDLE hDataBase = CreateDBInstance(E_DB_MYSQL);
+		ConnectToDB(hDataBase, m_stDBLoginToken);
+		stDBConnection.hDataBase = hDataBase;
+
+		DebugLog("Create DB Connection [%d]", i + 1);
+		g_pCDBQueue->pushToQueue(stDBConnection);
+		::Sleep(1000);
+	}
 	return E_RET_SUCCESS;
 }
 
@@ -224,6 +255,7 @@ DWORD CBGServer::InitServerValue(DWORD dwPort)
 	m_stServerInit.stServerAddrIn.sin_port = ::htons((unsigned short)dwPort);
 
 	std::string strAddress = vecstrGetAddress[0].c_str();
+	//std::string strAddress = "165.132.120.160";
 	::inet_pton(AF_INET, strAddress.c_str(), &m_stServerInit.stServerAddrIn.sin_addr.s_addr);
 
 	int nRet;
@@ -247,16 +279,13 @@ DWORD CBGServer::InitServerValue(DWORD dwPort)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-DWORD CBGServer::StartServer(DWORD dwPort, DWORD dwBackLog)
+VOID CBGServer::InitializeServer(DWORD dwPort, DWORD dwDBQueue) throw(std::exception)
 {
-	/*
-		Server have to be give a port for itself from Server Administrator
-	*/
+
 	DWORD dwRet = E_RET_SUCCESS;
 	dwRet = InitServerSock(dwPort);
 	if (dwRet != E_RET_SUCCESS) {
-		ErrorLog("Fail to initailize Server Sock");
-		return E_RET_FAIL;
+		throw std::exception("Fail to initailize Server Sock");
 	}
 
 	/*
@@ -265,8 +294,7 @@ DWORD CBGServer::StartServer(DWORD dwPort, DWORD dwBackLog)
 	*/
 	dwRet = InitIOCompletionPort(0);
 	if (dwRet != E_RET_SUCCESS) {
-		ErrorLog("Fail to initailize Server Sock");
-		return E_RET_FAIL;
+		throw std::exception("Fail to initailize Server Sock");
 	}
 
 	/*
@@ -274,26 +302,36 @@ DWORD CBGServer::StartServer(DWORD dwPort, DWORD dwBackLog)
 	*/
 	dwRet = InitWorkerThread();
 	if (dwRet != E_RET_SUCCESS) {
-		ErrorLog("Fail to initailize Server Sock");
-		return E_RET_FAIL;
+		throw std::exception("Fail to initailize Server Sock");
 	}
-	
+
 	dwRet = InitBrokerThread();
 	if (dwRet != E_RET_SUCCESS) {
-		ErrorLog("Fail to initailize Broker Sock");
-		return E_RET_FAIL;
+		throw std::exception("Fail to initailize Broker Sock");
 	}
 
 	dwRet = InitServerValue(dwPort);
 	if (dwRet != E_RET_SUCCESS) {
-		ErrorLog("Fail to configure server value");
-		return E_RET_FAIL;
+		throw std::exception("Fail to configure server value");
 	}
 
-	m_bStartServer = TRUE;
-	while (m_bStartServer)
+	dwRet = InitDBCQueue(dwDBQueue);
+	if (dwRet != E_RET_SUCCESS) {
+		throw std::exception("Fail to initialize DB Queue");
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+DWORD CBGServer::StartServer(DWORD dwPort, DWORD dwDBQueue)
+{
+	DWORD dwRet = E_RET_SUCCESS;
+	
+	try
 	{
-		try
+		InitializeServer(dwPort, dwDBQueue);
+
+		BOOL m_bStartServer = TRUE;
+		while (m_bStartServer)
 		{
 			ListenToReplacement();
 
@@ -308,14 +346,14 @@ DWORD CBGServer::StartServer(DWORD dwPort, DWORD dwBackLog)
 				continue;
 			}
 		}
-		catch (std::exception &e)
-		{
-			/*
-				Abnormally Exception
-			*/
-			ErrorLog("%s", e.what());
-			return dwRet;
-		}
+	}
+	catch (std::exception &e)
+	{
+		/*
+			Abnormally Exception
+		*/
+		ErrorLog("%s", e.what());
+		return E_RET_FAIL;
 	}
 
 	/*
@@ -326,13 +364,6 @@ DWORD CBGServer::StartServer(DWORD dwPort, DWORD dwBackLog)
 	
 	return dwRet;
 }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-DWORD CBGServer::StopServer()
-{
-	return E_RET_SUCCESS;
-}
-
 
 /*
 	Worker broker thread is used for receving data from broker
@@ -359,10 +390,18 @@ unsigned int WINAPI WorkerBrokerThread(void *pData)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 unsigned int WINAPI WorkerCompletionThread(void *pIOCPData)
 {
-	HANDLE hCompletionPort = (HANDLE)pIOCPData;
+	ST_SERVER_IOCP_DATA *pstServerIOCPData = (ST_SERVER_IOCP_DATA *)pIOCPData;
+	HANDLE hCompletionPort = pstServerIOCPData->hCompletionPort;
 	ST_SERVER_CONNECTION *pstServerConnection = NULL, *pstKey = NULL;
 	DWORD dwByteTransferred = 0;
 	
+	CBGLog BGLog(pstServerIOCPData->dwThreadNumber);
+	CBGWorkerThread *pWorkerThread = new (std::nothrow) CBGWorkerThread();
+	if (!pWorkerThread) {
+		ErrorLog("[WorkerThread] Fail to allocate memory of thread");
+		return E_RET_FAIL;
+	}
+
 	BOOL bThreadStart = TRUE;
 	while (bThreadStart) {
 		::GetQueuedCompletionStatus(hCompletionPort,
@@ -371,35 +410,23 @@ unsigned int WINAPI WorkerCompletionThread(void *pIOCPData)
 			(LPOVERLAPPED*)&pstServerConnection,
 			INFINITE);
 
-		/*
-			Data is nothing
-		*/
-		if (dwByteTransferred == 0) 
-		{
+		if (dwByteTransferred == 0) {
 			closesocket(pstServerConnection->ClientSock);
-			free(pstServerConnection);
-			continue;
-		}
-
-		CBGWorkerThread *pWorkerThread = NULL;
-		pWorkerThread = new CBGWorkerThread(pstServerConnection->ClientSock);
-		if (pWorkerThread == NULL) {
-			ErrorLog("[WorkerThread] Fail to allocate memory of thread");
+			::free(pstServerConnection);
 			continue;
 		}
 
 		DWORD dwRet;
-		DebugLog("[WorkerThread] Thread received data from client [%s]", pstServerConnection->szBuf);
-		dwRet = pWorkerThread->StartWorkerThread(pstServerConnection->szBuf, dwByteTransferred);
+		DebugLog("Thread received data from client");
+		pWorkerThread->SetClientSocket(pstServerConnection->ClientSock);
+		dwRet = pWorkerThread->StartWorkerThread(pstServerConnection->szBuf, &BGLog);
 		if (dwRet != E_RET_SUCCESS) {
 			ErrorLog("Fail to operate StartWorkerThread");
-			delete pWorkerThread;
 			continue;
 		}
-
 		DebugLog("Success to operate StartWorkerThread");
-		delete pWorkerThread;
 	}
 
+	delete pWorkerThread;
 	return E_RET_SUCCESS;
 }

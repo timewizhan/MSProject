@@ -24,6 +24,12 @@
     <Filter Include="Network">
       <UniqueIdentifier>{55017c49-8fc4-46b2-953d-f7c8550f8978}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Log">
+      <UniqueIdentifier>{fe101ed9-5ff3-4790-a36a-e9719dd35bfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Queue">
+      <UniqueIdentifier>{c0019b19-a1b9-4810-8e4a-1b30ca7c550e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\HelpTool\HelpTool.cpp">
@@ -51,6 +57,15 @@
       <Filter>DataBase</Filter>
     </ClCompile>
     <ClCompile Include="..\Server\BGBrokerThread.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\BGLog.cpp">
+      <Filter>Log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Server\DBQueue.cpp">
+      <Filter>Queue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Server\BGException.cpp">
       <Filter>Server</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,6 +113,15 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="..\Server\BGSpinLock.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\BGLog.h">
+      <Filter>Log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\DBQueue.h">
+      <Filter>Queue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Server\BGException.h">
       <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>

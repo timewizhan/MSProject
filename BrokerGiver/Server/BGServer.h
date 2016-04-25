@@ -3,17 +3,18 @@
 
 #include "..\Common\Common.h"
 #include "..\HelpTool\HelpTool.h"
+#include "..\DataBase\DataBase.h"
 #include "BGServerStruct.h"
 
 class CBGServer
 {
-	BOOL	m_bStartServer;
 	DWORD	m_dwAcceptCount;
 
 	ST_SERVER_INIT			m_stServerInit;
 	ST_SERVER_IOCP_DATA		m_stServerIOCPData;
 	ST_SERVER_WORKER_THREAD m_stServerWorkerThreads;
 	ST_SERVER_STATUS		m_stServerStatus;
+	ST_DB_LOGIN_TOKEN		m_stDBLoginToken;
 
 	CRITICAL_SECTION		m_CriticalSection;
 	std::vector<ST_SERVER_CONNECTION>	m_vecstServerConnection;
@@ -28,6 +29,9 @@ class CBGServer
 	DWORD InitIOCompletionPort(DWORD dwNumberOfConcurrentThreads);
 	DWORD InitWorkerThread();
 	DWORD InitBrokerThread();
+	DWORD InitDBCQueue(DWORD dwNumberOfConnection);
+
+	VOID InitializeServer(DWORD dwPort, DWORD dwDBQueue);
 
 	/*
 		InitServerValue method have internel method
@@ -43,7 +47,6 @@ public:
 	~CBGServer();
 
 	DWORD StartServer(DWORD dwPort, DWORD dwBackLog);
-	DWORD StopServer();
 };
 
 unsigned int WINAPI WorkerBrokerThread(void *pData);

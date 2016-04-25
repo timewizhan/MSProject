@@ -33,7 +33,10 @@ struct ST_SERVER_WORKER_THREAD
 
 struct ST_SERVER_IOCP_DATA
 {
+	DWORD	dwThreadNumber;
 	HANDLE	hCompletionPort;
+
+	ST_SERVER_IOCP_DATA() : dwThreadNumber(0) {}
 };
 
 #define MAX_CLIENT_MSG_BUF 1024

@@ -71,7 +71,6 @@ DWORD CMySQL::_QueryFromDB(ST_DB_SQL &refstDBSQL, ST_DB_RESULT &refstDBResult)
 		return E_RET_FAIL;
 	}
 
-
 	DWORD dwCol = mysql_num_fields(pMySQLResult);	
 	MYSQL_ROW resultRow;
 	MYSQL_FIELD *pResultCol = NULL;
@@ -86,6 +85,7 @@ DWORD CMySQL::_QueryFromDB(ST_DB_SQL &refstDBSQL, ST_DB_RESULT &refstDBResult)
 		refstDBResult.vecstDBResultLines.push_back(stDBResultLine);
 	}
 
+	mysql_free_result(pMySQLResult);
 	return E_RET_SUCCESS;
 }
 

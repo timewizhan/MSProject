@@ -88,17 +88,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Common\BGLog.cpp" />
     <ClCompile Include="..\Common\Log.cpp" />
     <ClCompile Include="..\DataBase\DataBase.cpp" />
     <ClCompile Include="..\DataBase\MySQL.cpp" />
     <ClCompile Include="..\HelpTool\HelpTool.cpp" />
     <ClCompile Include="..\BGServerMain.cpp" />
     <ClCompile Include="..\Server\BGBrokerThread.cpp" />
+    <ClCompile Include="..\Server\BGException.cpp" />
     <ClCompile Include="..\Server\BGServer.cpp" />
     <ClCompile Include="..\Server\BGServerError.cpp" />
     <ClCompile Include="..\Server\BGWorkerThread.cpp" />
+    <ClCompile Include="..\Server\DBQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Common\BGLog.h" />
     <ClInclude Include="..\Common\Common.h" />
     <ClInclude Include="..\Common\Log.h" />
     <ClInclude Include="..\Common\Type.h" />
@@ -113,6 +117,8 @@
     <ClInclude Include="..\Server\BGSpinLock.h" />
     <ClInclude Include="..\Server\BGWorkerStruct.h" />
     <ClInclude Include="..\Server\BGWorkerThread.h" />
+    <ClInclude Include="..\Server\DBQueue.h" />
+    <ClInclude Include="..\Server\BGException.h" />
     <ClInclude Include="..\Server\Protocol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
