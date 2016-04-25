@@ -20,7 +20,6 @@ CBGWorkerThread::CBGWorkerThread()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 CBGWorkerThread::~CBGWorkerThread()
 {
-	closesocket(m_stWorkerThread.hClientSocket);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -168,9 +167,12 @@ DWORD CBGWorkerThread::StartWorkerThread(char *pReceiveBuf, CBGLog *pBGLog)
 	{
 		std::string strErrMsg = e.what();
 		pBGLog->WriteErrorLog(strErrMsg);
+
+		::closesocket(m_stWorkerThread.hClientSocket);
 		return E_RET_FAIL;
 	}
 
 	pBGLog->WriteDebugLog("Success to communicate with client");
+	::closesocket(m_stWorkerThread.hClientSocket);
 	return E_RET_SUCCESS;
 } 
