@@ -4,6 +4,15 @@
 #include "..\Common\Common.h"
 
 static LONG lBrokerReqType = 0;
+/**
+* Lock and unLock by a type of request 
+* It's same as a SpinLock
+*
+* @param :
+	DWORD : Request Type
+* @return : None
+* @exception : None
+*/
 inline VOID SetLockBrokerReqType(DWORD dwReqType)
 {
 	DWORD dwValue = 1;
@@ -31,6 +40,15 @@ inline VOID SetLockBrokerReqType(DWORD dwReqType)
 	}
 }
 
+
+/**
+* Return a request type of broker
+*
+* @param : None
+* @return : 
+	DWORD : Request Type
+* @exception : None
+*/
 inline DWORD GetLockBrokerReqType()
 {
 	return lBrokerReqType;

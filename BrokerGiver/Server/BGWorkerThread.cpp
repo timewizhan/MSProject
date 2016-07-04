@@ -97,14 +97,14 @@ void CBGWorkerThread::ExtractResData(ST_DB_RESULT &refstDBResult, ST_CLIENT_RES 
 	Json::Value JsonRoot;
 
 	if (refstDBResult.vecstDBResultLines.size() < 1) {
-		throw std::exception("There is no DB result");
+		return;
 	}
 
 	ST_DB_RESULT_LINE stDBResultLine;
 	stDBResultLine = refstDBResult.vecstDBResultLines[0];
 
 	if (stDBResultLine.vecstrResult.size() < 1) {
-		throw std::exception("There is no DB record result");
+		return;
 	}
 
 	std::string strIPAddress = stDBResultLine.vecstrResult[0];
