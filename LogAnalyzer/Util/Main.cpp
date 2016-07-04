@@ -3,6 +3,10 @@
 #include <string>
 #include <vector>
 
+#include "CRTT.h"
+
+CRTT cRTT;
+
 typedef std::string BasicFileName;
 std::vector<BasicFileName> vecBasicFileName;
 
@@ -11,10 +15,21 @@ enum E_ANAL_TYPE
 	E_ANAL_DBCP = 1,
 	E_ANAL_BROKER,
 	E_ANAL_SNS,
+	E_ANAL_RTT,
 
 	E_ANAL_UNKNOWN
 };
 
+
+/**
+* Check whether path is a file or not
+*
+* @param :
+	string : file path
+* @return :
+	bool : result
+* @exception : None
+*/
 bool IsFile(std::string &refstrFilePath)
 {
 	DWORD dwRet = GetFileAttributesA(refstrFilePath.c_str());
@@ -27,6 +42,15 @@ bool IsFile(std::string &refstrFilePath)
 	return false;
 }
 
+/**
+* Check whether path is a directory or not
+*
+* @param :
+	string : log path
+* @return :
+	bool : result
+* @exception : None
+*/
 bool IsDirectory(std::string &refstrLogPath)
 {
 	DWORD dwRet = GetFileAttributesA(refstrLogPath.c_str());
@@ -39,6 +63,15 @@ bool IsDirectory(std::string &refstrLogPath)
 	return false;    
 }
 
+/**
+* Get a file list in the directory
+*
+* @param :
+	string : log path
+* @return :
+	DWORD : Result value
+* @exception : None
+*/
 DWORD GetFileListInDIR(std::string &refstrLogPath)
 {
 	if (!IsDirectory(refstrLogPath)) {
@@ -77,8 +110,17 @@ DWORD GetFileListInDIR(std::string &refstrLogPath)
 	return vecBasicFileName.size();
 }
 
-
-DWORD AnalyseOneFile(std::string &refstrFullFilePath, std::string &refstrAnalysis, std::string &refstrTotalResultPath, FILE *pResultFile) {
+/**
+* Analyze one file
+*
+* @param :
+	string : file path
+	string : filter string (analysis string)
+* @return :
+	DWORD : Result value
+* @exception : None
+*/
+DWORD AnalyseOneFile(std::string &refstrFullFilePath, std::string &refstrAnalysis) {
 	FILE *pFile = NULL;
 	errno_t err;
 
@@ -97,7 +139,7 @@ DWORD AnalyseOneFile(std::string &refstrFullFilePath, std::string &refstrAnalysi
 			::memset(szBuf, 0x00, sizeof(szBuf));
 			continue;
 		}
-		::fputs(szBuf, pResultFile);
+		cRTT.StartParseRTTString(strBuf);
 		::memset(szBuf, 0x00, sizeof(szBuf));
 	}
 	::fclose(pFile);
@@ -105,7 +147,17 @@ DWORD AnalyseOneFile(std::string &refstrFullFilePath, std::string &refstrAnalysi
 	return 1;
 }
 
-DWORD AnalyseFiles(std::string &refstrLogPath, std::string &refstrResultPath, int nType) {
+/**
+* Analyse files
+*
+* @param :
+	string : log path
+	int : type
+* @return :
+	DWORD : Result value
+* @exception : None
+*/
+DWORD AnalyseFiles(std::string &refstrLogPath, int nType) {
 	std::string strAnalysis;
 
 	if (nType == E_ANAL_DBCP) {
@@ -117,23 +169,11 @@ DWORD AnalyseFiles(std::string &refstrLogPath, std::string &refstrResultPath, in
 	else if (nType == E_ANAL_SNS) {
 		strAnalysis = "ENTRYPOINT";
 	}
+	else if (nType == E_ANAL_RTT) {
+		strAnalysis = "ENTRYPOINT RTT";
+	}
 	else {
 		printf("Invalid Type");
-		return 0;
-	}
-
-	std::string strResultName = "Result.txt";
-	std::string strTotalResultPath = refstrResultPath + "\\" + strResultName;
-	
-	bool bExist = IsFile(strTotalResultPath);
-	if (bExist) {
-		::DeleteFileA(strTotalResultPath.c_str());
-	}
-	
-	FILE *pFile = NULL;
-	errno_t err;
-	err = ::fopen_s(&pFile, strTotalResultPath.c_str(), "a+");
-	if (err != 0) {
 		return 0;
 	}
 
@@ -143,21 +183,50 @@ DWORD AnalyseFiles(std::string &refstrLogPath, std::string &refstrResultPath, in
 		printf("[%d/%d] file is analysing ... \n", i + 1, dwTotalFiles);
 
 		std::string strFullFilePath = refstrLogPath + "\\" + vecBasicFileName[i];
-		dwRet = AnalyseOneFile(strFullFilePath, strAnalysis, strTotalResultPath, pFile);
+		dwRet = AnalyseOneFile(strFullFilePath, strAnalysis);
 		if (dwRet < 1)
 			continue;
 
 	}
-	::fclose(pFile);
 	return 1;
 }
 
+/**
+* Print a result file
+*
+* @param :
+	string : result path
+* @return : None
+* @exception : None
+*/
+VOID PrintResultFile(std::string &refstrResultPath)
+{
+	std::string strResultName = "Result.txt";
+	std::string strTotalResultPath = refstrResultPath + "\\" + strResultName;
+
+	bool bExist = IsFile(strTotalResultPath);
+	if (bExist) {
+		::DeleteFileA(strTotalResultPath.c_str());
+	}
+
+	FILE *pFile = NULL;
+	errno_t err;
+	err = ::fopen_s(&pFile, strTotalResultPath.c_str(), "a+");
+	if (err != 0) {
+		return;
+	}
+
+	cRTT.PrintAverageRTT(pFile);
+
+	::fclose(pFile);
+}
 
 void Usage() {
 	printf("[Usage] :	[Log Path]	[Result Path]	[Analyis Type]");
 	printf("										DBPool Type	:  1");
 	printf("										Broker Type	:  2");
 	printf("										SNS Type	:  3");
+	printf("										ENTRYPOINT RTT Type	:  4");
 }
 
 int main(int argc, char **argv)
@@ -170,7 +239,7 @@ int main(int argc, char **argv)
 	std::string strBasicLogPath = argv[1];
 	std::string strResultPath = argv[2];
 	DWORD dwType = static_cast<DWORD>(::atoi(argv[3]));
-	if (dwType > 3) {
+	if (dwType != 4) {
 		Usage();
 		return 0;
 	}
@@ -191,7 +260,8 @@ int main(int argc, char **argv)
 	}
 	printf("Total File Count : %d\n", dwTotalCount);
 
-	AnalyseFiles(strBasicLogPath, strResultPath, dwType);
+	AnalyseFiles(strBasicLogPath, dwType);
+	PrintResultFile(strResultPath);
 
 	printf("========================================== \n");
 	printf("============== End analyze ============== \n");
