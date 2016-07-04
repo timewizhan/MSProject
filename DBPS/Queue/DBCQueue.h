@@ -29,7 +29,24 @@ public:
 		return m_pCDBCQueue;
 	}
 
+	/**
+	* Push queue (db connection)
+	*
+	* @param :
+		ST_DBConnection : DB Connection
+	* @return : None
+	* @exception : None
+	*/
 	void pushToQueue(const ST_DBConnection &refstDBConnection);
+
+	/**
+	* Pop queue (db connection)
+	*
+	* @param :
+		ST_DBConnection : DB Connection
+	* @return : None
+	* @exception : None
+	*/
 	void popFromQueue(ST_DBConnection &refstDBConnection);
 };
 

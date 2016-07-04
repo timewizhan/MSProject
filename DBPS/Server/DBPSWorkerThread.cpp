@@ -61,6 +61,8 @@ void CDBPSWorkerThread::ReceiveDataFromClient(ST_RECV_DATA &refstRecvData, char 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void CDBPSWorkerThread::MakeSTRResData(ST_DB_RESULT &refstDBResult, std::string &refstrSendData)
 {
+	DebugLog("Record Size : [%d]", refstDBResult.vecstDBResultLines.size());
+
 	Json::Value JsonRoot;
 
 	std::string strListResult;
@@ -86,7 +88,17 @@ void CDBPSWorkerThread::MakeSTRResData(ST_DB_RESULT &refstDBResult, std::string 
 void CDBPSWorkerThread::RequestDataBase(ST_RECV_DATA &refstRecvData, ST_DB_RESULT &refstDBResult)
 {
 	ST_DBConnection stDBConnection;
-	g_pCDBCQueue->popFromQueue(stDBConnection);
+
+	bool bContinue = true;
+	while (bContinue) {
+		g_pCDBCQueue->popFromQueue(stDBConnection);
+		if (stDBConnection.hDataBase == NULL) {
+			::Sleep(1000);
+			continue;
+		}
+		bContinue = false;
+	}
+	
 
 	ST_DB_SQL stDBSql;
 	stDBSql.strSQL = refstRecvData.strRecvData;
