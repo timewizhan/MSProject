@@ -14,6 +14,7 @@ struct ST_MONITORING_RESULT{
 	//server side monitoring result
 	int		cpu_util;
 	int		server_side_traffic;
+	int		request_num;
 
 	//client side monitoring result
 	char	user[40];

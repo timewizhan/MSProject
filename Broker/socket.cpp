@@ -183,34 +183,32 @@ void CSocket::CommSocket(HANDLE hThread, ofstream &insDRResFile, ofstream &insWe
 							SendStopMsg();
 							/////////////////////////////////////////////////////
 
-							printf("[Calculatiing LP] \n");
-							CMatch match;
-							match.NormalizeFactor();
-							match.InsertWeightTable();
-							
-							vector <match_result_data> vecMatchResult = match.CalculateLP();	//user, prev_ep, curr_ep 있는 데이터
-						
-
 							////////// Data Replacement 시간 출력 //////////
 							CFileWrite cFileWrite;
 							cFileWrite.InputTimeIntoDRFile(insDRResFile);
 							///////////////////////////////////////////////
 
-
+							printf("[Calculatiing LP] \n");
+							CMatch match;
+							match.NormalizeFactor(insDRResFile);
+							match.InsertWeightTable();
+							
+							vector <match_result_data> vecMatchResult = match.CalculateLP();	//user, prev_ep, curr_ep 있는 데이터
+						
 							int EP1_FD = 0;
 							int EP2_FD = 0;
 							int EP3_FD = 0;
 							for (int i = 0; i < NUM_OF_EP; i++){
 
-								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.85")){	//EP1: 165.132.123.85 / Host: 165.132.122.244 
+								if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.122.244")){	//EP1: 165.132.123.85 / Host: 165.132.122.244 
 								
 									EP1_FD = stEpInfo[i].iFDNum;
 								}
-								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.86")) {	//EP2: 165.132.123.86 / Host : 165.132.122.245
+								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.122.245")) {	//EP2: 165.132.123.86 / Host : 165.132.122.245
 								
 									EP2_FD = stEpInfo[i].iFDNum;
 								}
-								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.87")) {	//EP3: 165.132.123.87 / Host : 165.132.123.73
+								else if (!strcmp(stEpInfo[i].sIpAddr.c_str(), "165.132.123.73")) {	//EP3: 165.132.123.87 / Host : 165.132.123.73
 								
 									EP3_FD = stEpInfo[i].iFDNum;
 								}

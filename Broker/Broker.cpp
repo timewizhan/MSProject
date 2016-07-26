@@ -68,6 +68,9 @@ unsigned WINAPI PreprocessInsert(void *data){
 			//지역별로 트래픽 합치기
 			if (!strcmp(poppedData.side_flag, "c")){
 
+				l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
+				
+				/*
 				if (!strcmp(poppedData.location, "NY")){
 
 					stCCT.iNyTraffic += poppedData.traffic;
@@ -100,10 +103,6 @@ unsigned WINAPI PreprocessInsert(void *data){
 					stCCT.iWhaTraffic += poppedData.traffic;
 					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
 				}
-
-
-
-
 				else if (!strcmp(poppedData.location, "WASHINGTON")){
 
 					stCCT.WASHINGTON_TRAFFIC += poppedData.traffic;
@@ -359,14 +358,8 @@ unsigned WINAPI PreprocessInsert(void *data){
 					stCCT.GUAM_TRAFFIC += poppedData.traffic;
 					l_db->InsertClientTable(poppedData.user, poppedData.location, poppedData.timestamp, poppedData.traffic);
 				}
-
-
-
-
-
-
-
-
+				*/
+			
 
 
 
@@ -374,7 +367,7 @@ unsigned WINAPI PreprocessInsert(void *data){
 			else if (!strcmp(poppedData.side_flag, "s")){
 
 				l_db->InsertServerTable(poppedData.ep_num, poppedData.server_side_traffic, poppedData.cpu_util);		//클라이언트 부분 빼고 다 넣어주기
-
+				l_db->InsertNumOfReq(poppedData.ep_num, poppedData.request_num);
 			}
 			else if (!strcmp(poppedData.side_flag, "e")){
 
@@ -391,8 +384,8 @@ unsigned WINAPI PreprocessInsert(void *data){
 
 
 	//여기서 client-side traffic 값 넣어주기
-	printf(" - Total Traffic \n");
-	l_db->updateLocation(stCCT);
+//	printf(" - Total Traffic \n");
+//	l_db->updateLocation(stCCT);
 
 	return 0;
 }

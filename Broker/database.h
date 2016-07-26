@@ -96,6 +96,7 @@ public:
 
 	int InitDB();
 	void CloseDB();
+	void EstimationResultFileOut(ofstream &insDRResFile);
 	vector<client_data> extractClientData(string sQuery);
 	vector<server_data> extractServerData(string sQuery, int iNumOfColumn);
 	vector<client_data> ExtractCstData(string sQuery);
@@ -112,6 +113,7 @@ public:
 //	void insertData(string name, string location, int timestamp, int client_side_traffic, int server_side_traffic, int cpu_util, int ep_num, string side_flag);
 	void InsertServerTable(int iEP, int server_side_traffic, int cpu_util);
 	void InsertClientTable(string sUser, string sLocation, int iTimestamp, int iClientSideTraffic);
+	void InsertNumOfReq(int iEP, int request_num);
 	void InsertNormServerTable(vector <norm_server_data> vecNormalizedSST, string sFlag);
 	void InsertNormCstTable(vector <double> vecNormalizedCST, vector <string> vecNormalizedCSTLocation);
 	void InsertNormDistTable(string sUser, double dNormDistEp1, double dNormDistEp2, double dNormDistEp3);

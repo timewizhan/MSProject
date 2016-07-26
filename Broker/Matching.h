@@ -22,7 +22,7 @@ public:
 		CMatch();
 		~CMatch();
 
-		void NormalizeFactor();
+		void NormalizeFactor(ofstream &insDRResFile);
 		void InsertWeightTable();
 		vector <match_result_data> CalculateLP();
 		double CalculateDistEp1(coord_value stUserCoordValue);

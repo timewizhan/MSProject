@@ -37,6 +37,123 @@ void CDatabase::CloseDB(){
 	mysql_close(connection);
 }
 
+void CDatabase::EstimationResultFileOut(ofstream &insDRResFile){
+	//prev_matching_table에서 where prev_ep = '1' '2' '3' 일때 숫자 카운트
+		//select count(*) from prev_matching_table where prev_ep = '1';
+		//select count(*) from prev_matching_table where prev_ep = '2';
+		//select count(*) from prev_matching_table where prev_ep = '3';
+	
+	m_iQueryStat = mysql_query(connection, "select count(*) from prev_matching_table where prev_ep = '1'");
+	if (m_iQueryStat != 0) {
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	sql_result = mysql_store_result(connection);
+
+	insDRResFile << endl;
+	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+		insDRResFile << "Counting EP1 Data: " << sql_row[0] << endl;
+	}
+
+	mysql_free_result(sql_result);
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	m_iQueryStat = mysql_query(connection, "select count(*) from prev_matching_table where prev_ep = '2'");
+	if (m_iQueryStat != 0) {
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	sql_result = mysql_store_result(connection);
+
+	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+		insDRResFile << "Counting EP2 Data: " << sql_row[0] << endl;
+	}
+
+	mysql_free_result(sql_result);
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	m_iQueryStat = mysql_query(connection, "select count(*) from prev_matching_table where prev_ep = '3'");
+	if (m_iQueryStat != 0) {
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	sql_result = mysql_store_result(connection);
+
+	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+		insDRResFile << "Counting EP3 Data: " << sql_row[0] << endl;
+	}
+
+	mysql_free_result(sql_result);
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//request 수 카운트 where EP = 'EP1' 'EP2' 'EP3'
+		//select Req from request_table where EP = 'EP1';
+		//select Req from request_table where EP = 'EP2';
+		//select Req from request_table where EP = 'EP3';
+
+	insDRResFile << endl;
+
+	m_iQueryStat = mysql_query(connection, "select Req from request_table where EP = 'EP1'");
+	if (m_iQueryStat != 0) {
+
+	fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	sql_result = mysql_store_result(connection);
+
+	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+		insDRResFile << "Counting EP1 Req: " << sql_row[0] << endl;
+	}
+
+	mysql_free_result(sql_result);
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	m_iQueryStat = mysql_query(connection, "select Req from request_table where EP = 'EP2'");
+	if (m_iQueryStat != 0) {
+
+	fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	sql_result = mysql_store_result(connection);
+
+	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+		insDRResFile << "Counting EP2 Req: " << sql_row[0] << endl;
+	}
+
+	mysql_free_result(sql_result);
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	m_iQueryStat = mysql_query(connection, "select Req from request_table where EP = 'EP3'");
+	if (m_iQueryStat != 0) {
+
+	fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+	sql_result = mysql_store_result(connection);
+
+	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
+
+		insDRResFile << "Counting EP3 Req: " << sql_row[0] << endl;
+	}
+
+	mysql_free_result(sql_result);
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+
 vector<client_data> CDatabase::extractClientData(string sQuery){
 
 	m_iQueryStat = mysql_query(connection, sQuery.c_str());
@@ -201,6 +318,7 @@ norm_server_data CDatabase::ExtractNormServerData(string sQuery){
 	sql_result = mysql_store_result(connection);
 
 	norm_server_data stResValue;
+	memset(&stResValue, 0, sizeof(norm_server_data));
 	while ((sql_row = mysql_fetch_row(sql_result)) != NULL) {
 
 		stResValue.sEpNum = sql_row[0];
@@ -379,6 +497,35 @@ void CDatabase::InsertServerTable(int iEP, int server_side_traffic, int cpu_util
 
 	sprintf_s(query, sizeof(query), "insert into server_table values ('%s', %d, %d)",
 		sEP.c_str(), server_side_traffic, cpu_util);
+
+	m_iQueryStat = mysql_query(connection, query);
+
+	if (m_iQueryStat != 0){
+
+		fprintf(stderr, "Mysql query error : %s", mysql_error(&conn));
+	}
+
+}
+
+void CDatabase::InsertNumOfReq(int iEP, int request_num){
+
+	string sEP;
+
+	if (iEP == 1){
+		sEP = "EP1";
+	}
+	else if (iEP == 2){
+		sEP = "EP2";
+	}
+	else if (iEP == 3){
+		sEP = "EP3";
+	}
+
+
+	char query[255];
+
+	sprintf_s(query, sizeof(query), "insert into request_table values ('%s', %d)",
+		sEP.c_str(), request_num);
 
 	m_iQueryStat = mysql_query(connection, query);
 
@@ -1194,13 +1341,13 @@ void CDatabase::UpdatePrevMatchingTable(vector <match_result_data> vecMatchResul
 		
 
 		if (vecMatchResult.at(i).iCurrEP == 1){
-			sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d, ip = '165.132.123.85', port = 7777 WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
+			sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d, ip = '165.132.122.244', port = 7777 WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
 		}
 		else if (vecMatchResult.at(i).iCurrEP == 2){
-			sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d, ip = '165.132.123.86', port = 7777 WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
+			sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d, ip = '165.132.122.245', port = 7777 WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
 		}
 		else if (vecMatchResult.at(i).iCurrEP == 3){
-			sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d, ip = '165.132.123.87', port = 7777 WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
+			sprintf_s(query, sizeof(query), "UPDATE prev_matching_table SET prev_ep = %d, ip = '165.132.123.73', port = 7777 WHERE user = '%s'", vecMatchResult.at(i).iCurrEP, vecMatchResult.at(i).arrUser);
 		}
 
 
@@ -1224,7 +1371,8 @@ void CDatabase::DeleteTables(){
 		"delete from normalized_server_table",
 		"delete from weight_table",
 		"delete from matching_table",
-		"delete from update_matching_table"
+		"delete from update_matching_table",
+		"delete from request_table"
 	};
 
 	for (int i = 0; i < sizeof(arrQuery) / sizeof(string); i++){

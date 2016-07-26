@@ -21,17 +21,19 @@ CMatch::~CMatch(){
 
 }
 
-void CMatch::NormalizeFactor(){
+void CMatch::NormalizeFactor(ofstream &insDRResFile){
 	
 	CDatabase	databaseInstance;
 	databaseInstance.InitDB();
 	string sQuery;
 	
-
+	//Estimation result FileOut
+	databaseInstance.EstimationResultFileOut(insDRResFile);
 
 	//normalizing >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> server side traffic
 	sQuery = "select * from server_table";
 	vector <server_data> vecDataList_server = databaseInstance.extractServerData(sQuery, 3);
+
 
 	vector <int> vec_server_side_traffic_list;
 	for (int i = 0; i < vecDataList_server.size(); i++){
@@ -42,22 +44,29 @@ void CMatch::NormalizeFactor(){
 	int iMaxValue = FindMax(vec_server_side_traffic_list);
 	int iMinValue = FindMin(vec_server_side_traffic_list);
 
-	double dRange = 1.0 / (iMaxValue - iMinValue);
+	double dRange = 0.0;
+	if (iMaxValue == iMinValue){
+		dRange = 1.0;
+	}
+	else {
+		dRange = 1.0 / (iMaxValue - iMinValue);
+	}
 	
+
 	norm_server_data stNormServerData;
 	vector <norm_server_data> vecNormalizedSST;
 	for (int i = 0; i < vec_server_side_traffic_list.size(); i++){
 
 		double dNormalizedVal = (vec_server_side_traffic_list.at(i) - iMinValue)*dRange;
-		
+
 		stNormServerData.sEpNum = vecDataList_server.at(i).sEpNum;
 		stNormServerData.dServerSideTraffic = dNormalizedVal;
-		
+
 		vecNormalizedSST.push_back(stNormServerData);
 	}
 
 	databaseInstance.InsertNormServerTable(vecNormalizedSST, "SST");
-
+	
 
 
 	//normalizing >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> cpu utilization
@@ -73,7 +82,13 @@ void CMatch::NormalizeFactor(){
 	iMaxValue = FindMax(vec_cpu_util_list);
 	iMinValue = FindMin(vec_cpu_util_list);
 	 
-	dRange = 1.0 / (iMaxValue - iMinValue);
+	dRange = 0.0;
+	if (iMaxValue == iMinValue){
+		dRange = 1.0;
+	}
+	else {
+		dRange = 1.0 / (iMaxValue - iMinValue);
+	}
 
 //	norm_server_data stNormServerData;
 	vector <norm_server_data> vecNormalizedCpuUtil;
@@ -88,10 +103,11 @@ void CMatch::NormalizeFactor(){
 	}
 
 	databaseInstance.InsertNormServerTable(vecNormalizedCpuUtil, "CPU");
+	
 
 
-
-	//normalizing >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> client side traffic 
+	//normalizing >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> client side traffic
+	/*
 	sQuery = "insert into cst_table (client_side_traffic, location) select client_side_traffic, location from client_table group by location";
 	databaseInstance.DeleteDuplicateValues(sQuery);
 	
@@ -119,12 +135,12 @@ void CMatch::NormalizeFactor(){
 	vector <string> vecNormalizedCSTLocation = databaseInstance.ExtractCstLocation();
 
 	databaseInstance.InsertNormCstTable(vecNormalizedCST, vecNormalizedCSTLocation);
-	
+	*/
 
 
 	//normalizing >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> distance 
 	sQuery = "select * from client_table";
-	vecDataList_client = databaseInstance.extractClientData(sQuery);
+	vector <client_data> vecDataList_client = databaseInstance.extractClientData(sQuery);
 
 	vector <int> vec_distance_list;
 	for (int i = 0; i < vecDataList_client.size(); i++){
@@ -153,7 +169,14 @@ void CMatch::NormalizeFactor(){
 		double iMinValue = FindMinDist(arrDists);
 
 		//normalize
-		double dRange = 1.0 / (iMaxValue - iMinValue);
+		dRange = 0.0;
+		if (iMaxValue == iMinValue){
+			dRange = 1.0;
+		}
+		else {
+			dRange = 1.0 / (iMaxValue - iMinValue);
+		}
+
 		for (int i = 0; i < sizeof(arrDists)/sizeof(double); i++){
 
 			double dNormalizedVal = (arrDists[i] - iMinValue)*dRange;
@@ -171,6 +194,7 @@ void CMatch::NormalizeFactor(){
 
 double CMatch::CalculateDistEp1(coord_value stUserCoordValue){
 	//EP1(Washington : 38.9071923, -77.0368707)
+	//EP1(Washington : 38.9071923, 77.0368707)
 
 	double theta, dist;
 	theta = -77.0368707 - stUserCoordValue.longitude;
@@ -188,6 +212,7 @@ double CMatch::CalculateDistEp1(coord_value stUserCoordValue){
 
 double CMatch::CalculateDistEp2(coord_value stUserCoordValue){
 	//EP2(Texas		 : 31.9685988, -99.9018131)
+	//EP2(Texas		 : 31.9685988, 99.9018131)
 
 	double theta, dist;
 	theta = -99.9018131 - stUserCoordValue.longitude;
@@ -205,6 +230,7 @@ double CMatch::CalculateDistEp2(coord_value stUserCoordValue){
 
 double CMatch::CalculateDistEp3(coord_value stUserCoordValue){
 	//EP3(Newyork	 : 40.7127837, -74.0059413)
+	//EP3(Newyork	 : 40.7127837, 74.0059413)
 
 	double theta, dist;
 	theta = -74.0059413 - stUserCoordValue.longitude;
@@ -234,9 +260,9 @@ void CMatch::InsertWeightTable(){
 
 	// Weight 계산
 	// [a: normalized cpu, b: normalized server-side traffic, c: normalized client-side traffic, d: distance, e: social level] = 가중치
-	double a = 0.5;
-	double b = 0.5;
-	double c = 1.0;
+	double a = 0.0;
+	double b = 0.0;
+	double c = 0.0;
 	double d = 1.0;
 	double e = 1.0;
 	CDatabase	databaseInstance;
@@ -276,21 +302,21 @@ void CMatch::InsertWeightTable(){
 		dSst = stNormServerData.dServerSideTraffic;
 
 		//CST
-		sQuery = "select A.user, A.location, B.client_side_traffic from client_table A join normalized_cst_table B on A.location = B.location where A.user ='" + sUser + "'";
-		stNormCstData = databaseInstance.ExtractNormCstData(sQuery);
-		dCst = stNormCstData.dCst;
+	//	sQuery = "select A.user, A.location, B.client_side_traffic from client_table A join normalized_cst_table B on A.location = B.location where A.user ='" + sUser + "'";
+	//	stNormCstData = databaseInstance.ExtractNormCstData(sQuery);
+	//	dCst = stNormCstData.dCst;
 
 		//DIST
 		sQuery = "select user, ep1 from normalized_distance_table where user ='" + sUser + "'";
 		dEp1Dist = databaseInstance.ExtractNormDistData(sQuery);
 
 		//Social Level
-	//	sQuery = "select user, ep1 from normalized_social_level_table where user ='" + sUser + "'";
-	//	dEp1SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
+		sQuery = "select user, ep1 from normalized_social_level_table where user ='" + sUser + "'";
+		dEp1SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
 
 		//weight
-	//	dWeight_EP1 = a*dCpuUtil + b*dSst + c*dCst + d*dEp1Dist + e*dEp1SocialLvl;
-		dWeight_EP1 = a*dCpuUtil + b*dSst + c*dCst + d*dEp1Dist;
+		dWeight_EP1 = a*dCpuUtil + b*dSst + c*dCst + d*dEp1Dist + e*dEp1SocialLvl;
+	//	dWeight_EP1 = a*dCpuUtil + b*dSst + c*dCst + d*dEp1Dist;
 
 
 	//user1, ep2
@@ -302,21 +328,21 @@ void CMatch::InsertWeightTable(){
 		dSst = stNormServerData.dServerSideTraffic;
 
 		//CST
-		sQuery = "select A.user, A.location, B.client_side_traffic from client_table A join normalized_cst_table B on A.location = B.location where A.user ='" + sUser + "'";
-		stNormCstData = databaseInstance.ExtractNormCstData(sQuery);
-		dCst = stNormCstData.dCst;
+	//	sQuery = "select A.user, A.location, B.client_side_traffic from client_table A join normalized_cst_table B on A.location = B.location where A.user ='" + sUser + "'";
+	//	stNormCstData = databaseInstance.ExtractNormCstData(sQuery);
+	//	dCst = stNormCstData.dCst;
 
 		//DIST
 		sQuery = "select user, ep2 from normalized_distance_table where user ='" + sUser + "'";
 		dEp2Dist = databaseInstance.ExtractNormDistData(sQuery);
 
 		//Social Level
-	//	sQuery = "select user, ep2 from normalized_social_level_table where user ='" + sUser + "'";
-	//	dEp2SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
+		sQuery = "select user, ep2 from normalized_social_level_table where user ='" + sUser + "'";
+		dEp2SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
 
 		//weight
-	//	dWeight_EP2 = a*dCpuUtil + b*dSst + c*dCst + d*dEp2Dist + e*dEp2SocialLvl;
-		dWeight_EP2 = a*dCpuUtil + b*dSst + c*dCst + d*dEp2Dist;
+		dWeight_EP2 = a*dCpuUtil + b*dSst + c*dCst + d*dEp2Dist + e*dEp2SocialLvl;
+	//	dWeight_EP2 = a*dCpuUtil + b*dSst + c*dCst + d*dEp2Dist;
 	
 
 	//user1, ep3
@@ -328,21 +354,21 @@ void CMatch::InsertWeightTable(){
 		dSst = stNormServerData.dServerSideTraffic;
 
 		//CST
-		sQuery = "select A.user, A.location, B.client_side_traffic from client_table A join normalized_cst_table B on A.location = B.location where A.user ='" + sUser + "'";
-		stNormCstData = databaseInstance.ExtractNormCstData(sQuery);
-		dCst = stNormCstData.dCst;
+	//	sQuery = "select A.user, A.location, B.client_side_traffic from client_table A join normalized_cst_table B on A.location = B.location where A.user ='" + sUser + "'";
+	//	stNormCstData = databaseInstance.ExtractNormCstData(sQuery);
+	//	dCst = stNormCstData.dCst;
 
 		//DIST
 		sQuery = "select user, ep3 from normalized_distance_table where user ='" + sUser + "'";
 		dEp3Dist = databaseInstance.ExtractNormDistData(sQuery);
 
 		//Social Level
-	//	sQuery = "select user, ep3 from normalized_social_level_table where user ='" + sUser + "'";
-	//	dEp3SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
+		sQuery = "select user, ep3 from normalized_social_level_table where user ='" + sUser + "'";
+		dEp3SocialLvl = databaseInstance.ExtractNormSocialLevelData(sQuery);
 
 		//weight
-	//	dWeight_EP3 = a*dCpuUtil + b*dSst + c*dCst + d*dEp3Dist + e*dEp3SocialLvl;
-		dWeight_EP3 = a*dCpuUtil + b*dSst + c*dCst + d*dEp3Dist;
+		dWeight_EP3 = a*dCpuUtil + b*dSst + c*dCst + d*dEp3Dist + e*dEp3SocialLvl;
+	//	dWeight_EP3 = a*dCpuUtil + b*dSst + c*dCst + d*dEp3Dist;
 
 
 
