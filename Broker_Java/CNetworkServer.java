@@ -7,8 +7,8 @@ public class CNetworkServer {
 	
 	private static final int PORT = 3333;
 	
-	public void start(ExecutorService threadPool){
-		
+	public void start(){
+//	public void start(ExecutorService threadPool){
 		try	{
 			
 			ServerSocket serverSocket = new ServerSocket(PORT);
@@ -16,7 +16,7 @@ public class CNetworkServer {
 			while(true){
 			
 				Socket socket = serverSocket.accept();
-				threadPool.execute(new CConnectionWrap(socket));
+				ThreadPool.GetInstance().execute(new CConnectionWrap(socket));
 				
 			//	serverSocket.close();
 			}

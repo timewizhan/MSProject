@@ -40,14 +40,14 @@ public class CConnectionWrap implements Runnable{
             
             //Monitoring 결과 다 받았다고 EP에게 메세지 전송
             // 소켓의 출력 스트림을 얻는다
- 			OutputStream out = socket.getOutputStream();
- 			DataOutputStream dos = new DataOutputStream(out);
+ 		//	OutputStream out = socket.getOutputStream();
+ 		//	DataOutputStream dos = new DataOutputStream(out);
  			
  			// 원격 소켓(remote socket)에 데이터를 보낸다
- 			dos.writeUTF("[NOTICE] Test message1 from BROKER");
- 			System.out.println("A message was sent");
+ 		//	dos.writeUTF("[NOTICE] Test message1 from BROKER");
+ 		//	System.out.println("A message was sent");
  			
- 			dos.close();
+ 		//	dos.close();
             
             System.out.println("연결을 종료합니다.");
             socket.close();
