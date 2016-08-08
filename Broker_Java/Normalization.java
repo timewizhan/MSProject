@@ -55,6 +55,8 @@ public class Normalization {
 		}
 		
 		System.out.println("!!!!!!!!!!!!!!!");
+		//DB Test
+		IDatabase.connectDatabase();
 	}
 
 	private void normalizeServerTraffic(){
