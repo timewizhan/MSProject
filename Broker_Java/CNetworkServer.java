@@ -6,24 +6,21 @@ import java.util.concurrent.ExecutorService;
 public class CNetworkServer {
 	
 	private static final int PORT = 3333;
-	
-	public void start(){
-//	public void start(ExecutorService threadPool){
-		try	{
-			
-			ServerSocket serverSocket = new ServerSocket(PORT);
 
+	public void start(){
+
+		try	{
+			ServerSocket serverSocket = new ServerSocket(PORT);
+	
 			while(true){
-			
 				Socket socket = serverSocket.accept();
 				ThreadPool.GetInstance().execute(new CConnectionWrap(socket));
-				
-			//	serverSocket.close();
 			}
-			
-		} catch (IOException e) {
 		
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	
 	}
+	
 }

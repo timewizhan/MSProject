@@ -34,6 +34,12 @@ public class CConnectionWrap implements Runnable{
              * Monitoring 결과를 DB에서 읽어오는 부분
              * socket.getInetAddress() 으로 상대 IP 알아내서 거기의 DB에 접속 
              */
+            CDatabase databaseInstance = new CDatabase();
+            databaseInstance.connectEntryPointDatabase(socket);
+            databaseInstance.extractServerMonitoredResult();
+            databaseInstance.extractClientMonitoredResult();
+            databaseInstance.disconnectEntryPointDatabase();
+            
            // Counter.addRecvCompletedCount();
             Counter.GetInstance().addRecvCompletedCount();
             System.out.println(Counter.GetInstance().getRecvCompletedCount());
