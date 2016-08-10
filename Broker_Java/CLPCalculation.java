@@ -14,7 +14,6 @@ public class CLPCalculation implements Runnable {
 		while(true) {
 			
 			if(NUM_OF_EP == Counter.GetInstance().getRecvCompletedCount()){
-				
 				System.out.println("all the data was received");
 				break;
 			}
@@ -325,6 +324,14 @@ public class CLPCalculation implements Runnable {
 	public void run() {
 		// TODO Auto-generated method stub
 		System.out.println("LP thread running..");
+		
+		//Database에 EP개수 만큼 Column 만들어서 Table 생성
+		CDatabase databaseInstance = new CDatabase();
+		databaseInstance.connectBrokerDatabase();
+		databaseInstance.createTable(NUM_OF_EP);
+		databaseInstance.disconnectBrokerDatabase();
+		
+		//
 		checkRecvComplete();
 	}
 }
