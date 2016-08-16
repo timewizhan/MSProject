@@ -14,13 +14,14 @@ public class CDatabase {
 		String url = socket.getInetAddress().toString();
 		epUrl = url.substring(1);
 		String port = "3306";
-		String dbName = "sns_db";
+		String dbName = "snsdb";
 		String id = "root";
 		String password = "cclab";
 		
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
-			epConn = DriverManager.getConnection("jdbc:mysql:/" + url + ":" + port + "/" + dbName + "?autoReconnect=true&useSSL=false", id, password); 
+			epConn = DriverManager.getConnection("jdbc:mysql:/" + url + ":" + port + "/" + dbName + "?autoReconnect=true&useSSL=false", id, password);
+		//	epConn = DriverManager.getConnection("jdbc:mysql:/" + url + ":" + port + "/" + dbName, id, password);
 			System.out.println("Entry Point database was connected successfully");
 
 		}catch(ClassNotFoundException cnfe){
@@ -39,12 +40,12 @@ public class CDatabase {
 		
 		try {
 			stmt = epConn.createStatement();
-			ResultSet rs = stmt.executeQuery("select server_side_traffic, cpu_utilization from server_side_monitor;");
+			ResultSet rs = stmt.executeQuery("select server_side_traffic, cpu_util from server_side_monitor;");
 			connectBrokerDatabase();
 			
 			while(rs.next()){
 				String serverTraffic = rs.getString("server_side_traffic");
-				String cpuUtil = rs.getString("cpu_utilization");
+				String cpuUtil = rs.getString("cpu_util");
 				
 				insertServerMonitoredResult(serverTraffic, cpuUtil);
 			}
@@ -104,7 +105,7 @@ public class CDatabase {
 		try{
 			Class.forName("com.mysql.jdbc.Driver");  //jdbc 드라이버로 연결하고 
 			brokerConn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/broker_table?autoReconnect=true&useSSL=false","root","cclab");
-			System.out.println("Database was connected successfully");
+		//	System.out.println("Database was connected successfully");
 		
 		}catch(ClassNotFoundException cnfe){
 			System.out.println("해당 클래스를 찾을수 없습니다."+cnfe.getMessage());
@@ -301,7 +302,7 @@ public class CDatabase {
 		String location = null;
 		try {
 			stmt = brokerConn.createStatement();
-			ResultSet rs = stmt.executeQuery("select state from locationIP where ip = " + ip +";");
+			ResultSet rs = stmt.executeQuery("select state from locationIP where ip = '" + ip +"';");
 
 			while(rs.next()){
 				
@@ -326,13 +327,18 @@ public class CDatabase {
 		Statement stmt = null;
 		try {
 			stmt = brokerConn.createStatement();
-			ResultSet rs = stmt.executeQuery("select latitude, longitude from coord_list_table where state = " + location +";");
+			ResultSet rs = stmt.executeQuery("select latitude, longitude from coord_list_table where state = '" + location +"';");
 
+			int rsCount = 0;
 			while(rs.next()){
-				
 				coordValue.setLatitude(Double.parseDouble(rs.getString("latitude")));
 				coordValue.setLongitude(Double.parseDouble(rs.getString("longitude")));
+				
+				rsCount++;
 			}
+			
+			if(rsCount==0)
+				System.out.println("-------------"+location+"에 대한 위도/경도 정보가 없음");
 
 			rs.close();
 			stmt.close();
@@ -399,8 +405,7 @@ public class CDatabase {
 			// Statement 얻기
 		    stmt = brokerConn.createStatement();
 		    
-		    sql = "insert into normalized_distance_table ( " +
-		    		"'" + userID + "'";
+		    sql = "insert into normalized_distance_table values ( " + "'" + userID + "'";
 		    for(int i=0; i<normalizedDistances.length; i++){
 		    	sql += ", " + normalizedDistances[i];
 		    }
@@ -434,7 +439,7 @@ public class CDatabase {
 		
 		try {
 			brokerConn.close();
-			System.out.println("Disconnect Broker database session");
+		//	System.out.println("Disconnect Broker database session");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

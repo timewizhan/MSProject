@@ -53,8 +53,6 @@ public class Normalization {
 				e.printStackTrace();
 			}
 		}
-		
-		System.out.println("!!!!!!!!!!!!!!!");
 	}
 
 	private void normalizeServerTraffic(){

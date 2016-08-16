@@ -7,7 +7,8 @@ import lpsolve.*;
 
 public class CLPCalculation implements Runnable {
 
-	static final int NUM_OF_EP = 1; // Number of clouds
+	//165.132.122.244, 165.132.123.73, localhost
+	static final int NUM_OF_EP = 3; // Number of clouds
 	
 	public void checkRecvComplete(){
 		
@@ -28,6 +29,8 @@ public class CLPCalculation implements Runnable {
 		//각 팩터(Factors: Server Traffic, Distance, Social Level, Cost) 정규화
 		Normalization norm = new Normalization();
 		norm.normalizeFactors();
+
+		System.out.println("!!!!!!!!!!!!!!!");
 		
 		//각 엣지에 대한 가중치(weight) 계산
 		calculateWeight();

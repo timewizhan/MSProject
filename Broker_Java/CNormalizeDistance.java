@@ -25,9 +25,17 @@ public class CNormalizeDistance implements Callable{
 				
 				//locationIP 테이블 업데이트: ip addr와 ep num 매칭 시킬 수 있게
 				databaseInstance.updateLocationIpTable(alServerInfo.get(i).getEpAddr(), i+1);
+			
+				if(i<10){
+					System.out.print("user location: " + clientData.getUserLocation() + ", server location: " + alServerInfo.get(i).getServerLocation());
+				}
 				
 				double dist = IDistanceCalculation.calculateDistance(clientData.getUserLocation(), alServerInfo.get(i).getServerLocation());
 				distances[i] = dist;
+				
+				if(i<10){
+					System.out.println(", distance: " + dist);
+				}
 				
 				//min, max 찾기
 				if(i==0){

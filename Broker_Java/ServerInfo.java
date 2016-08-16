@@ -16,6 +16,19 @@ public class ServerInfo {
 		
 		return this;
 	}
+/*
+	public void mappingIpAddrToLocation(String epAddr){
+		
+		CDatabase databaseInstance = new CDatabase();
+		databaseInstance.connectBrokerDatabase();
+		
+		this.epAddr = epAddr;
+		this.location = databaseInstance.getLocationWithIp(epAddr);
+	
+		databaseInstance.disconnectBrokerDatabase();
+		
+	}
+*/
 	
 	public String getEpAddr(){
 		return this.epAddr;
@@ -24,4 +37,6 @@ public class ServerInfo {
 	public String getServerLocation(){
 		return this.location;
 	}
+	
+	
 }

@@ -12,11 +12,11 @@ public interface IDistanceCalculation {
 		CoordValue coordValue = null;
 		coordValue = databaseInstance.getLatitudeLongitude(location1);
 		double location1_latitude = coordValue.getLatitude();
-		double location1_longitude = coordValue.getLatitude();
+		double location1_longitude = coordValue.getLongitude();
 		
 		coordValue = databaseInstance.getLatitudeLongitude(location2);
 		double location2_latitude = coordValue.getLatitude();
-		double location2_longitude = coordValue.getLatitude();
+		double location2_longitude = coordValue.getLongitude();
 		
 		databaseInstance.disconnectBrokerDatabase();
 		
