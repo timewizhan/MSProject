@@ -270,6 +270,56 @@ public class CDatabase {
 		return alServerData;
 	}
 	
+	public int getServerTotalTraffic(){
+		
+		int totalTraffic = 0;
+		
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select sum(server_side_traffic) from server_table;");
+
+			while(rs.next()){
+				totalTraffic = Integer.parseInt(rs.getString("sum(server_side_traffic)"));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return totalTraffic;
+	}
+	
+	public ArrayList<String> getServerList(){
+		
+		ArrayList<String> serverList = new ArrayList<String>();
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select ep from server_table;");
+
+			while(rs.next()){
+				String epAddr = rs.getString("ep");
+				serverList.add(epAddr);
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return serverList;
+	}
+	
 	public ArrayList<ServerInfo> getServerInfo(){
 		
 		ArrayList<ServerInfo> alServerData = new ArrayList<ServerInfo>();

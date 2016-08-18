@@ -34,6 +34,18 @@ public class CLPCalculation implements Runnable {
 		
 		//각 엣지에 대한 가중치(weight) 계산
 		calculateWeight();
+		
+		/*
+		try {
+			calculateLP();
+		} catch (LpSolveException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		CLBCalculation lbCalculation = new CLBCalculation();
+		lbCalculation.lbMain();
+		*/
 	}
 	
 	public void calculateWeight(){
