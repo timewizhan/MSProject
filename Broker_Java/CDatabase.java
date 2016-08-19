@@ -432,6 +432,33 @@ public class CDatabase {
 		
 		return alClientData;
 	}
+
+	public ArrayList<ClientData> getUserList(){
+		
+		ArrayList<ClientData> userList = new ArrayList<ClientData>();
+		Statement stmt = null;
+		
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select user from client_table;");
+
+			while(rs.next()){
+				ClientData userData = new ClientData();
+				String sUserId = rs.getString("user");
+				userData.setUserID(sUserId);
+				userList.add(userData);
+			}
+			
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return userList;
+	}
 	
 	public void insertNormServerData(String epAddr, double normalizedServerTraffic){
 
@@ -467,6 +494,58 @@ public class CDatabase {
 		    // TODO Auto-generated catch block
 		    e.printStackTrace();
 		}
+	}
+	
+	public double [] getNormalizedDistanceValues(String userId, int NumOfEp){
+	
+		double normDistValues [] = new double [NumOfEp];
+		Statement stmt = null;
+		
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select * from normalized_distance_table where user = '" + userId + "';");
+
+			while(rs.next()){
+				for(int i=0; i<NumOfEp; i++){
+					normDistValues[i] = Double.parseDouble(rs.getString("ep"+(i+1)));
+				}
+			}
+			
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return normDistValues;
+	}
+	
+	public double [] getNormalizedSocialWeightValues(String userId, int NumOfEp){
+		
+		double normDistValues [] = new double [NumOfEp];
+		Statement stmt = null;
+		
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select * from normalized_social_level_table where user = '" + userId + "';");
+
+			while(rs.next()){
+				for(int i=0; i<NumOfEp; i++){
+					normDistValues[i] = Double.parseDouble(rs.getString("ep"+(i+1)));
+				}
+			}
+			
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return normDistValues;
 	}
 	
 	public void updateLocationIpTable(String epAddr, int epNum){

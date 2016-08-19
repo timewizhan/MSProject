@@ -2,6 +2,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import lpsolve.*;
 
@@ -9,6 +10,12 @@ public class CLPCalculation implements Runnable {
 
 	//165.132.122.244, 165.132.123.73, localhost
 	static final int NUM_OF_EP = 3; // Number of clouds
+	private int NUM_OF_USERS;
+	ArrayList<UserWeight> userWeightList;
+	
+	public CLPCalculation(){
+		userWeightList = new ArrayList<UserWeight>();
+	}
 	
 	public void checkRecvComplete(){
 		
@@ -29,13 +36,11 @@ public class CLPCalculation implements Runnable {
 		//각 팩터(Factors: Server Traffic, Distance, Social Level, Cost) 정규화
 		Normalization norm = new Normalization();
 		norm.normalizeFactors();
-
-		System.out.println("!!!!!!!!!!!!!!!");
 		
 		//각 엣지에 대한 가중치(weight) 계산
 		calculateWeight();
 		
-		/*
+		
 		try {
 			calculateLP();
 		} catch (LpSolveException e) {
@@ -43,6 +48,7 @@ public class CLPCalculation implements Runnable {
 			e.printStackTrace();
 		}
 		
+		/*
 		CLBCalculation lbCalculation = new CLBCalculation();
 		lbCalculation.lbMain();
 		*/
@@ -50,6 +56,59 @@ public class CLPCalculation implements Runnable {
 	
 	public void calculateWeight(){
 		
+		//유저 리스트 읽어오기 client_table에서
+		CDatabase databaseInstance = new CDatabase();
+		databaseInstance.connectBrokerDatabase();
+		
+		//유저 수 멤버 변수에 저장
+		ArrayList<ClientData> userList = databaseInstance.getUserList();
+		NUM_OF_USERS = userList.size();
+		
+		//유저 별로 반복
+		UserWeight userWeight;
+		for(int i=0; i<NUM_OF_USERS; i++){
+			userWeight = new UserWeight(NUM_OF_EP);
+			
+			//유저 아이디
+			userWeight.setUser(userList.get(i).getUserID());
+			
+			//유저에 유니크한 번호값 매겨주기
+			userWeight.setUser_no(i);
+			
+			//normalized_distance_table에서 user명 이용해서 ep 개수에 맞게 값 추출
+			double NormDistValueArray[];
+			NormDistValueArray = databaseInstance.getNormalizedDistanceValues(userList.get(i).getUserID(), NUM_OF_EP);
+		//	System.out.println("[test0] " + userList.get(i).getUserID());
+			
+			//normalized_social_level_table에서 user명 이용해서 ep 개수에 맞게 값 추출
+			double NormSocialWeightValueArray[];
+			NormSocialWeightValueArray = databaseInstance.getNormalizedSocialWeightValues(userList.get(i).getUserID(), NUM_OF_EP);
+			
+			//ep개수에 맞게 weight를 줘서 두개의 값을 합침
+			int a = 1;
+			int b = 1;
+			double tmpWeightValues [] = new double [NUM_OF_EP];
+			for(int j=0; j<NUM_OF_EP; j++){
+				tmpWeightValues[j] = a*NormDistValueArray[j] + b*NormSocialWeightValueArray[j];
+			}
+			userWeight.setWeightValues(tmpWeightValues);
+			System.out.println("[Test] user name : " + userWeight.getUser() + ", " + userWeight.getUser_no()
+							+ ", " + userWeight.getWeightValues()[0]
+									+ ", " + userWeight.getWeightValues()[1]
+											+ ", " + userWeight.getWeightValues()[2]); 
+			userWeightList.add(userWeight);
+		}
+		
+		//테스트
+		for(int p=0; p<userWeightList.size(); p++){
+			System.out.println("[Debug] print the weight values of a user: " 
+								+ userWeightList.get(p).getUser() + ", " 
+									+ userWeightList.get(p).getWeightValues()[0] + ", "
+										+ userWeightList.get(p).getWeightValues()[1] + ", "
+											+ userWeightList.get(p).getWeightValues()[2]);
+		}
+		
+		databaseInstance.disconnectBrokerDatabase();
 	}
 	
 	public void getWeight() {
@@ -66,12 +125,7 @@ public class CLPCalculation implements Runnable {
 		/* We will build the model row by row
             So we start with creating a model with 0 rows and 2 columns */
 		//Ncol = 2; /* there are two variables in the model */
-
-		int numOfUsers = 0;
-		/**
-		 * numOfUsers = vecClientData.size(); //이 부분은 이런식으로, 데이터 베이스에서 사용자 수 받아온다
-		 */
-		Ncol = numOfUsers * NUM_OF_EP;
+		Ncol = NUM_OF_USERS * NUM_OF_EP;
 
 		/* create space large enough for one row */
 		int[] colno = new int[Ncol];		//colno는 각 변수의 순서를 의미 colno값을 이용해서 어떤 변수(몇 번째 변수)에 접근한 건지 결정할 수 있다. 따라서, 변수 만큼 공간을 할당해줘야하고, 순서(인덱스)를 나타내므로 int
@@ -92,7 +146,7 @@ public class CLPCalculation implements Runnable {
 		if(ret == 0) {
 			/* let us name our variables. Not required, but can be useful for debugging */
 			int p = 1;
-			for (int i = 0; i < numOfUsers; i++) {		//user 숫자 만큼 반복
+			for (int i = 0; i < NUM_OF_USERS; i++) {		//user 숫자 만큼 반복
 
 				for (int k = 0; k < NUM_OF_EP; k++) {		//data center 숫자 만큼 반복
 
@@ -119,7 +173,7 @@ public class CLPCalculation implements Runnable {
 			//contraint1 : 각 유저가 다수의 데이터 센터 중에서도 하나에만 매칭 되야하는 조건 : x_11 + x_12 + x_13 <= 1
 
 			j= 0;
-			for (int i= 0; i < numOfUsers * NUM_OF_EP; i++){
+			for (int i= 0; i < NUM_OF_USERS * NUM_OF_EP; i++){
 
 				colno[j] = i + 1;
 				row[j++] = 1;
@@ -141,7 +195,7 @@ public class CLPCalculation implements Runnable {
 			for (int i = 0; i < NUM_OF_EP; i++){
 
 				tmp = p;
-				for (int k = 0; k < numOfUsers; k++){
+				for (int k = 0; k < NUM_OF_USERS; k++){
 
 					colno[j] = tmp;
 					row[j++] = 1;
@@ -150,7 +204,7 @@ public class CLPCalculation implements Runnable {
 				}
 
 				/* add the row to lpsolve */
-				lp.addConstraintex(j, row, colno, LpSolve.LE, numOfUsers);
+				lp.addConstraintex(j, row, colno, LpSolve.LE, NUM_OF_USERS);
 				p++; j = 0;
 			}
 		}
@@ -160,20 +214,20 @@ public class CLPCalculation implements Runnable {
 		if(ret == 0) {
 
 			j = 0;
-			for (int i = 0; i < numOfUsers*NUM_OF_EP; i++){
+			for (int i = 0; i < NUM_OF_USERS*NUM_OF_EP; i++){
 				colno[j] = i + 1;
 				row[j++] = 1;
 			}
 
 			/* add the row to lpsolve */
-			lp.addConstraintex(j, row, colno, LpSolve.GE, numOfUsers);
+			lp.addConstraintex(j, row, colno, LpSolve.GE, NUM_OF_USERS);
 		}
 
 		//contraint4 : 모든 엣지의 값은 0보다 크거나 같아야 한다는 조건
 
 		if (ret == 0){
 
-			for (int i = 0; i < numOfUsers * NUM_OF_EP; i++){
+			for (int i = 0; i < NUM_OF_USERS * NUM_OF_EP; i++){
 
 				j = 0;
 				colno[j] = i + 1;
@@ -195,21 +249,36 @@ public class CLPCalculation implements Runnable {
 		//min 이나 max로 만들어야 하는 objective function 만들어주는 곳. 
 		//여기에 row 배열 이용해서 가중치 넣어야함
 
-		/**
-		 *  여기에서 아래와 같이, 데이터베이스 인스턴스 만들고, weight값을 불러와야함
-		 *	CDatabase	databaseInstance;
-		 *	databaseInstance.InitDB();
-		 *	vector<weight_data> vecWeightData = databaseInstance.ExtractWeightData();
-		 */
-
 		if(ret == 0) {
 			lp.setAddRowmode(false); /* rowmode should be turned off again when done building the model */
-
 			j = 0;
-			/**
-			 * 가중치가 적용된, 최소가 되야하는 objective 수식이 아래와 같이 들어가야 함
-			 * 
+			
+			for (int i = 0; i < NUM_OF_USERS; i++){
+       		 for (int p = 0; p < NUM_OF_EP; p++){
 
+   			 	if ((p + 1 % NUM_OF_EP) == 1){
+
+   			 		colno[j] = j + 1;
+						row[j] = userWeightList.get(i).getWeightValues()[0];
+						j++;
+
+   			 	} else if ((p + 1 % NUM_OF_EP) == 2){
+
+   			 		colno[j] = j + 1;
+						row[j] = userWeightList.get(i).getWeightValues()[1];
+						j++;
+
+   			 	} else if ((p + 1 % NUM_OF_EP) == 3){
+
+						colno[j] = j + 1;
+						row[j] = userWeightList.get(i).getWeightValues()[2];
+						j++;
+					}
+				}
+			}
+			
+			/*
+			 가중치가 적용된, 최소가 되야하는 objective 수식이 아래와 같이 들어가야 함
 			//colno[j] = 1 : 첫번째 column이라는 의미
 			//row[j] = 143 : 계수에 143 대입
 			//colno[j] = 2 : 두번째 column이라는 의미
@@ -239,8 +308,7 @@ public class CLPCalculation implements Runnable {
 					}
 				}
 			}
-
-			 */
+			*/
 
 			/* set the objective in lpsolve */
 			lp.setObjFnex(j, row, colno);
@@ -276,16 +344,26 @@ public class CLPCalculation implements Runnable {
 
 			/* variable values */
 			lp.getVariables(row);
-			//  for(j = 0; j < Ncol; j++)
-			//    System.out.println(lp.getColName(j + 1) + ": " + row[j]);
+			for(j = 0; j < Ncol; j++)
+				System.out.println(lp.getColName(j + 1) + ": " + row[j]);
 
 			//1인거만 뽑자
 			System.out.println("");
 			System.out.println("[elements over 1]");
-			for (int q = 0; q < Ncol; q++){
-				if (row[q] > 0){
+			for (j = 0; j < Ncol; j++){
+				if (row[j] > 0){
+					
+					String matchResult = lp.getColName(j+1);
+					String fullString = matchResult;
+					int stringLength = matchResult.length();
+
+					String userNo = fullString.substring(2, stringLength-1);						//앞쪽에서 "x_" 다음부터, 뒤쪽에서 Data center를 의미하는 한자리 숫자 앞까지
+					String epNo = fullString.substring(stringLength-1, stringLength);			//제일 끝자리 한자리만
+					System.out.println("User number: " + userNo + ", EP number: " + epNo);
+/*
+					
 					StringBuffer matchResult = new StringBuffer();
-					matchResult.append(lp.getColName(q+1));
+					matchResult.append(lp.getColName(j+1));
 
 					StringBuffer fullString = new StringBuffer();
 					fullString.append(matchResult.toString());
@@ -296,7 +374,7 @@ public class CLPCalculation implements Runnable {
 					String userNo = fullString.substring(2, stringLength-2).toString();						//앞쪽에서 "x_" 다음부터, 뒤쪽에서 Data center를 의미하는 한자리 숫자 앞까지
 					String epNo = fullString.substring(stringLength-1, stringLength-1).toString();			//제일 끝자리 한자리만
 					System.out.println("User number: " + userNo + ", EP number: " + epNo);
-
+*/
 					/**
 					 * 이 부분에, DB에 matching 결과 저장 코드 삽입 
 					 * Example) databaseInstance.InsertMatchingTable(sUserNo, sEpNo);

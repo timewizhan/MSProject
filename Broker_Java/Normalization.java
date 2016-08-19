@@ -27,7 +27,7 @@ public class Normalization {
 		Callable<Integer> callableNormDist = new CNormalizeDistance();
 		Future<Integer> futureNormDist = ThreadPool.GetInstance().submit(callableNormDist);
 		set.add(futureNormDist);
-		
+/*		
 		//set to normalize social level
 		Callable<Integer> callableNormSocialLvl = new CNormalizeSocialLvl();
 		Future<Integer> futureNormSocialLvl = ThreadPool.GetInstance().submit(callableNormSocialLvl);
@@ -37,7 +37,7 @@ public class Normalization {
 		Callable<Integer> callableNormCost = new CNormalizeCost();
 		Future<Integer> futureNormCost = ThreadPool.GetInstance().submit(callableNormCost);
 		set.add(futureNormCost);
-		
+*/		
 		
 		for (Future<Integer> future : set) {
 		
@@ -54,7 +54,7 @@ public class Normalization {
 			}
 		}
 	}
-
+/*
 	private void normalizeServerTraffic(){
 
 	}
@@ -70,4 +70,5 @@ public class Normalization {
 	private void normalizeCost(){
 
 	}
+*/
 }
