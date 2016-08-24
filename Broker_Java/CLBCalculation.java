@@ -4,6 +4,8 @@ import java.util.HashMap;
 public class CLBCalculation {
 	
 	HashMap<String , Integer> map;
+	ArrayList<LpMatchResult> lpMatchResult;
+	ArrayList<ArrayList<ClientTrafficData>> initialUsersOfClouds;
 	
 	public CLBCalculation(){
 		
@@ -17,17 +19,31 @@ public class CLBCalculation {
 	}
 	
 	//load balancing 메인 메소드
-	public void lbMain(){
+	public void lbMain(ArrayList<LpMatchResult> lpMatchRes){
+
+		//LP calculation의 매치 결과 저장
+		copyLpMatchResult(lpMatchRes);
 		
 		//process 타입을 결정하는 메소드 : 트래픽 양이 모든 클라우드가 받아들일 수 있는 정도인지 아닌지를 3단계로 나눔
-		String processType = determineProcessType();
+//		String processType = determineProcessType();
 		
-		if(processType.equals("MINIMUM_TRAFFIC")){
+//		if(processType.equals("MINIMUM_TRAFFIC")){
 			//LP만 하고 끝낸다. LB 프로세스 동작 안함
-		} else if (processType.equals("MEDIUM_TRAFFIC")){
+//		} else if (processType.equals("MEDIUM_TRAFFIC")){
 			rematchForLoadBalancing();
-		} else if (processType.equals("MAXIMUM_TRAFFIC")){
-		} 
+//		} else if (processType.equals("MAXIMUM_TRAFFIC")){
+			//1차적으론 rematchForLoadBalancing을 통해서 모든 클라우드의 예상트래픽이 가용 최대치에 맞춰져야함
+			//그러고 나서 남은 부분은 lp결과에서 추천해주는 곳으로
+//		} 
+	}
+	
+	public void copyLpMatchResult(ArrayList<LpMatchResult> lpMatchRes){
+		//ArrayList의 Deep Copy
+		lpMatchResult = new ArrayList<LpMatchResult>();
+		for (int i=0; i<lpMatchRes.size(); i++) {
+			LpMatchResult initMatchResult = new LpMatchResult(lpMatchRes.get(i));
+			lpMatchResult.add(initMatchResult);
+		}
 	}
 	
 	public String determineProcessType(){
@@ -110,7 +126,60 @@ public class CLBCalculation {
 	}
 	
 	public void rematchForLoadBalancing(){
+		//lp calculation 결과에 따라, 각 클라우드 별로 매치된 유저들 모으기 
+		getMatchedUsersToClouds();
+	/*	
+		//test
+		System.out.println();
+		System.out.println("[before sorting]");
+		for(int i=0; i<initialUsersOfClouds.size(); i++){
+			if(initialUsersOfClouds.get(i) != null){
+				
+				ArrayList<ClientTrafficData> usersOfCloud = initialUsersOfClouds.get(i);
+				for(int j=0; j<usersOfCloud.size(); j++){
+					System.out.println("user id : " + usersOfCloud.get(j).getUserId()
+							+ ", cloud No : " + usersOfCloud.get(j).getCloudNo()
+							+ ", traffic : " + usersOfCloud.get(j).getUserTraffic());
+				}
+			}
+		}
+	*/	
+		
+		//트래픽 양에 따라 소팅하기
+		for(int i=0; i<initialUsersOfClouds.size();i++){
+			sortUsersWithTraffic(initialUsersOfClouds.get(i));
+		}
 	
+	/*
+		//test
+		System.out.println();
+		System.out.println("[after sorting]");
+		for(int i=0; i<initialUsersOfClouds.size(); i++){
+			if(initialUsersOfClouds.get(i) != null){
+				
+				ArrayList<ClientTrafficData> usersOfCloud = initialUsersOfClouds.get(i);
+				for(int j=0; j<usersOfCloud.size(); j++){
+					System.out.println("user id : " + usersOfCloud.get(j).getUserId()
+							+ ", cloud No : " + usersOfCloud.get(j).getCloudNo()
+							+ ", traffic : " + usersOfCloud.get(j).getUserTraffic());
+				}
+			}
+		}
+	*/			
+		//초과한 클라우드가 어떤 건지 파악 //초과한 트래픽 용량이 얼마인지 계산
+		ArrayList<ServerStatus> serverStateList = getCloudsStatus();
+		for(int i=0; i<serverStateList.size(); i++){
+			
+			//초과될 것으로 예상되는 클라우드
+			
+			//남을 것으로 예상되는 클라우드
+		}
+		
+		//초과한 만큼 애들 보내기
+		
+		
+/////////////////////////////////////////////////////////////////////////////////////////////////		
+		
 		//"어느 클라우드에 매칭된" : 가용 트래픽 보다 초과된 클라우드 
 	/**
 		매치 결과를 디비나 어레이리스트로 가지고 있을텐데 그걸 보고, 가용량을 넘어서는지 안넘어서는지 구분
@@ -120,5 +189,107 @@ public class CLBCalculation {
 		//"몇명을" : 한명의 데이터가 발생시킬 수 있는 예상 트래픽을 계산한 후, LP결과에 의해 매칭된 것(이걸 트래픽으로 계산해야함)에서 몇명의 데이터를 빼야 가용 트래픽 범위 안에 들어서는지 계산하고, 그만큼 뺌
 		//"어디로" : 우선 순위에 따라 옮기되, 목적지의 가용 트래픽을 고려해서 옮김
 		
+	}
+	
+	public ArrayList<ServerStatus> getCloudsStatus(){
+	
+		ArrayList<ServerStatus> serverStateList = new ArrayList<ServerStatus>();
+		
+		CDatabase databaseInstance = new CDatabase();
+		databaseInstance.connectBrokerDatabase();
+		
+		serverStateList = databaseInstance.getServersStatus(map, initialUsersOfClouds);
+		
+		databaseInstance.disconnectBrokerDatabase();
+		
+		return serverStateList;
+	}
+	
+	public void getMatchedUsersToClouds(){
+		
+		initialUsersOfClouds = new ArrayList<ArrayList<ClientTrafficData>>();
+		for(int i=0; i<CLPCalculation.NUM_OF_EP; i++){
+			initialUsersOfClouds.add(null);
+		}
+		
+		ArrayList<ClientTrafficData> usersOfCloud = null;
+		ClientTrafficData clientTrafficData = null; 
+		int epNo = CLPCalculation.NUM_OF_EP;
+		
+		for(int j=0; j<CLPCalculation.NUM_OF_EP; j++){
+			usersOfCloud = new ArrayList<ClientTrafficData>();
+			if(epNo > 0){
+				
+				for(int i=0; i<lpMatchResult.size(); i++){
+					if(epNo == lpMatchResult.get(i).getCloudNo()){
+						clientTrafficData = new ClientTrafficData();
+						clientTrafficData.setUserId(lpMatchResult.get(i).getUserId());
+						clientTrafficData.setUserTraffic(getUserTraffic(lpMatchResult.get(i).getUserId()));
+						clientTrafficData.setCloudNo(lpMatchResult.get(i).getCloudNo());
+						usersOfCloud.add(clientTrafficData);
+					}
+				}
+				initialUsersOfClouds.remove(epNo-1);
+				initialUsersOfClouds.add(epNo-1, usersOfCloud);
+				epNo--;
+				
+			}
+		}
+	}
+	
+	public int getUserTraffic(String userId){
+		
+		int traffic=0;
+		
+		CDatabase databaseInstance = new CDatabase();
+		databaseInstance.connectBrokerDatabase();
+		
+		traffic = databaseInstance.getUserTraffic(userId);
+		
+		databaseInstance.disconnectBrokerDatabase();
+		
+		return traffic;
+	}
+	
+	public void sortUsersWithTraffic(ArrayList<ClientTrafficData> S){
+		//	public void sortUsersWithTraffic(ArrayList<ClientTrafficData> usersOfCloud){
+
+		//quick sort
+		if (S.size() < 2) return; // Nothing needs to be done if S has zero or one element)
+
+		// Divide: If S has at least two elements, select a specific element x from S, which is called the pivot.
+		ArrayList<ClientTrafficData> L = new ArrayList<ClientTrafficData>(); // L, storing the elements in S less than pivot
+		ArrayList<ClientTrafficData> E = new ArrayList<ClientTrafficData>(); // E, storing the elements in S equal to pivot
+		ArrayList<ClientTrafficData> G = new ArrayList<ClientTrafficData>(); // G, storing the elements in S greater than pivot
+		int pivot = (int)S.get(S.size() - 1).getUserTraffic();
+	
+		E.add(S.get(S.size() - 1));
+		S.remove(S.size() - 1);
+		
+		while (S.size() > 0) {
+			if ((int)S.get(0).getUserTraffic() < pivot) {
+				L.add(S.get(0));
+			} else if ((int)S.get(0).getUserTraffic() == pivot) {
+				E.add(S.get(0));
+			} else {
+				G.add(S.get(0));
+			}
+			S.remove(0);
+		}
+
+		// Conquer: Recursively sort sequences L and G.
+		sortUsersWithTraffic(L);
+		sortUsersWithTraffic(G);
+
+		// Combine: Put back the element into S in order by first inserting the elements of L, then those of E, and finally those of G.
+		for (int i = 0; i < L.size(); i++) {
+			S.add(L.get(i));
+		}
+		for (int i = 0; i < E.size(); i++) {
+			S.add(E.get(i));
+		}
+		for (int i = 0; i < G.size(); i++) {
+			S.add(G.get(i));
+		}
 	}
 }

@@ -12,9 +12,11 @@ public class CLPCalculation implements Runnable {
 	static final int NUM_OF_EP = 3; // Number of clouds
 	private int NUM_OF_USERS;
 	ArrayList<UserWeight> userWeightList;
+	ArrayList<LpMatchResult> lpMatchResult;
 	
 	public CLPCalculation(){
 		userWeightList = new ArrayList<UserWeight>();
+		lpMatchResult =  new ArrayList<LpMatchResult>();
 	}
 	
 	public void checkRecvComplete(){
@@ -48,10 +50,8 @@ public class CLPCalculation implements Runnable {
 			e.printStackTrace();
 		}
 		
-		/*
 		CLBCalculation lbCalculation = new CLBCalculation();
-		lbCalculation.lbMain();
-		*/
+		lbCalculation.lbMain(lpMatchResult);
 	}
 	
 	public void calculateWeight(){
@@ -78,7 +78,6 @@ public class CLPCalculation implements Runnable {
 			//normalized_distance_table에서 user명 이용해서 ep 개수에 맞게 값 추출
 			double NormDistValueArray[];
 			NormDistValueArray = databaseInstance.getNormalizedDistanceValues(userList.get(i).getUserID(), NUM_OF_EP);
-		//	System.out.println("[test0] " + userList.get(i).getUserID());
 			
 			//normalized_social_level_table에서 user명 이용해서 ep 개수에 맞게 값 추출
 			double NormSocialWeightValueArray[];
@@ -92,22 +91,9 @@ public class CLPCalculation implements Runnable {
 				tmpWeightValues[j] = a*NormDistValueArray[j] + b*NormSocialWeightValueArray[j];
 			}
 			userWeight.setWeightValues(tmpWeightValues);
-			System.out.println("[Test] user name : " + userWeight.getUser() + ", " + userWeight.getUser_no()
-							+ ", " + userWeight.getWeightValues()[0]
-									+ ", " + userWeight.getWeightValues()[1]
-											+ ", " + userWeight.getWeightValues()[2]); 
 			userWeightList.add(userWeight);
 		}
-		
-		//테스트
-		for(int p=0; p<userWeightList.size(); p++){
-			System.out.println("[Debug] print the weight values of a user: " 
-								+ userWeightList.get(p).getUser() + ", " 
-									+ userWeightList.get(p).getWeightValues()[0] + ", "
-										+ userWeightList.get(p).getWeightValues()[1] + ", "
-											+ userWeightList.get(p).getWeightValues()[2]);
-		}
-		
+
 		databaseInstance.disconnectBrokerDatabase();
 	}
 	
@@ -276,39 +262,6 @@ public class CLPCalculation implements Runnable {
 					}
 				}
 			}
-			
-			/*
-			 가중치가 적용된, 최소가 되야하는 objective 수식이 아래와 같이 들어가야 함
-			//colno[j] = 1 : 첫번째 column이라는 의미
-			//row[j] = 143 : 계수에 143 대입
-			//colno[j] = 2 : 두번째 column이라는 의미
-			//row[j] = 60 : 계수에 60 대입
-
-
-        	 for (int i = 0; i < numOfUsers; i++){
-        		 for (int p = 0; p < NUM_OF_EP; p++){
-
-    			 	if ((p + 1 % cloud_no) == 1){
-
-    			 		colno[j] = j + 1;
-						row[j] = vecWeightData.at(i).dEp1;
-						j++;
-
-    			 	} else if ((p + 1 % NUM_OF_EP) == 2){
-
-    			 		colno[j] = j + 1;
-						row[j] = vecWeightData.at(i).dEp2;
-						j++;
-
-    			 	} else if ((p + 1 % NUM_OF_EP) == 3){
-
-						colno[j] = j + 1;
-						row[j] = vecWeightData.at(i).dEp3;
-						j++;
-					}
-				}
-			}
-			*/
 
 			/* set the objective in lpsolve */
 			lp.setObjFnex(j, row, colno);
@@ -357,32 +310,22 @@ public class CLPCalculation implements Runnable {
 					String fullString = matchResult;
 					int stringLength = matchResult.length();
 
-					String userNo = fullString.substring(2, stringLength-1);						//앞쪽에서 "x_" 다음부터, 뒤쪽에서 Data center를 의미하는 한자리 숫자 앞까지
+					String userNo = fullString.substring(2, stringLength-1);					//앞쪽에서 "x_" 다음부터, 뒤쪽에서 Data center를 의미하는 한자리 숫자 앞까지
 					String epNo = fullString.substring(stringLength-1, stringLength);			//제일 끝자리 한자리만
 					System.out.println("User number: " + userNo + ", EP number: " + epNo);
-/*
-					
-					StringBuffer matchResult = new StringBuffer();
-					matchResult.append(lp.getColName(j+1));
 
-					StringBuffer fullString = new StringBuffer();
-					fullString.append(matchResult.toString());
-					int stringLength = matchResult.length();
-
-					//Data Center 개수가 한 자리일때만!
-					//두자리수 만큼 있으면 바꿔야함!
-					String userNo = fullString.substring(2, stringLength-2).toString();						//앞쪽에서 "x_" 다음부터, 뒤쪽에서 Data center를 의미하는 한자리 숫자 앞까지
-					String epNo = fullString.substring(stringLength-1, stringLength-1).toString();			//제일 끝자리 한자리만
-					System.out.println("User number: " + userNo + ", EP number: " + epNo);
-*/
-					/**
-					 * 이 부분에, DB에 matching 결과 저장 코드 삽입 
-					 * Example) databaseInstance.InsertMatchingTable(sUserNo, sEpNo);
-					 */
+					//user id, user no, match result를 ArrayList에 추가
+					makeLpMatchList(userNo, epNo);
 				}
 			}
 
 			/* we are done now */
+			//test
+			for(int i=0; i<lpMatchResult.size(); i++){
+				System.out.println("ID:" + lpMatchResult.get(i).getUserId()
+						+ ", No.:" + lpMatchResult.get(i).getUserNo()
+						+ ", Cloud No.:" + lpMatchResult.get(i).getCloudNo());
+			}
 		}
 
 		/* clean up such that all used memory by lpsolve is freed */
@@ -412,6 +355,20 @@ public class CLPCalculation implements Runnable {
 
 		return(ret);
 	}
+	
+	public void makeLpMatchList(String userNo, String epNo){
+	
+		LpMatchResult eachUserMatch = new LpMatchResult();
+		
+		for(int i=0; i<userWeightList.size(); i++){
+			if(userWeightList.get(i).getUser_no() == Integer.parseInt(userNo)){
+				eachUserMatch.setUserId(userWeightList.get(i).getUser());
+			}
+		}
+		eachUserMatch.setUserNo(Integer.parseInt(userNo));
+		eachUserMatch.setCloudNo(Integer.parseInt(epNo));
+		lpMatchResult.add(eachUserMatch);
+	}
 
 	@Override
 	public void run() {
@@ -422,6 +379,7 @@ public class CLPCalculation implements Runnable {
 		CDatabase databaseInstance = new CDatabase();
 		databaseInstance.connectBrokerDatabase();
 		databaseInstance.createTable(NUM_OF_EP);
+		databaseInstance.updateLocationIpTable();
 		databaseInstance.disconnectBrokerDatabase();
 		
 		//

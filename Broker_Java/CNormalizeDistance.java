@@ -13,7 +13,7 @@ public class CNormalizeDistance implements Callable{
 		CDatabase databaseInstance = new CDatabase();
 		databaseInstance.connectBrokerDatabase();
 		ArrayList<ClientData> alClientData = databaseInstance.extractClientData();
-		ArrayList<ServerInfo> alServerInfo = databaseInstance.getServerInfo();
+		ArrayList<ServerInfo> alServerInfo = databaseInstance.getServerInfo();	//여기서, 연결되어있는 서버의 IP addr와 location을 가져온다
 		
 		Iterator it = alClientData.iterator();
 		while(it.hasNext()){
@@ -23,19 +23,12 @@ public class CNormalizeDistance implements Callable{
 			
 			for(int i=0; i<alServerInfo.size(); i++){
 				
-				//locationIP 테이블 업데이트: ip addr와 ep num 매칭 시킬 수 있게
-				databaseInstance.updateLocationIpTable(alServerInfo.get(i).getEpAddr(), i+1);
-			
-				if(i<10){
-					System.out.print("user location: " + clientData.getUserLocation() + ", server location: " + alServerInfo.get(i).getServerLocation());
-				}
-				
 				double dist = IDistanceCalculation.calculateDistance(clientData.getUserLocation(), alServerInfo.get(i).getServerLocation());
-				distances[i] = dist;
+				distances[alServerInfo.get(i).getEpNo()-1] = dist;
 				
-				if(i<10){
-					System.out.println(", distance: " + dist);
-				}
+				System.out.println("user: " + clientData.getUserLocation() + ", server location: " + alServerInfo.get(i).getServerLocation()
+						+ ", ep no.:" + alServerInfo.get(i).getEpNo());
+				System.out.println("current distance array contents: [" + distances[0] + ", " + distances[1] + ", " + distances[2] +"]");
 				
 				//min, max 찾기
 				if(i==0){

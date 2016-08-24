@@ -1,6 +1,7 @@
 import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class CDatabase {
@@ -327,12 +328,18 @@ public class CDatabase {
 
 		try {
 			stmt = brokerConn.createStatement();
-			ResultSet rs = stmt.executeQuery("select ep from server_table;");
+			ResultSet rs = stmt.executeQuery("select ep from server_table;");	//ep의 ip주소 가져오기
 
 			while(rs.next()){
 				ServerInfo serverInfo = new ServerInfo();
 				String epAddr = rs.getString("ep");
-				alServerData.add(serverInfo.mappingIpAddrToLocation(epAddr));
+				
+				//EP의 IP주소로 위치(Location) 알아내서, ServerInfo 객체에 저장
+				serverInfo.mappingIpAddrToLocation(epAddr);
+				//EP의 IP주소로 EP번호 알아내서, ServerInfo 객체에 저장
+				serverInfo.mappingIpAddrToEpNo(epAddr);
+				
+				alServerData.add(serverInfo);
 			}
 
 			rs.close();
@@ -344,6 +351,30 @@ public class CDatabase {
 		}
 		
 		return alServerData;
+	}
+	
+	public int getEpNoWithIp(String ip){
+		
+		int epNo = 0;
+		Statement stmt = null;
+		
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select ep from locationIP where ip = '" + ip +"';");
+
+			while(rs.next()){
+				epNo = Integer.parseInt(rs.getString("ep"));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return epNo;
 	}
 	
 	public String getLocationWithIp(String ip){
@@ -460,6 +491,135 @@ public class CDatabase {
 		return userList;
 	}
 	
+	public int getUserTraffic(String userId){
+
+		int traffic = 0;
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select client_side_traffic from client_table where user = '" + userId + "';");
+
+			while(rs.next()){
+				traffic = Integer.parseInt(rs.getString("client_side_traffic"));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return traffic;
+	}
+
+	public ArrayList<ServerStatus> getServersStatus(HashMap<String , Integer> map, ArrayList<ArrayList<ClientTrafficData>> initUsrsOfClouds){
+
+		ArrayList<ServerStatus> serverStateList = new ArrayList<ServerStatus>();
+		ServerStatus eachServerState = new ServerStatus();
+		int currTraffic = 0;
+		String serverIp = null;
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select ep, server_side_traffic from server_table;");
+
+			while(rs.next()){
+				serverIp = rs.getString("ep");
+				currTraffic = Integer.parseInt(rs.getString("server_side_traffic"));
+				
+				eachServerState.setServerIp(serverIp);
+				eachServerState.setCurrentTraffic(currTraffic);
+				eachServerState.setMaximumTraffic(map.get(serverIp));
+				//epNo
+				int epNo = getEpNoWithIp(serverIp);
+				eachServerState.setEpNo(epNo);
+				//expectedTraffic
+				eachServerState.setExpectedTraffic(epNo, initUsrsOfClouds.get(epNo-1));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return serverStateList;
+	}
+	
+	public double getPrevTotalCloudsTraffic(double currTotalTraffic){
+
+		double prevTotalTraffic = 0;
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select total_traffic from previous_server_traffic;");
+
+			if(rs.next()){
+				prevTotalTraffic = Integer.parseInt(rs.getString("total_traffic"));
+			}else{
+				prevTotalTraffic = currTotalTraffic;
+			}
+/*
+			while(rs.next()){
+				prevTotalTraffic = Integer.parseInt(rs.getString("total_traffic"));
+			}
+*/
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return prevTotalTraffic;
+	}
+	
+	public double getCurrTotalCloudsTraffic(){
+
+		double currTotalTraffic = 0;
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select sum(server_side_traffic) from server_table;");
+
+			while(rs.next()){
+				currTotalTraffic = Integer.parseInt(rs.getString("sum(server_side_traffic)"));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return currTotalTraffic;
+	}
+	
+	public void updatePrevTotalCloudsTraffic(double currTotalTraffic){
+
+		Statement stmt = null;
+		String sql = null;
+		try {
+			stmt = brokerConn.createStatement();
+		    sql = "update previous_server_traffic set total_traffic = " + currTotalTraffic;
+		    stmt.executeUpdate(sql);
+		} catch (SQLException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+	}
+	
 	public void insertNormServerData(String epAddr, double normalizedServerTraffic){
 
 		Statement stmt = null;
@@ -548,16 +708,37 @@ public class CDatabase {
 		return normDistValues;
 	}
 	
-	public void updateLocationIpTable(String epAddr, int epNum){
+	public void updateLocationIpTable(){
 		
 		Statement stmt = null;
 		String sql = null;
 		
 		try {
-		    stmt = brokerConn.createStatement();
-		    sql = "update locationIP set ep = 'ep" + epNum + "' where ip ='" + epAddr + "'"; 
-		    stmt.executeUpdate(sql);
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select ip from locationIP;");
+			
+			int seq=1;
+			while(rs.next()){
+				updateEpNoInLocationIpTable(rs.getString("ip"), seq);
+				seq++;
+			}
+			rs.close();
+			stmt.close();
 
+		} catch (SQLException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+	}
+	
+	public void updateEpNoInLocationIpTable(String serverIpAddr, int seq){
+		
+		Statement stmt = null;
+		String sql = null;
+		try {
+			stmt = brokerConn.createStatement();
+		    sql = "update locationIP set ep=" + seq + " where ip='" + serverIpAddr + "'";
+		    stmt.executeUpdate(sql);
 		} catch (SQLException e) {
 		    // TODO Auto-generated catch block
 		    e.printStackTrace();
