@@ -52,7 +52,11 @@ public class ServerStatus {
 		
 		prevTotalTraffic = databaseInstance.getPrevTotalCloudsTraffic(currTotalTraffic);
 		
-		databaseInstance.updatePrevTotalCloudsTraffic(currTotalTraffic);
+		if(databaseInstance.checkPrevTotalTrafficExisting()){
+			databaseInstance.updatePrevTotalCloudsTraffic(currTotalTraffic);
+		} else {
+			databaseInstance.insertPrevTotalCloudsTraffic(currTotalTraffic);
+		}
 		
 		databaseInstance.disconnectBrokerDatabase();
 		

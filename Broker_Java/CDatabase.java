@@ -518,7 +518,7 @@ public class CDatabase {
 	public ArrayList<ServerStatus> getServersStatus(HashMap<String , Integer> map, ArrayList<ArrayList<ClientTrafficData>> initUsrsOfClouds){
 
 		ArrayList<ServerStatus> serverStateList = new ArrayList<ServerStatus>();
-		ServerStatus eachServerState = new ServerStatus();
+		ServerStatus eachServerState = null;
 		int currTraffic = 0;
 		String serverIp = null;
 		Statement stmt = null;
@@ -528,6 +528,8 @@ public class CDatabase {
 			ResultSet rs = stmt.executeQuery("select ep, server_side_traffic from server_table;");
 
 			while(rs.next()){
+				eachServerState = new ServerStatus();
+				
 				serverIp = rs.getString("ep");
 				currTraffic = Integer.parseInt(rs.getString("server_side_traffic"));
 				
@@ -539,6 +541,8 @@ public class CDatabase {
 				eachServerState.setEpNo(epNo);
 				//expectedTraffic
 				eachServerState.setExpectedTraffic(epNo, initUsrsOfClouds.get(epNo-1));
+				
+				serverStateList.add(eachServerState);
 			}
 
 			rs.close();
@@ -580,6 +584,32 @@ public class CDatabase {
 		}
 
 		return prevTotalTraffic;
+	}
+	
+	public boolean checkPrevTotalTrafficExisting(){
+		boolean totalTrafficExisting = false;
+		
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select total_traffic from previous_server_traffic;");
+
+			if(rs.next()){
+				totalTrafficExisting = true;
+			}else{
+				totalTrafficExisting = false;
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return totalTrafficExisting;
 	}
 	
 	public double getCurrTotalCloudsTraffic(){
@@ -634,6 +664,20 @@ public class CDatabase {
 		}
 	}
 	
+	public void insertPrevTotalCloudsTraffic(double currTotalTraffic){
+
+		Statement stmt = null;
+		
+		try {
+			stmt = brokerConn.createStatement();
+			stmt.executeUpdate("insert into previous_server_traffic values("+currTotalTraffic+");");
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void insertNormDistanceData(String userID, double [] normalizedDistances){
 
 		Statement stmt = null;
@@ -654,6 +698,29 @@ public class CDatabase {
 		    // TODO Auto-generated catch block
 		    e.printStackTrace();
 		}
+	}
+	
+	public double getNormalizedSocialWeightValue(String userId, int epNo){
+		double normalizedValue = 0;
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select * from normalized_distance_table where user = '" + userId + "';");
+
+			while(rs.next()){
+				normalizedValue = Double.parseDouble(rs.getString("ep"+epNo));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return normalizedValue;
 	}
 	
 	public double [] getNormalizedDistanceValues(String userId, int NumOfEp){

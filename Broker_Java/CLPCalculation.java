@@ -50,7 +50,7 @@ public class CLPCalculation implements Runnable {
 			e.printStackTrace();
 		}
 		
-		CLBCalculation lbCalculation = new CLBCalculation();
+		CLBCalculation lbCalculation = new CLBCalculation(userWeightList);
 		lbCalculation.lbMain(lpMatchResult);
 	}
 	
