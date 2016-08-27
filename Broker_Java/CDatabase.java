@@ -377,6 +377,30 @@ public class CDatabase {
 		return epNo;
 	}
 	
+	public String getIpWithEpNo(int epNo){
+		
+		String serverIp = null;
+		Statement stmt = null;
+		
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select ip from locationIP where ep = '" + epNo +"';");
+
+			while(rs.next()){
+				serverIp = rs.getString("ip");
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return serverIp;
+	}
+	
 	public String getLocationWithIp(String ip){
 		
 		Statement stmt = null;
@@ -700,13 +724,61 @@ public class CDatabase {
 		}
 	}
 	
-	public double getNormalizedSocialWeightValue(String userId, int epNo){
+	public double getNormalizedTrafficWeightValue(int epNo){
+		double normalizedValue = 0;
+		Statement stmt = null;
+		
+		String serverIp = getIpWithEpNo(epNo);
+		
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select * from norm_server_table where ep = '" + serverIp + "';");
+
+			while(rs.next()){
+				normalizedValue = Double.parseDouble(rs.getString("server_side_traffic"));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return normalizedValue;
+	}
+	
+	public double getNormalizedDistanceWeightValue(String userId, int epNo){
 		double normalizedValue = 0;
 		Statement stmt = null;
 
 		try {
 			stmt = brokerConn.createStatement();
 			ResultSet rs = stmt.executeQuery("select * from normalized_distance_table where user = '" + userId + "';");
+
+			while(rs.next()){
+				normalizedValue = Double.parseDouble(rs.getString("ep"+epNo));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return normalizedValue;
+	}
+	
+	public double getNormalizedSocialWeightValue(String userId, int epNo){
+		double normalizedValue = 0;
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select * from normalized_social_level_table where user = '" + userId + "';");
 
 			while(rs.next()){
 				normalizedValue = Double.parseDouble(rs.getString("ep"+epNo));
