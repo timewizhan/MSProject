@@ -6,6 +6,12 @@ public class CEntryPoint {
 		System.out.println("EntryPoint Start");
 		
 		CNetworkClient cEP = new CNetworkClient();
-		cEP.start();
+		int keepGoing = cEP.start();
+		
+		if(keepGoing==1){
+			
+		}else if(keepGoing==0){
+			
+		}
 	}
 }
