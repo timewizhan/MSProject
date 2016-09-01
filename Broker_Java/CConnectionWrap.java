@@ -27,7 +27,7 @@ public class CConnectionWrap implements Runnable{
             DataInputStream dis = new DataInputStream(in);	
 		
             // 소켓으로부터 받은 데이터를 출력한다.
-            System.out.println("클라이언트로 부터 받은 메세지 : " + dis.readUTF());
+            System.out.println("Message from Entry Point : " + dis.readUTF());
             dis.close();
             
             /**

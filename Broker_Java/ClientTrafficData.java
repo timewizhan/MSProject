@@ -5,6 +5,15 @@ public class ClientTrafficData {
 	private int userTraffic;
 	private int cloudNo;
 	
+	public ClientTrafficData() {
+	}
+	
+	public ClientTrafficData(ClientTrafficData clientData){
+		this.userId = clientData.getUserId();
+		this.userTraffic = clientData.getUserTraffic();
+		this.cloudNo = clientData.getCloudNo();
+	}
+	
 	public String getUserId() {
 		return userId;
 	}

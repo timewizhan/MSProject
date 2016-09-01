@@ -1,6 +1,6 @@
 /***********************************************************************************************
 EntryPoint의 개수가 달라지면, 코드 상에서 변화가 생겨야 하는 부분
-1. CLPCalculation의 static final int NUM_OF_EP = 3;
+1. Main의 static final int NUM_OF_EP = 3;
 2. CLBCalculation의 생성자 부분에 IP와 Maximum Traffic 매칭 
 3. broker_table DB에 locationIP 테이블 값 수정: 이 떄 여기에 있는 값은 실험하는 데이터센터의 개수와 정확히 일치/동일해야함
      예를 들어 데이터센터의 개수가 3개면 3개에 대한 정보만 있어야함
@@ -22,13 +22,14 @@ future work로 해야할까..
 
 public class CBroker {
 	
+	static final int NUM_OF_EP = 3; // Number of clouds
+	
 	public static void main(String [] args){
 		
-		System.out.println("Broker Start");
-		
-		ThreadPool.GetInstance().execute(new CLPCalculation());
-		
-		CNetworkServer cBroker = new CNetworkServer(); 
-		cBroker.start();
+			System.out.println("Broker Start");
+			
+			ThreadPool.GetInstance().execute(new CLPCalculation());
+			CNetworkServer cBroker = new CNetworkServer(); 
+			cBroker.start();
 	}
 }

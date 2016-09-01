@@ -5,6 +5,7 @@ public class CLBCalculation {
 	
 	HashMap<String , Integer> map;
 	ArrayList<LpMatchResult> lpMatchResult;
+	ArrayList<ArrayList<ClientTrafficData>> prevInitialUsersOfClouds;
 	ArrayList<ArrayList<ClientTrafficData>> initialUsersOfClouds;
 	ArrayList<UserWeight> userWeightList;
 	
@@ -28,19 +29,46 @@ public class CLBCalculation {
 		copyLpMatchResult(lpMatchRes);
 		
 		//process 타입을 결정하는 메소드 : 트래픽 양이 모든 클라우드가 받아들일 수 있는 정도인지 아닌지를 3단계로 나눔
-//		String processType = determineProcessType();
+		String processType = determineProcessType();
 		
-//		if(processType.equals("MINIMUM_TRAFFIC")){
+		if(processType.equals("MINIMUM_TRAFFIC")){
 			//LP만 하고 끝낸다. LB 프로세스 동작 안함
-//		} else if (processType.equals("MEDIUM_TRAFFIC")){
+			System.out.println("MINIMUM_TRAFFIC");
+		} else if (processType.equals("MEDIUM_TRAFFIC")){
+			System.out.println("MEDIUM_TRAFFIC");
 			rematchForLoadBalancing();
-//		} else if (processType.equals("MAXIMUM_TRAFFIC")){
-		//예상트래픽만으로도 이미 모두 가득차거나, 예상트래픽만으로도 이미 모두 넘쳤을때
-			//넘치는 부분에 대해서만 LB한다? ㄴㄴ 말이 안되는듯 이미 최고의 추천임. --> 그대로 둔다. 가 맞는듯.
-		//아직 모두 가득차진 않았을때	
-			//1차적으론 rematchForLoadBalancing을 통해서 모든 클라우드의 예상트래픽이 가용 최대치에 맞춰져야함
-			//그러고 나서 남은 부분은 lp결과에서 추천해주는 곳으로
-//		} 
+		} else if (processType.equals("MAXIMUM_TRAFFIC")){
+			System.out.println("MAXIMUM_TRAFFIC");
+			/**
+			 * 이부분 구현해야함
+			 */
+			//1. 이미 모든 클라우드가 가득찼다  --> 그대로 둔다.
+			//2. 아직 모두 가득차진 않았을때	 --> 남아있는 부분만 load balancing해서 채운다. 모두 가득차면, 나머지는 LP 결과를 따른다.
+		}
+		
+		//broker giver database update
+		updateBrokerGiver();
+		
+		//테이블 초기화
+		resetTables();
+	}
+	
+	public void resetTables(){
+		CDatabase databaseInstance = new CDatabase();
+		databaseInstance.connectBrokerDatabase();
+		
+		String [] del_tables = {"server_table", "client_table", "norm_server_table"};
+		String [] drop_tables = {"normalized_distance_table"};
+ 		
+		for(int i=0; i<del_tables.length; i++){
+			databaseInstance.deleteTable(del_tables[i]);
+		}
+		
+		for(int i=0; i<drop_tables.length; i++){
+			databaseInstance.dropTable(drop_tables[i]);
+		}
+
+		databaseInstance.disconnectBrokerDatabase();
 	}
 	
 	public void copyLpMatchResult(ArrayList<LpMatchResult> lpMatchRes){
@@ -124,7 +152,7 @@ public class CLBCalculation {
 		CDatabase databaseInstance = new CDatabase();
 		databaseInstance.connectBrokerDatabase();
 		
-		serverList = getServerList();
+		serverList = databaseInstance.getServerList();
 		
 		databaseInstance.disconnectBrokerDatabase();
 		
@@ -244,10 +272,9 @@ public class CLBCalculation {
 /////////////////////////////////////////////////////////////////////////////////////////////////		
 		
 		//"어느 클라우드에 매칭된" : 가용 트래픽 보다 초과된 클라우드 
-	/**
-		매치 결과를 디비나 어레이리스트로 가지고 있을텐데 그걸 보고, 가용량을 넘어서는지 안넘어서는지 구분
-		많이 넘어서는 놈 부터 리매치
-	*/	
+		//매치 결과를 디비나 어레이리스트로 가지고 있을텐데 그걸 보고, 가용량을 넘어서는지 안넘어서는지 구분
+		//많이 넘어서는 놈 부터 리매치
+		
 		//"누구를" : 해당 단위 시간 동안 사용량이 가장 적은 유저부터
 		//"몇명을" : 한명의 데이터가 발생시킬 수 있는 예상 트래픽을 계산한 후, LP결과에 의해 매칭된 것(이걸 트래픽으로 계산해야함)에서 몇명의 데이터를 빼야 가용 트래픽 범위 안에 들어서는지 계산하고, 그만큼 뺌
 		//"어디로" : 우선 순위에 따라 옮기되, 목적지의 가용 트래픽을 고려해서 옮김
@@ -412,6 +439,59 @@ public class CLBCalculation {
 		}
 	}
 	
+	private void updateBrokerGiver(){
+	
+		CDatabase databaseInstance = new CDatabase();
+		CDatabase databaseInstance2 = new CDatabase();
+		databaseInstance.connectBrokerGiverDatabase();
+		
+		for(int i=0; i<initialUsersOfClouds.size(); i++){
+			
+			ArrayList<ClientTrafficData> usersOfCloud = initialUsersOfClouds.get(i);
+			
+			for(int j=0; j<usersOfCloud.size(); j++){
+				
+				String userId = usersOfCloud.get(j).getUserId();
+				int cloudNo = usersOfCloud.get(j).getCloudNo();
+				
+				databaseInstance2.connectBrokerDatabase();
+				String ip = databaseInstance2.getIpWithEpNo(cloudNo);
+				String location = databaseInstance2.getLocationWithIp(ip);
+				databaseInstance2.disconnectBrokerDatabase();
+			
+				databaseInstance.updateBrokerGiverTable(userId, cloudNo, ip, location);
+			}
+		}
+		
+		
+		databaseInstance.disconnectBrokerGiverDatabase();
+		
+		/*
+		if(prevInitialUsersOfClouds.size() == 0){
+			
+			//initialUsersOfClouds ArrayList 깊은 복사
+			for(int i=0; i<initialUsersOfClouds.size(); i++){
+				
+				ArrayList<ClientTrafficData> prevUsersOfCloud = initialUsersOfClouds.get(i);
+				ArrayList<ClientTrafficData> currUsersOfCloud = new ArrayList<ClientTrafficData>();
+				
+				for(int j=0; j<prevUsersOfCloud.size(); j++){
+					currUsersOfCloud.add(new ClientTrafficData(prevUsersOfCloud.get(j)));
+				}
+				
+				prevInitialUsersOfClouds.add(currUsersOfCloud);
+			}
+			
+			
+			 여기서 디비 호출해서 업데이트
+			
+ 			
+		} else {
+			
+		}
+		*/
+	}
+	
 	public ArrayList<SurCloudWeight> getCloudHavingMinWeight(double minValue, ArrayList<SurCloudWeight> priorWeight){
 		
 	//	ArrayList<SurCloudWeight> priorWeight = new ArrayList<SurCloudWeight>();
@@ -573,15 +653,15 @@ public class CLBCalculation {
 	public void getMatchedUsersToClouds(){
 		
 		initialUsersOfClouds = new ArrayList<ArrayList<ClientTrafficData>>();
-		for(int i=0; i<CLPCalculation.NUM_OF_EP; i++){
+		for(int i=0; i<CBroker.NUM_OF_EP; i++){
 			initialUsersOfClouds.add(null);
 		}
 		
 		ArrayList<ClientTrafficData> usersOfCloud = null;
 		ClientTrafficData clientTrafficData = null; 
-		int epNo = CLPCalculation.NUM_OF_EP;
+		int epNo = CBroker.NUM_OF_EP;
 		
-		for(int j=0; j<CLPCalculation.NUM_OF_EP; j++){
+		for(int j=0; j<CBroker.NUM_OF_EP; j++){
 			usersOfCloud = new ArrayList<ClientTrafficData>();
 			if(epNo > 0){
 				

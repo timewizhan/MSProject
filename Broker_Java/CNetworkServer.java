@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -11,7 +12,8 @@ public class CNetworkServer {
 
 		try	{
 			ServerSocket serverSocket = new ServerSocket(PORT);
-	
+			
+			int test_count = 0;
 			while(true){
 				Socket socket = serverSocket.accept();
 				ThreadPool.GetInstance().execute(new CConnectionWrap(socket));

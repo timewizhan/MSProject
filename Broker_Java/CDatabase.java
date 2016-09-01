@@ -8,6 +8,7 @@ public class CDatabase {
 
 	Connection epConn = null;
 	Connection brokerConn = null;
+	Connection brokerGiverConn = null;
 	String epUrl = null;
 	
 	public void connectEntryPointDatabase(Socket socket){
@@ -44,10 +45,18 @@ public class CDatabase {
 			ResultSet rs = stmt.executeQuery("select server_side_traffic, cpu_util from server_side_monitor;");
 			connectBrokerDatabase();
 			
-			while(rs.next()){
-				String serverTraffic = rs.getString("server_side_traffic");
-				String cpuUtil = rs.getString("cpu_util");
-				
+			if(rs.next()) {
+
+				do {
+					String serverTraffic = rs.getString("server_side_traffic");
+					String cpuUtil = rs.getString("cpu_util");
+
+					insertServerMonitoredResult(serverTraffic, cpuUtil);
+				} while(rs.next());
+
+			}else{
+				String serverTraffic = "0";
+				String cpuUtil = "0";
 				insertServerMonitoredResult(serverTraffic, cpuUtil);
 			}
 			
@@ -120,7 +129,7 @@ public class CDatabase {
 	//	createDistanceTable(ep_num);
 		createNormDistanceTable(ep_num);
 	//	createNormSocialLevelTable(ep_num);
-		createWeightTable(ep_num);
+	//	createWeightTable(ep_num);
 	}
 	
 	private void createDistanceTable(int ep_num){
@@ -166,6 +175,34 @@ public class CDatabase {
 		} catch (SQLException e) {
 		    // TODO Auto-generated catch block
 		    e.printStackTrace();
+		}
+	}
+	
+	public void deleteTable(String tableName){
+		
+		Statement stmt = null;
+		String sql = null;
+		try {
+		    stmt = brokerConn.createStatement();
+		    sql = "DELETE FROM " + tableName;
+		    stmt.executeUpdate(sql);
+		} catch (SQLException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+	}
+	
+	public void dropTable(String tableName){
+
+		Statement stmt = null;
+		String sql = null;
+		try {
+			stmt = brokerConn.createStatement();
+			sql = "DROP TABLE " + tableName;
+			stmt.executeUpdate(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -905,4 +942,76 @@ public class CDatabase {
 			return null;
 		}
 	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void connectBrokerGiverDatabase(){
+
+		try{
+			Class.forName("com.mysql.jdbc.Driver");  //jdbc 드라이버로 연결하고 
+			brokerGiverConn = DriverManager.getConnection("jdbc:mysql://165.132.122.242:3306/broker2?autoReconnect=true&useSSL=false","root","cclab");
+			System.out.println("Broker Giver Database was connected successfully");
+
+		}catch(ClassNotFoundException cnfe){
+			System.out.println("해당 클래스를 찾을수 없습니다."+cnfe.getMessage());
+		}catch(SQLException se){
+			System.out.println(se.getMessage());
+		}
+	}
+	
+	public void updateBrokerGiverTable(String userId, int cloudNo, String ip, String location){
+		
+		Statement stmt = null;
+		String sql = null;
+		
+	//	String ip = getIp(cloudNo);
+	//	String location = getLocation(ip);
+		
+		try {
+			stmt = brokerGiverConn.createStatement();
+		    sql = "update redirection_table set ep_num='" + cloudNo 
+		    		+ "', ip='" + ip + "', location='" + location + "' where user_id='" + userId + "'";
+		    stmt.executeUpdate(sql);
+		} catch (SQLException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+		
+	}
+	
+	public String getLocation(String ip){
+		String location = null;
+		
+		CDatabase databaseInstance = new CDatabase();
+		databaseInstance.connectBrokerDatabase();
+		
+		location = getLocationWithIp(ip);
+		
+		databaseInstance.disconnectBrokerDatabase();
+		return location;
+	}
+	
+	public String getIp(int epNo){
+		String ip = null;
+		
+		connectBrokerDatabase();
+		
+		ip = getIpWithEpNo(epNo);
+		
+		disconnectBrokerDatabase();
+		
+		return ip;
+	}
+	
+	public void disconnectBrokerGiverDatabase(){
+		
+		try {
+			brokerGiverConn.close();
+			System.out.println("Disconnect Broker Giver database session");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+		
 }

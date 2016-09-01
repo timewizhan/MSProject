@@ -9,28 +9,45 @@ import lpsolve.*;
 public class CLPCalculation implements Runnable {
 
 	//165.132.122.244, 165.132.123.73, localhost
-	static final int NUM_OF_EP = 3; // Number of clouds
+//	static final int NUM_OF_EP = 3; // Number of clouds
 	private int NUM_OF_USERS;
 	ArrayList<UserWeight> userWeightList;
 	ArrayList<LpMatchResult> lpMatchResult;
 	
-	public CLPCalculation(){
-		userWeightList = new ArrayList<UserWeight>();
-		lpMatchResult =  new ArrayList<LpMatchResult>();
-	}
+	public CLPCalculation(){}
 	
 	public void checkRecvComplete(){
-		
-		while(true) {
+		while(true){
+			userWeightList = new ArrayList<UserWeight>();
+			lpMatchResult =  new ArrayList<LpMatchResult>();
 			
-			if(NUM_OF_EP == Counter.GetInstance().getRecvCompletedCount()){
-				System.out.println("all the data was received");
-				break;
+			initializeTables();
+			while(true) {
+
+				if(CBroker.NUM_OF_EP == Counter.GetInstance().getRecvCompletedCount()){
+					System.out.println("all the data was received");
+
+					//Count 값 초기화
+					Counter.GetInstance().setRecvCompletedCountZero();
+					System.out.println(Counter.GetInstance().getRecvCompletedCount());
+					break;
+				}
 			}
+
+			// 사용자와 데이터센터 간의 매칭 알고리즘
+			doMatchAlgorithm();
 		}
+	}
+	
+	private void initializeTables(){
+	
+		//Database에 EP개수 만큼 Column 만들어서 Table 생성
+		CDatabase databaseInstance = new CDatabase();
+		databaseInstance.connectBrokerDatabase();
+		databaseInstance.createTable(CBroker.NUM_OF_EP);
+		databaseInstance.updateLocationIpTable();
+		databaseInstance.disconnectBrokerDatabase();
 		
-		// 사용자와 데이터센터 간의 매칭 알고리즘
-		doMatchAlgorithm();
 	}
 	
 	public void doMatchAlgorithm(){
@@ -67,7 +84,7 @@ public class CLPCalculation implements Runnable {
 		//유저 별로 반복
 		UserWeight userWeight;
 		for(int i=0; i<NUM_OF_USERS; i++){
-			userWeight = new UserWeight(NUM_OF_EP);
+			userWeight = new UserWeight(CBroker.NUM_OF_EP);
 			
 			//유저 아이디
 			userWeight.setUser(userList.get(i).getUserID());
@@ -77,17 +94,17 @@ public class CLPCalculation implements Runnable {
 			
 			//normalized_distance_table에서 user명 이용해서 ep 개수에 맞게 값 추출
 			double NormDistValueArray[];
-			NormDistValueArray = databaseInstance.getNormalizedDistanceValues(userList.get(i).getUserID(), NUM_OF_EP);
+			NormDistValueArray = databaseInstance.getNormalizedDistanceValues(userList.get(i).getUserID(), CBroker.NUM_OF_EP);
 			
 			//normalized_social_level_table에서 user명 이용해서 ep 개수에 맞게 값 추출
 			double NormSocialWeightValueArray[];
-			NormSocialWeightValueArray = databaseInstance.getNormalizedSocialWeightValues(userList.get(i).getUserID(), NUM_OF_EP);
+			NormSocialWeightValueArray = databaseInstance.getNormalizedSocialWeightValues(userList.get(i).getUserID(), CBroker.NUM_OF_EP);
 			
 			//ep개수에 맞게 weight를 줘서 두개의 값을 합침
 			int a = 1;
 			int b = 1;
-			double tmpWeightValues [] = new double [NUM_OF_EP];
-			for(int j=0; j<NUM_OF_EP; j++){
+			double tmpWeightValues [] = new double [CBroker.NUM_OF_EP];
+			for(int j=0; j<CBroker.NUM_OF_EP; j++){
 				tmpWeightValues[j] = a*NormDistValueArray[j] + b*NormSocialWeightValueArray[j];
 			}
 			userWeight.setWeightValues(tmpWeightValues);
@@ -111,7 +128,7 @@ public class CLPCalculation implements Runnable {
 		/* We will build the model row by row
             So we start with creating a model with 0 rows and 2 columns */
 		//Ncol = 2; /* there are two variables in the model */
-		Ncol = NUM_OF_USERS * NUM_OF_EP;
+		Ncol = NUM_OF_USERS * CBroker.NUM_OF_EP;
 
 		/* create space large enough for one row */
 		int[] colno = new int[Ncol];		//colno는 각 변수의 순서를 의미 colno값을 이용해서 어떤 변수(몇 번째 변수)에 접근한 건지 결정할 수 있다. 따라서, 변수 만큼 공간을 할당해줘야하고, 순서(인덱스)를 나타내므로 int
@@ -134,7 +151,7 @@ public class CLPCalculation implements Runnable {
 			int p = 1;
 			for (int i = 0; i < NUM_OF_USERS; i++) {		//user 숫자 만큼 반복
 
-				for (int k = 0; k < NUM_OF_EP; k++) {		//data center 숫자 만큼 반복
+				for (int k = 0; k < CBroker.NUM_OF_EP; k++) {		//data center 숫자 만큼 반복
 
 					String str = "x_";
 					StringBuffer base = new StringBuffer(str);
@@ -159,12 +176,12 @@ public class CLPCalculation implements Runnable {
 			//contraint1 : 각 유저가 다수의 데이터 센터 중에서도 하나에만 매칭 되야하는 조건 : x_11 + x_12 + x_13 <= 1
 
 			j= 0;
-			for (int i= 0; i < NUM_OF_USERS * NUM_OF_EP; i++){
+			for (int i= 0; i < NUM_OF_USERS * CBroker.NUM_OF_EP; i++){
 
 				colno[j] = i + 1;
 				row[j++] = 1;
 
-				if (((i + 1) % NUM_OF_EP) == 0){
+				if (((i + 1) % CBroker.NUM_OF_EP) == 0){
 
 					/* add the row to lpsolve */
 					lp.addConstraintex(j, row, colno, LpSolve.LE, 1);
@@ -178,7 +195,7 @@ public class CLPCalculation implements Runnable {
 		if(ret == 0) {
 
 			j = 0; int p = 1; int tmp = 0;
-			for (int i = 0; i < NUM_OF_EP; i++){
+			for (int i = 0; i < CBroker.NUM_OF_EP; i++){
 
 				tmp = p;
 				for (int k = 0; k < NUM_OF_USERS; k++){
@@ -186,7 +203,7 @@ public class CLPCalculation implements Runnable {
 					colno[j] = tmp;
 					row[j++] = 1;
 
-					tmp = tmp + NUM_OF_EP;
+					tmp = tmp + CBroker.NUM_OF_EP;
 				}
 
 				/* add the row to lpsolve */
@@ -200,7 +217,7 @@ public class CLPCalculation implements Runnable {
 		if(ret == 0) {
 
 			j = 0;
-			for (int i = 0; i < NUM_OF_USERS*NUM_OF_EP; i++){
+			for (int i = 0; i < NUM_OF_USERS*CBroker.NUM_OF_EP; i++){
 				colno[j] = i + 1;
 				row[j++] = 1;
 			}
@@ -213,7 +230,7 @@ public class CLPCalculation implements Runnable {
 
 		if (ret == 0){
 
-			for (int i = 0; i < NUM_OF_USERS * NUM_OF_EP; i++){
+			for (int i = 0; i < NUM_OF_USERS * CBroker.NUM_OF_EP; i++){
 
 				j = 0;
 				colno[j] = i + 1;
@@ -240,21 +257,21 @@ public class CLPCalculation implements Runnable {
 			j = 0;
 			
 			for (int i = 0; i < NUM_OF_USERS; i++){
-       		 for (int p = 0; p < NUM_OF_EP; p++){
+       		 for (int p = 0; p < CBroker.NUM_OF_EP; p++){
 
-   			 	if ((p + 1 % NUM_OF_EP) == 1){
+   			 	if ((p + 1 % CBroker.NUM_OF_EP) == 1){
 
    			 		colno[j] = j + 1;
 						row[j] = userWeightList.get(i).getWeightValues()[0];
 						j++;
 
-   			 	} else if ((p + 1 % NUM_OF_EP) == 2){
+   			 	} else if ((p + 1 % CBroker.NUM_OF_EP) == 2){
 
    			 		colno[j] = j + 1;
 						row[j] = userWeightList.get(i).getWeightValues()[1];
 						j++;
 
-   			 	} else if ((p + 1 % NUM_OF_EP) == 3){
+   			 	} else if ((p + 1 % CBroker.NUM_OF_EP) == 3){
 
 						colno[j] = j + 1;
 						row[j] = userWeightList.get(i).getWeightValues()[2];
@@ -321,37 +338,18 @@ public class CLPCalculation implements Runnable {
 
 			/* we are done now */
 			//test
+			System.out.println();
 			for(int i=0; i<lpMatchResult.size(); i++){
 				System.out.println("ID:" + lpMatchResult.get(i).getUserId()
 						+ ", No.:" + lpMatchResult.get(i).getUserNo()
 						+ ", Cloud No.:" + lpMatchResult.get(i).getCloudNo());
 			}
+			System.out.println();
 		}
 
 		/* clean up such that all used memory by lpsolve is freed */
 		if(lp.getLp() != 0)
 			lp.deleteLp();
-
-
-		/**
-		 * 이 부분에, 그 전 matching과 비교해서 다른건 업데이트 하는 과정이 들어간다
-		 * (Prev 값이랑 다른 것만 추출해서 update_matching_table에 저장)
-		 * 
-		 * Example)
-		 * user랑 EP랑 매칭할때 weight_table에 있는 user, user_no 값에 따라서 매칭 해야한다.
-		 * databaseInstance.InsertUpdateMatchingTable();
-		 * 
-		 * 데이터 읽어와서 벡터에 저장한 다음에 리턴으로 돌려줌
-		 * vector <match_result_data> vecMatchResult = databaseInstance.ExtractMatchResult();
-		 * 
-		 * 돌려주고 나서 prev 테이블 업데이트
-		 * databaseInstance.UpdatePrevMatchingTable(vecMatchResult);
-		 * 
-		 * 데이터베이스 커넥션 끊기
-		 * databaseInstance.DeleteTables();
-		 * databaseInstance.CloseDB(); 
-		 * databaseInstance.~CDatabase();
-		 */
 
 		return(ret);
 	}
@@ -375,14 +373,10 @@ public class CLPCalculation implements Runnable {
 		// TODO Auto-generated method stub
 		System.out.println("LP thread running..");
 		
-		//Database에 EP개수 만큼 Column 만들어서 Table 생성
-		CDatabase databaseInstance = new CDatabase();
-		databaseInstance.connectBrokerDatabase();
-		databaseInstance.createTable(NUM_OF_EP);
-		databaseInstance.updateLocationIpTable();
-		databaseInstance.disconnectBrokerDatabase();
-		
 		//
+
+		
 		checkRecvComplete();
+		System.out.println("end???????????????????????????????????????????");
 	}
 }
