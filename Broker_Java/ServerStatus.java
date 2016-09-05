@@ -7,7 +7,23 @@ public class ServerStatus {
 	private int maximumTraffic;
 	private String serverIp;
 	private int epNo;
+	private int remainTraffic;
+	private double ratioOfTraffic;
 	
+	public double getRatioOfTraffic(){
+		return this.ratioOfTraffic;
+	}
+	
+	public void setRatioOfTraffic(double ratioOfTraffic){
+		this.ratioOfTraffic = ratioOfTraffic;
+	}
+	
+	public int getRemainTraffic(){
+		return remainTraffic;
+	}
+	public void setRemainTraffic(int remainTraffic){
+		this.remainTraffic = remainTraffic;
+	}
 	public int getCurrentTraffic() {
 		return currentTraffic;
 	}
@@ -33,6 +49,7 @@ public class ServerStatus {
 		//현재 예상되는 각 사용자들의 트래픽을 구하기위한,
 		//이전 토탈 트래픽과 현재 토탈 트래픽의 비율
 		double ratioOfTraffic = currTotalTraffic/prevTotalTraffic;
+		setRatioOfTraffic(ratioOfTraffic);
 		
 		//현재 해당 서버에 매칭된 각 유저들의 트래픽 + 비율 => 예상되는 토탈 트래픽
 		int expectedTraffic = 0;
