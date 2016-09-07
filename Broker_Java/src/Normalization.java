@@ -6,16 +6,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.apache.log4j.Logger;
+
 public class Normalization {
 
+	static Logger log = Logger.getLogger(CBroker.class.getName());		//initiate logger
+	
 	public Normalization(){
 
 	}
 
 	public void normalizeFactors(){
 
-		System.out.println("normalization start");
-
+		log.info("Normalization Start");
+		
 		Set<Future<Integer>> set = new HashSet<Future<Integer>>();
 
 		//set to normalize server traffic 
@@ -53,6 +57,8 @@ public class Normalization {
 				e.printStackTrace();
 			}
 		}
+		
+		log.info("Normalization Of All Factors Were Done \r\n");
 	}
 /*
 	private void normalizeServerTraffic(){

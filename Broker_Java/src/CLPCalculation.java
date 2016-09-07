@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import lpsolve.*;
 
 public class CLPCalculation implements Runnable {
 
+	static Logger log = Logger.getLogger(CBroker.class.getName());		//initiate logger
 	//165.132.122.244, 165.132.123.73, localhost
 //	static final int NUM_OF_EP = 3; // Number of clouds
 	private int NUM_OF_USERS;
@@ -17,19 +20,31 @@ public class CLPCalculation implements Runnable {
 	public CLPCalculation(){}
 	
 	public void checkRecvComplete(){
+		
+		log.info("check the number of receiving monitored data \r\n");
+		
 		while(true){
+			log.info("****************************************************************************************");
+			log.info("********************************* Broker routine START *********************************");
+			log.info("**************************************************************************************** \r\n");
+			
 			userWeightList = new ArrayList<UserWeight>();
 			lpMatchResult =  new ArrayList<LpMatchResult>();
 			
+			log.info("Initialize dynamic table (normalized_distance_table) \r\n");
 			initializeTables();
+			
 			while(true) {
-
+				
 				if(CBroker.NUM_OF_EP == Counter.GetInstance().getRecvCompletedCount()){
-					System.out.println("all the data was received");
-
+					
+					log.debug("# All The Monitored Data Was Received");
+					
 					//Count 값 초기화
 					Counter.GetInstance().setRecvCompletedCountZero();
-					System.out.println(Counter.GetInstance().getRecvCompletedCount());
+					log.debug("# SET EP CONNECTIION COUNTER ZERO \r\n");
+					
+				//	System.out.println(Counter.GetInstance().getRecvCompletedCount());
 					break;
 				}
 			}
@@ -52,6 +67,7 @@ public class CLPCalculation implements Runnable {
 	
 	public void doMatchAlgorithm(){
 		
+		log.info("[doMatchAlgorithm method] - Start \r\n");
 		//각 팩터(Factors: Server Traffic, Distance, Social Level, Cost) 정규화
 		Normalization norm = new Normalization();
 		norm.normalizeFactors();
@@ -69,9 +85,13 @@ public class CLPCalculation implements Runnable {
 		
 		CLBCalculation lbCalculation = new CLBCalculation(userWeightList);
 		lbCalculation.lbMain(lpMatchResult);
+		
+		log.info("[doMatchAlgorithm method] - End \r\n");
 	}
 	
 	public void calculateWeight(){
+		
+		log.info("[calculateWeight method] - Start");
 		
 		//유저 리스트 읽어오기 client_table에서
 		CDatabase databaseInstance = new CDatabase();
@@ -80,6 +100,8 @@ public class CLPCalculation implements Runnable {
 		//유저 수 멤버 변수에 저장
 		ArrayList<ClientData> userList = databaseInstance.getUserList();
 		NUM_OF_USERS = userList.size();
+		
+		log.debug("	* number of user : " + NUM_OF_USERS);
 		
 		//유저 별로 반복
 		UserWeight userWeight;
@@ -112,6 +134,8 @@ public class CLPCalculation implements Runnable {
 		}
 
 		databaseInstance.disconnectBrokerDatabase();
+		
+		log.info("[calculateWeight method] - End \r\n");
 	}
 	
 	public void getWeight() {
@@ -119,7 +143,9 @@ public class CLPCalculation implements Runnable {
 	}
 	
 	public int calculateLP() throws LpSolveException{
-
+		
+		log.info("[calculateLP method] - Start");
+		
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//초기화
 		LpSolve lp;
@@ -310,16 +336,16 @@ public class CLPCalculation implements Runnable {
 			/* a solution is calculated, now lets get some results */
 
 			/* objective value */
-			System.out.println("Objective value: " + lp.getObjective());
+		//	System.out.println("Objective value: " + lp.getObjective());
 
 			/* variable values */
 			lp.getVariables(row);
-			for(j = 0; j < Ncol; j++)
-				System.out.println(lp.getColName(j + 1) + ": " + row[j]);
+		//	for(j = 0; j < Ncol; j++)
+		//		System.out.println(lp.getColName(j + 1) + ": " + row[j]);
 
 			//1인거만 뽑자
-			System.out.println("");
-			System.out.println("[elements over 1]");
+		//	System.out.println("");
+		//	System.out.println("[elements over 1]");
 			for (j = 0; j < Ncol; j++){
 				if (row[j] > 0){
 					
@@ -329,7 +355,7 @@ public class CLPCalculation implements Runnable {
 
 					String userNo = fullString.substring(2, stringLength-1);					//앞쪽에서 "x_" 다음부터, 뒤쪽에서 Data center를 의미하는 한자리 숫자 앞까지
 					String epNo = fullString.substring(stringLength-1, stringLength);			//제일 끝자리 한자리만
-					System.out.println("User number: " + userNo + ", EP number: " + epNo);
+				//	log.debug(" - User number: " + userNo + ", EP number: " + epNo);
 
 					//user id, user no, match result를 ArrayList에 추가
 					makeLpMatchList(userNo, epNo);
@@ -340,7 +366,7 @@ public class CLPCalculation implements Runnable {
 			//test
 			System.out.println();
 			for(int i=0; i<lpMatchResult.size(); i++){
-				System.out.println("ID:" + lpMatchResult.get(i).getUserId()
+				log.debug("	* ID:" + lpMatchResult.get(i).getUserId()
 						+ ", No.:" + lpMatchResult.get(i).getUserNo()
 						+ ", Cloud No.:" + lpMatchResult.get(i).getCloudNo());
 			}
@@ -351,6 +377,8 @@ public class CLPCalculation implements Runnable {
 		if(lp.getLp() != 0)
 			lp.deleteLp();
 
+		log.info("[calculateLP method] - End \r\n");
+		
 		return(ret);
 	}
 	
@@ -371,12 +399,10 @@ public class CLPCalculation implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		System.out.println("LP thread running..");
-		
-		//
-
-		
+		log.info("LP Thread is Running Now..");
+				
 		checkRecvComplete();
-		System.out.println("end???????????????????????????????????????????");
+		
+		log.info("=================== END BROKER =================== \r\n");
 	}
 }

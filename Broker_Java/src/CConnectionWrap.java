@@ -5,8 +5,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import org.apache.log4j.Logger;
+
 public class CConnectionWrap implements Runnable{
 
+	static Logger log = Logger.getLogger(CBroker.class.getName());
 	private Socket socket = null;
 	
 	public CConnectionWrap (Socket socket){
@@ -27,7 +30,8 @@ public class CConnectionWrap implements Runnable{
             DataInputStream dis = new DataInputStream(in);	
 		
             // 소켓으로부터 받은 데이터를 출력한다.
-            System.out.println("Message from Entry Point : " + dis.readUTF());
+            log.info("	* Message from Entry Point : " + dis.readUTF());
+      //    System.out.println("Message from Entry Point : " + dis.readUTF());
             dis.close();
             
             /**
@@ -42,7 +46,8 @@ public class CConnectionWrap implements Runnable{
             
            // Counter.addRecvCompletedCount();
             Counter.GetInstance().addRecvCompletedCount();
-            System.out.println(Counter.GetInstance().getRecvCompletedCount());
+            log.info("	* Number of Entry Point Receving Data Completely : " + Counter.GetInstance().getRecvCompletedCount());
+        //  System.out.println(Counter.GetInstance().getRecvCompletedCount());
             
             //Monitoring 결과 다 받았다고 EP에게 메세지 전송
             // 소켓의 출력 스트림을 얻는다
@@ -55,7 +60,7 @@ public class CConnectionWrap implements Runnable{
  			
  		//	dos.close();
             
-            System.out.println("연결을 종료합니다.");
+            log.info("# EP SOCKET CONNECTION CLOSED");
             socket.close();
             
 		} catch (IOException e) {

@@ -3,13 +3,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.Logger;
+
 public class CNormalizeTraffic implements Callable {
 
+	static Logger log = Logger.getLogger(CBroker.class.getName());		//initiate logger
+	
 	@Override
 	public Object call() throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("normalization of server traffic start");
-
+		
+		log.debug("Normalization of Server Traffic Start");
+		
 		CDatabase databaseInstance = new CDatabase();
 		databaseInstance.connectBrokerDatabase();
 		ArrayList<ServerData> alServerData = databaseInstance.extractServerData();
@@ -24,7 +29,8 @@ public class CNormalizeTraffic implements Callable {
 			databaseInstance.insertNormServerData(serverData.getEpAddr(), normalizedValue);
 		}
 		
-		System.out.println("normalization of server traffic was done");
+		log.debug("Normalization of Server Traffic Was Done");
+
 		return null;
 	}
 

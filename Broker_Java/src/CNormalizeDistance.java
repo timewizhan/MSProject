@@ -3,13 +3,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.Logger;
+
 public class CNormalizeDistance implements Callable{
 
+	static Logger log = Logger.getLogger(CBroker.class.getName());	
+	
 	@Override
 	public Object call() throws Exception {
-		// TODO Auto-generated method stub
-		System.out.println("normalization of distance start");
-
+		// TODO Auto-generated method stub\
+		log.debug("Normalization of Distance Start");
+		
 		CDatabase databaseInstance = new CDatabase();
 		databaseInstance.connectBrokerDatabase();
 		ArrayList<ClientData> alClientData = databaseInstance.extractClientData();
@@ -26,9 +30,10 @@ public class CNormalizeDistance implements Callable{
 				double dist = IDistanceCalculation.calculateDistance(clientData.getUserLocation(), alServerInfo.get(i).getServerLocation());
 				distances[alServerInfo.get(i).getEpNo()-1] = dist;
 				
-				System.out.println("user: " + clientData.getUserLocation() + ", server location: " + alServerInfo.get(i).getServerLocation()
+				log.debug("	* user: " + clientData.getUserLocation() + ", server location: " + alServerInfo.get(i).getServerLocation()
 						+ ", ep no.:" + alServerInfo.get(i).getEpNo());
-				System.out.println("current distance array contents: [" + distances[0] + ", " + distances[1] + ", " + distances[2] +"]");
+				
+				
 				
 				//min, max Ã£±â
 				if(i==0){
@@ -42,6 +47,8 @@ public class CNormalizeDistance implements Callable{
 					if(ClientData.maxDistance <= dist)
 						ClientData.maxDistance = dist;
 				}
+				
+				log.debug("	* current distance array contents: [" + distances[0] + ", " + distances[1] + ", " + distances[2] +"]");
 			}
 			
 			double [] normalizedDistances = new double [alServerInfo.size()];
@@ -52,11 +59,15 @@ public class CNormalizeDistance implements Callable{
 				normalizedDistances[i] = normalizedValue;
 			}
 			
+			log.debug("	* current distance array contents (normalized): [" + normalizedDistances[0] + ", " + normalizedDistances[1] + ", " + normalizedDistances[2] +"]");
+			
 			databaseInstance.insertNormDistanceData(clientData.getUserID(), normalizedDistances);
 		}
 		
-		System.out.println("normalization of distance was done");
+		log.debug("Normalization of Distance Was Done");
+		
 		databaseInstance.disconnectBrokerDatabase();
+		
 		return null;
 	}
 
