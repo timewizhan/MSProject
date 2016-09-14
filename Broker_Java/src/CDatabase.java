@@ -262,7 +262,7 @@ public class CDatabase {
 		
 		try {
 			stmt = brokerConn.createStatement();
-			stmt.executeUpdate("insert into client_table values('" + user + "','" + location + "'," + Integer.parseInt(cst) + ");");
+			stmt.executeUpdate("insert into client_table (user, location, client_side_traffic) values('" + user + "','" + location + "'," + Integer.parseInt(cst) + ");");
 			stmt.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -453,12 +453,15 @@ public class CDatabase {
 		try {
 			stmt = brokerConn.createStatement();
 			ResultSet rs = stmt.executeQuery("select state from locationIP where ip = '" + ip +"';");
-
-			while(rs.next()){
-				
-				location = rs.getString("state");
+			
+			if(rs.next()){
+				do{
+					location = rs.getString("state");
+				} while(rs.next());
+			}else{
+				log.info("---------------------------------------------------------------------locationIP 테이블에 "+ip+"에 대한 정보가 없음");
 			}
-
+			
 			rs.close();
 			stmt.close();
 
@@ -488,7 +491,7 @@ public class CDatabase {
 			}
 			
 			if(rsCount==0)
-				System.out.println("-------------"+location+"에 대한 위도/경도 정보가 없음");
+				log.info("---------------------------------------------------------------------"+location+"에 대한 위도/경도 정보가 없음");
 
 			rs.close();
 			stmt.close();
@@ -992,7 +995,10 @@ public class CDatabase {
 		    stmt.executeUpdate(sql);
 		} catch (SQLException e) {
 		    // TODO Auto-generated catch block
-		    e.printStackTrace();
+			log.info("CDatabase.updateBrokerGiverTable() SQLException Error!!!!!!");
+		//	log.info("해당 유저가 Broker Giver의 Redirection_table에 있는지 확인 요망!!!!!!!");
+		//	log.error("CDatabase.updateBrokerGiverTable() SQLException Error! ", e);
+		//	e.printStackTrace();
 		}
 		
 	}

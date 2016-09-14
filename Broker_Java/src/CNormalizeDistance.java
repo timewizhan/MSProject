@@ -30,7 +30,7 @@ public class CNormalizeDistance implements Callable{
 				double dist = IDistanceCalculation.calculateDistance(clientData.getUserLocation(), alServerInfo.get(i).getServerLocation());
 				distances[alServerInfo.get(i).getEpNo()-1] = dist;
 				
-				log.debug("	* user: " + clientData.getUserLocation() + ", server location: " + alServerInfo.get(i).getServerLocation()
+				log.debug(" 	* user id:" + clientData.getUserID() + ", user location: " + clientData.getUserLocation() + ", server location: " + alServerInfo.get(i).getServerLocation()
 						+ ", ep no.:" + alServerInfo.get(i).getEpNo());
 				
 				
@@ -59,8 +59,7 @@ public class CNormalizeDistance implements Callable{
 				normalizedDistances[i] = normalizedValue;
 			}
 			
-			log.debug("	* current distance array contents (normalized): [" + normalizedDistances[0] + ", " + normalizedDistances[1] + ", " + normalizedDistances[2] +"]");
-			
+			log.debug("	* current distance array contents (normalized): [" + normalizedDistances[0] + ", " + normalizedDistances[1] + ", " + normalizedDistances[2] +"] \r\n");
 			databaseInstance.insertNormDistanceData(clientData.getUserID(), normalizedDistances);
 		}
 		

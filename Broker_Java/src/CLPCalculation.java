@@ -102,7 +102,7 @@ public class CLPCalculation implements Runnable {
 		NUM_OF_USERS = userList.size();
 		
 		log.debug("	* number of user : " + NUM_OF_USERS);
-		
+		log.debug("	----------------------------------------------------------------------");
 		//유저 별로 반복
 		UserWeight userWeight;
 		for(int i=0; i<NUM_OF_USERS; i++){
@@ -127,11 +127,14 @@ public class CLPCalculation implements Runnable {
 			int b = 1;
 			double tmpWeightValues [] = new double [CBroker.NUM_OF_EP];
 			for(int j=0; j<CBroker.NUM_OF_EP; j++){
+				log.debug("	user id : " + userList.get(i).getUserID() + ", norm dist (ep"+ (int)(j+1) + ") : " + NormDistValueArray[j] 
+						+ ", norm social weight (ep" + (int)(j+1) + ") :" + NormSocialWeightValueArray[j]);
 				tmpWeightValues[j] = a*NormDistValueArray[j] + b*NormSocialWeightValueArray[j];
 			}
 			userWeight.setWeightValues(tmpWeightValues);
 			userWeightList.add(userWeight);
 		}
+		log.debug("	----------------------------------------------------------------------");
 
 		databaseInstance.disconnectBrokerDatabase();
 		
