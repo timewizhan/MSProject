@@ -13,12 +13,13 @@ import org.json.simple.JSONObject;
 
 public class CNetworkClient {
 
-	private static final String BROKER_IP = "165.132.120.144";
+	private static final String BROKER_IP = "165.132.122.243";
 	private static final int BROKER_PORT = 3333;
 
 	private static final String SERVICE_SERVER_IP = "127.0.0.1";
 	private static final int SERVICE_SERVER_PORT = 7777;
 
+//	public void start(){
 	public int start(){
 
 		System.out.println("Starting EntryPoint...");
@@ -108,7 +109,7 @@ public class CNetworkClient {
 			DataOutputStream dos = new DataOutputStream(out);
 
 			// 원격 소켓(remote socket)에 데이터를 보낸다
-			dos.writeUTF("[NOTICE] Test message1 from BROKER");
+			dos.writeUTF("Do extracting monitored data");
 			System.out.println("A message was sent");
 
 			//dis.close();
