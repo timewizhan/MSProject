@@ -123,8 +123,8 @@ public class CLPCalculation implements Runnable {
 			NormSocialWeightValueArray = databaseInstance.getNormalizedSocialWeightValues(userList.get(i).getUserID(), CBroker.NUM_OF_EP);
 			
 			//ep개수에 맞게 weight를 줘서 두개의 값을 합침
-			int a = 1;
-			int b = 1;
+			int a = 1;	//distance weight
+			int b = 0;	//social weight
 			double tmpWeightValues [] = new double [CBroker.NUM_OF_EP];
 			for(int j=0; j<CBroker.NUM_OF_EP; j++){
 				log.debug("	user id : " + userList.get(i).getUserID() + ", norm dist (ep"+ (int)(j+1) + ") : " + NormDistValueArray[j] 
