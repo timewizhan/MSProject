@@ -77,3 +77,12 @@ class Timer:
 
 	def getCurrentDay(self):
 		return self.botDate.getDay()
+
+	def getWaitTimeForNextHour(self):
+		nowDateTime = datetime.now()
+
+		compareMinute = 60 - nowDateTime.minute
+		compareSecond = 60 - nowDateTime.second
+
+		waitTimeInSecond = (compareMinute * 60) + compareSecond
+		return waitTimeInSecond

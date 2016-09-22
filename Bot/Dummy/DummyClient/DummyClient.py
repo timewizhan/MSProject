@@ -29,7 +29,7 @@ class NetworkConnection:
 		return SUCCESS
 
 	def sendMsg(self, msg):
-		return self.socketToConnect.sendall(msg)
+		return self.socketToConnect.sendall(msg + "\r\n")
 
 	def receiveMsg(self):
 		return self.socketToConnect.recv(self.MSG_BUF)
@@ -57,8 +57,8 @@ class DummyBotProcess:
 			threshold value is 600
 		'''
 
-		TIMECOUNT_THRESHOLD = 600
-		timeCount = 1
+		
+		Count = 0
 		
 		JSON_FILE_NAME = "json.txt"
 		currentPath = os.getcwd()
@@ -78,19 +78,15 @@ class DummyBotProcess:
 			ret = self.networkConnection.sendMsg(self.readData)
 			
 			ret = self.networkConnection.receiveMsg()
-			print ret
+						
 			if ret < 1:
+                                print "ERROR"                                
 				continue
 
-			if timeCount > TIMECOUNT_THRESHOLD:
-				timeCount = 1
-			else:
-				timeCount *= 2
-
-			self.networkConnection.destoryConnection()
-
-			print "[Info] Wait for %d seconds" % timeCount
-			time.sleep(timeCount)
+                        Count = Count + 1
+                        print ret + str(Count)
+                        
+			self.networkConnection.destoryConnection()			
 
 def fn_process(*argv):
 	serverIP 			= argv[0]

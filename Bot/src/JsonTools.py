@@ -20,9 +20,3 @@ class JsonParser:
 	def getValue(self, key):
 		jsonObject = self.getJsonObject()
 		return jsonObject[key]
-
-
-	
-
-
-

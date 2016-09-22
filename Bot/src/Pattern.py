@@ -1,10 +1,10 @@
-#from DataBase import *
 from Structure import *
 from Network import *
+from Log import *
 import random
 import pdb
 
-class AbstractPattern:
+class AbstractPattern:	
 	TOTAL_TIME_COUNT = 24
 	INIT_COUNT = 0
 
@@ -18,9 +18,11 @@ class AbstractPattern:
 		pass
 		
 class TimePattern(AbstractPattern):
+	MAX_TWEET_NUM = 150
+
 	def __init__(self, userID):
 		self.initialize()
-		self.userID = userID
+		self.userID = userID		
 
 		self.jobCountByTimeList = []
 		for i in range(0, self.TOTAL_TIME_COUNT):
@@ -30,35 +32,41 @@ class TimePattern(AbstractPattern):
 		self.deinitailize()
 
 	def startToMakePattern(self):
-			return self.startToMakeTimePattern()
+		Log.debug("=============================================")
+		Log.debug("=========== Generate Time Pattern ===========")
+		Log.debug("=============================================")
+
+		return self.startToMakeTimePattern()
 
 	def startToMakeTimePattern(self):
-		writtenTimeHourList = self.getAllDataFromDataBase()
-		if len(writtenTimeHourList) == 0:
+		writtenNumInHouList = self.getAllDataFromDataBase()
+		if not writtenNumInHouList:
 			return
-		
-		self.generalizeAllDataAsOneDay(writtenTimeHourList)
+
+		self.generalizeAllDataAsOneDay(writtenNumInHouList)
 		return self.getWorkCountByEachHour()
 
 	def getAllDataFromDataBase(self):
-		sql = "SELECT \"TweetTime\" FROM public.\"UserProperty\" WHERE \"UserName\"=\'" + self.userID +"\'"
+		sql = "SELECT \"TweetTime\" FROM public.\"UserProperty\" WHERE \"UserName\"=\'" + self.userID + "\'"
 
 		DBPSServer = DBPoolServer()
 		recvFromServer = DBPSServer.startNetworkingWithData(sql)
-		del DBPSServer
+		DBPSServer.closeConnection()
 
-		datalist = recvFromServer.split()
+		dateList = recvFromServer.split()
 		hourList = []
-		for i in range(0, len(datalist)):
-			timevaluelist = datalist[i].split(':')
-			hourList.append(int(timevaluelist[0]))
-		
+		for i in range(0, len(dateList)):
+			if i % 2 == 0:
+				continue
+				
+			timeList = dateList[i].split(':')
+			hourList.append(int(timeList[0]))
+
 		return hourList
 
-	def generalizeAllDataAsOneDay(self, writtenTimeHourList):
-		lengthOfWrittenTimeHourList = len(writtenTimeHourList)
-		for i in range(0, lengthOfWrittenTimeHourList):
-			hourValue = writtenTimeHourList[i]
+	def generalizeAllDataAsOneDay(self, writtenNumInHourList):
+		for i in range(0, len(writtenNumInHourList)):
+			hourValue = writtenNumInHourList[i]
 
 			if not self.checkProperHourValue(hourValue):
 				continue
@@ -74,45 +82,34 @@ class TimePattern(AbstractPattern):
 		self.jobCountByTimeList[hourValue] += 1
 
 	def getWorkCountByEachHour(self):
-		totalWrittenCount = self.getTotalWrittenCountInList()
+		totalWrittenNum = self.getTotalWrittenCountInList()
 		
-		countlistToWorkInOneDay = []
+		writtenNumInOneDayList = []
 		for selectedTime in range(0, self.TOTAL_TIME_COUNT):
-			writtenCount 	= self.getWrittenCountBySelectedTime(totalWrittenCount, selectedTime)
-			randomCount 	= self.getWrittenValueByRandom(writtenCount)
-			finalCount 		= self.getWrittenValueByRatio(totalWrittenCount, selectedTime, randomCount)
+			finalWrittenNum = self.getWrittenValueByRatio(totalWrittenNum, selectedTime)
 
-			countlistToWorkInOneDay.append(finalCount)
+			writtenNumInOneDayList.append(finalWrittenNum)
 
-		return countlistToWorkInOneDay
+		return writtenNumInOneDayList
 
 	def getTotalWrittenCountInList(self):
-		totalValue = 0
-		for i in range(0, self.TOTAL_TIME_COUNT):	
-			totalValue += self.jobCountByTimeList[i]
+		sql = "SELECT COUNT(\"TweetTime\") FROM public.\"UserProperty\" WHERE \"UserName\"=\'" + self.userID + "\'"
 
-		return totalValue
+		DBPSServer = DBPoolServer()
+		recvFromServer = DBPSServer.startNetworkingWithData(sql)
+		del DBPSServer
 
-	def getWrittenCountBySelectedTime(self, totalWrittenCount, selectedTime):
-		TOTAL_MINUTE_COUNT = 60
+		return int(recvFromServer)
 
+	def getWrittenValueByRatio(self, totalWrittenNum, selectedTime):
 		selectedTimeCount = self.jobCountByTimeList[selectedTime]
-		firstValue = (selectedTimeCount * TOTAL_MINUTE_COUNT) / totalWrittenCount
-		return int(firstValue)
-
-	def getWrittenValueByRandom(self, countValue):
-		if countValue == 0:
-			return countValue
-
-		return random.randrange(1, countValue + 1)
-
-	def getWrittenValueByRatio(self, totalWrittenCount, selectedTime, countValue):
-		selectedTimeCount = self.jobCountByTimeList[selectedTime]
-		selectedTimeRatio = (selectedTimeCount * 100/ totalWrittenCount)
+		selectedTimeRatio = float(selectedTimeCount) / float(totalWrittenNum) * float(self.MAX_TWEET_NUM)
+		Log.debug("Total written num in [" + str(selectedTime) + "]: " + str(selectedTimeCount) + "/" + str(int(round(selectedTimeRatio))))
 		return int(round(selectedTimeRatio))
 
-
 class BehaviorPattern(AbstractPattern):
+	RW_RATIO = 5
+
 	WORK_FOR_ME 	= 1
 	WORK_FOR_YOU 	= 2
 
@@ -121,7 +118,6 @@ class BehaviorPattern(AbstractPattern):
 
 	MSG_WRITE 		= 1
 	MSG_REPLY 		= 2
-	MSG_LIKE 		= 3
 	MSG_NOTHING		= 0
 
 	def __init__(self, userID):
@@ -131,122 +127,173 @@ class BehaviorPattern(AbstractPattern):
 	def __del__(self):
 		self.deinitailize()
 
-	def startToMakeBehaviorPattern(self, countlistToWorkInOneDay):
-		if len(countlistToWorkInOneDay) == 0:
+	def startToMakeBehaviorPattern(self, writtenNumInOneDay):
+		if not writtenNumInOneDay:
 			return
 
-		return self.decideBehaviorByEachHour(countlistToWorkInOneDay)
+		Log.debug("=============================================")
+		Log.debug("========= Generate Behavior Pattern =========")
+		Log.debug("=============================================")
 
-	def decideBehaviorByEachHour(self, countlistToWorkInOneDay):
+		return self.decideBehaviorByEachHour(writtenNumInOneDay)
+
+	def decideBehaviorByEachHour(self, writtenNumInOneDay):				
+		myselfRatio, friendRatio = self.getMFRatio()
+		
+		friendInfoList = self.getAllDataFromDataBase()
+		
 		workListInOneDay = []
-		#pdb.set_trace()
-
-		friendList = self.getAllDataFromDataBase()
 
 		for selectedHour in range(0, self.TOTAL_TIME_COUNT):
-			countToWork = countlistToWorkInOneDay[selectedHour]
+			writtenNumInHour = writtenNumInOneDay[selectedHour]
 
-			friendListByRatio = self.getFriendByRatio(friendList)
-			workListInHour = self.decideWorkByBehaviorCount(countToWork, friendListByRatio)
-			workListInOneDay.append(workListInHour)
+			finalWriteMyself = int(round(writtenNumInHour * myselfRatio))
+			writeFriend = float(round(writtenNumInHour * friendRatio))
+
+			#assume that read/write ratio = 70 / 30	
+			readFriend = float(round(writtenNumInHour * self.RW_RATIO))
+
+			finalWriteFriend, wFriendList = self.getFinalOperationFriend(writeFriend, friendInfoList)
+			finalReadFriend, rFriendList = self.getFinalOperationFriend(readFriend, friendInfoList)						
+
+			Log.debug("Final write myself: " + str(finalWriteMyself))
+			Log.debug("Final write friend: " + str(writeFriend) + "/" + str(finalWriteFriend))
+			Log.debug("Final read friend: " + str(readFriend) + "/" + str(finalReadFriend))
+
+			operationList = []
+			if finalWriteMyself != 0:
+				operationList.append("MW")
+
+			if finalWriteFriend != 0:
+				operationList.append("FW")
+
+			if finalReadFriend != 0:
+				operationList.append("FR")
+
+			workInHour = []
+			while(operationList):
+				toWork = []			
+
+				operationIndex = random.randrange(0, len(operationList))
+				operationValue = operationList[operationIndex]
+
+				if operationValue == "MW":
+					toWork.append(self.WORK_FOR_ME)
+					toWork.append(self.WRITE_TYPE)
+					toWork.append("")
+					toWork.append(self.MSG_WRITE)
+
+					finalWriteMyself -= 1
+
+					if finalWriteMyself == 0:
+						operationList.pop(operationIndex)
+
+				if operationValue == "FW":
+					friendIndex = random.randrange(0, len(wFriendList))
+					friendName = wFriendList[friendIndex].getName()
+
+					toWork.append(self.WORK_FOR_YOU)
+					toWork.append(self.WRITE_TYPE)
+					toWork.append(friendName)
+					toWork.append(self.MSG_REPLY)
+
+					wFriendList[friendIndex].decreaseNumOperation()
+
+					if wFriendList[friendIndex].getNumOperation() == 0:
+						wFriendList.pop(friendIndex)
+
+					finalWriteFriend -= 1
+
+					if finalWriteFriend == 0:
+						operationList.pop(operationIndex)
+
+				if operationValue == "FR":
+					friendIndex = random.randrange(0, len(rFriendList))
+					friendName = rFriendList[friendIndex].getName()
+
+					toWork.append(self.WORK_FOR_YOU)
+					toWork.append(self.READ_TYPE)
+					toWork.append(friendName)
+					toWork.append(self.MSG_NOTHING)
+
+					rFriendList[friendIndex].decreaseNumOperation()
+
+					if rFriendList[friendIndex].getNumOperation() == 0:
+						rFriendList.pop(friendIndex)
+
+					finalReadFriend -= 1
+
+					if finalReadFriend == 0:
+						operationList.pop(operationIndex)
+
+				workInHour.append(toWork)
+
+			workListInOneDay.append(workInHour)			
+			Log.debug("Behavior in [" + str(selectedHour) + "] is generated")
+			
+			time.sleep(1)
 
 		return workListInOneDay
 
-	def decideWorkByBehaviorCount(self, countToWork, friendListByRatio):
-		jobToWorkInHour = []
+	def getMFRatio(self):
+		numData = self.getNumDataFromDataBase()
+		myselfRatio = float(numData[0])
+		friendRatio = float(numData[1])
 
-		for i in range(0, countToWork):
-			jobToWork = []
+		return (myselfRatio, friendRatio)
 
-			forType = self.selectBetweenMeAndYou()
-			jobToWork.append(forType)
-
-			forRWType = self.selectBetweenReadAndWrite()
-			jobToWork.append(forRWType)
-
-			nameToWork = ""
-			if forType == self.WORK_FOR_YOU:
-				nameToWork = self.selectFriendInRatioList(friendListByRatio)
-				jobToWork.append(nameToWork)
-			else:
-				jobToWork.append(nameToWork)
-
-			if forRWType == self.WRITE_TYPE:
-				writeType = self.selectAmongWriteType()
-				jobToWork.append(writeType)				
-			else:
-				jobToWork.append(self.MSG_NOTHING)
-
-			jobToWorkInHour.append(jobToWork)
-
-		return jobToWorkInHour
-
-	def getFriendByRatio(self, friendList):
-		lengthOfFriendList = len(friendList)
-		if lengthOfFriendList < 1:
-			return
-
-		DEFAULT_RATIO = 12
-		ratioValue = int(round((lengthOfFriendList * 12) / 100))
-		return self.selectFriendByRandom(friendList, ratioValue)
-
-	def selectFriendByRandom(self, friendList, ratioValue):
-		randomMaxValue = len(friendList)
-
-		selectedFriendList = []
-		for i in range(1, ratioValue):
-			randomValue = random.randrange(1, randomMaxValue)
-
-			friendName = friendList[randomValue]
-			selectedFriendList.append(friendName)
-
-		return selectedFriendList
-
-	def getAllDataFromDataBase(self):
-		sql = "SELECT \"DestinationName\" FROM public.\"UserLink\" WHERE \"SourceName\"=\'" + self.userID +"\'"
+	def getNumDataFromDataBase(self):
+		sql = "SELECT \"MyselfRatio\", \"FriendRatio\" FROM public.\"MFRatio\" WHERE \"SourceName\"=\'" + self.userID + "\'"
 
 		DBPSServer = DBPoolServer()
 		recvFromServer = DBPSServer.startNetworkingWithData(sql)
-		del DBPSServer
+		DBPSServer.closeConnection()
 
-		return recvFromServer.split()
+		return recvFromServer.split('=')
 
-	def selectFriendInRatioList(self, friendListByRatio):
-		randValue = random.randrange(1, len(friendListByRatio))
-		return friendListByRatio[randValue]
+	def getAllDataFromDataBase(self):
+		sql = "SELECT \"DestinationName\", \"Portion\" FROM public.\"SocialLevelPerUser\" WHERE \"SourceName\"=\'" + self.userID +"\'"
 
+		DBPSServer = DBPoolServer()
+		recvFromServer = DBPSServer.startNetworkingWithData(sql)
+		DBPSServer.closeConnection()
 
-	def selectBetweenMeAndYou(self):
-		FOR_ME = 45
-		randomValue = random.randrange(1, 100)
-		if randomValue <= FOR_ME:
-			return self.WORK_FOR_ME
-		else:
-			return self.WORK_FOR_YOU
+		splittedList = recvFromServer.split()
 
-	def selectBetweenReadAndWrite(self):
-		FOR_READ = 70
-		randomValue = random.randrange(1, 100)
-		if randomValue <= FOR_READ:
-			return self.READ_TYPE
-		else:
-			return self.WRITE_TYPE
+		friendInfoList = []
+		for i in range(len(splittedList)):
+			finalSplittedList = splittedList[i].split('=')
+			
+			friendName = finalSplittedList[0]
+			socialLevel = float(finalSplittedList[1])
+			
+			if socialLevel == 0.0:
+				continue
+			
+			friendInfo = FriendInfo(friendName, socialLevel)
+			friendInfoList.append(friendInfo)
 
-	def selectAmongWriteType(self):
-		randomValue = random.randrange(1, 100)
-		if randomValue <= 70:
-			return self.MSG_WRITE
-		elif randomValue <= 90:
-			return self.MSG_REPLY
-		else:
-			return self.MSG_LIKE
+		return friendInfoList
 
-class LocationPattern(AbstractPattern):
-	def __init__(self):
-		pass 
+	def getFinalOperationFriend(self, numOperation, friendInfoList):
+		finalOperationFriend = 0
+		opFriendList = []
+		for i in friendInfoList:
+			friendName = i.getName()
+			socialLevel = i.getSocialLevel()
 
-	def startToMakePattern(self):
-		pass
+			friendNumOperation = round(numOperation * socialLevel, 2)
+			if (friendNumOperation > 0) & (friendNumOperation < 1):
+				additional = random.randrange(0,3)
+				if additional == 1:
+					friendNumOperation = 1.0;
+			
+			friendWork = FriendWork(friendName, int(friendNumOperation))
+			opFriendList.append(friendWork)
+			
+			finalOperationFriend += int(friendNumOperation)
+
+		return (finalOperationFriend, opFriendList)
 
 class PatternDelegator:
 	def __init__(self, userID):
@@ -255,12 +302,14 @@ class PatternDelegator:
 	def startToGetPattern(self, jobHashMap):
 		self.initializePattern()
 
-		countlistToWorkInOneDay = self.getOneDayList()
-		if len(countlistToWorkInOneDay) == 0:
-			return
-
-		workListInOneDay = self.getOneDayWorkList(countlistToWorkInOneDay)
-		if len(workListInOneDay) == 0:
+		writtenNumInOneDay = self.getOneDayList()
+		Log.debug("Complete deciding time pattern\n")
+		if not writtenNumInOneDay:
+			return		
+		
+		workListInOneDay = self.getOneDayWorkList(writtenNumInOneDay)
+		Log.debug("Complete deciding behavior pattern\n")
+		if not workListInOneDay:
 			return
 
 		self.makeHashMap(jobHashMap, workListInOneDay)
@@ -269,14 +318,11 @@ class PatternDelegator:
 		self.timePattern = TimePattern(self.userID)
 		self.behaviorPattern = BehaviorPattern(self.userID)
 
-		# TODO : decide user's location
-		self.LocationPattern = LocationPattern()
-
-	def getOneDayList(self):
+	def getOneDayList(self):		
 		return self.timePattern.startToMakePattern()
 
-	def getOneDayWorkList(self, countlistToWorkInOneDay):
-		return self.behaviorPattern.startToMakeBehaviorPattern(countlistToWorkInOneDay)
+	def getOneDayWorkList(self, writtenNumInOneDay):
+		return self.behaviorPattern.startToMakeBehaviorPattern(writtenNumInOneDay)
 
 	def makeHashMap(self, jobHashMap ,workListInOneDay):
 		for hour in range(0, len(workListInOneDay)):
@@ -297,4 +343,3 @@ class PatternDelegator:
 		jobForEachWork.setRWType(eachWork[1])
 		jobForEachWork.setWhoName(eachWork[2])
 		jobForEachWork.setWriteType(eachWork[3])
-

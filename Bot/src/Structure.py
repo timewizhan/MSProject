@@ -1,4 +1,3 @@
-
 class Job:
 	def __init__(self):
 		pass
@@ -32,6 +31,50 @@ class Job:
 
 	def getLocation(self):
 		return location
+
+class JobList:
+	def __init__(self):
+		self.oneHourList = []
+
+	def insertJobValueByKey(self, jobToWork):
+		self.oneHourList.append(jobToWork)
+
+	def dequeJobValueByKey(self):
+		if self.checkLengthOfTimeList() < 1:
+			return 0
+
+		FIRST_QUEUE_IN_LIST = 0
+		selectedJob = self.oneHourList.pop(FIRST_QUEUE_IN_LIST)
+		return selectedJob
+
+	def checkLengthOfTimeList(self):
+		return len(self.oneHourList)
+
+class FriendInfo:
+	def __init__(self, friendName, socialLevel):
+		self.friendName = friendName
+		self.socialLevel = socialLevel
+
+	def getName(self):
+		return self.friendName
+
+	def getSocialLevel(self):
+		return self.socialLevel
+
+class FriendWork:
+	def __init__(self, friendName, numOperation):
+		self.friendName = friendName
+		self.numOperation = numOperation
+
+	def getName(self):
+		return self.friendName
+
+	def getNumOperation(self):
+		return self.numOperation
+
+	def decreaseNumOperation(self):
+		if self.numOperation != 0:
+			self.numOperation -= 1
 
 class JobHashMap:
 	TOTAL_TIME_COUNT = 24

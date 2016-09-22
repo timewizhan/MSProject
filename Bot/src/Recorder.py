@@ -10,5 +10,5 @@ class CRecorder:
 	def endRecord(self):
 		self.afterTime = time.time()
 
-	def gerResultTime(self):
+	def getResponseTime(self):
 		return self.afterTime - self.beforeTime

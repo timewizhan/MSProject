@@ -1,83 +1,114 @@
-from Structure import JobHashMap
+from Structure import JobList
 from Timer import *
 from JsonTools import *
 from Pattern import *
-#from DataBase import *
 from MsgSets import *
 from Network import *
 from Recorder import *
 import time
-
+import os
+import socket
+import sys
 import pdb
 
 class Scheduler:
 	ONE_MINUTE = 60
 
 	def __init__(self, userID, userPlace):
-		self.jobHashMap = JobHashMap()
+		self.jobHashMap = JobHashMap()		
 		self.patternDelegator = PatternDelegator(userID)
 		self.userID = userID
 		self.userPlace = userPlace
+		self.continued = True
+		self.firstStep = True
+		self.oneDayCounter = 0
 
 	def start(self):
 		from Log import *
-		Log.debug("Start to scheduler")
+		Log.debug("Start scheduler")
 
 		timer = Timer()
 		timer.setCurrentDateAndTime()
 
-		Log.debug("Start to operate bot")
-
-		continued =	firstStep = True
+		processID = os.getpid()
+		Log.debug("Start to operate bot [" + str(processID) + "]\n")
 		
-		# Make an initial pattern
-		#pdb.set_trace()
+		# Make a pattern		
 		self.patternDelegator.startToGetPattern(self.jobHashMap)
 
-		while continued:
-			try:
-				Log.debug("Check whether day is changed or not")
-				self.checkNextDay(firstStep)
+		Log.debug("=============================================")
+		Log.debug("=================== Ready ===================")
+		Log.debug("=============================================")
 
-				while timer.compareHourWithNowHour():
-					currentHour = timer.getCurrentHour()
+		while self.continued:
+			try:				
+				start = self.checkNextHour(timer)
+								
+				# After generating the pattern
+				# Send the report to the manager
+				# and wait for the start message				
+				if self.firstStep:
+					#Log.debug("Send the action message to the manager\n")
+					#reportToSend = makeManagerJsonData(self.userID)
+					#recvMsgFromManager = self.networkingWithManager(reportToSend)
+					self.firstStep = False
+				
+					#if len(recvMsgFromManager) == 0:
+					#	Log.error("Fail to receive the action message from the manager")
+					#	self.continued = False
+					#	continue							
 
-					Log.debug("Start to deque for next work")
+				if start:
+					Log.debug("=============================================")
+					Log.debug("=================== Start ===================")
+					Log.debug("=============================================")
+
+				currentHour = timer.getCurrentHour()
+
+				while start:					
 					nextJobToWork = self.jobHashMap.dequeJobValueByKey(currentHour)
-					if nextJobToWork == 0:
-						Log.debug("Wait for 60 seconds")
-						time.sleep(self.ONE_MINUTE)
-						continue
 
-					#pdb.set_trace()
-					Log.debug("Start to communicate with servers")
-					self.startToCommunicateWithServer(nextJobToWork)
+					if nextJobToWork == 0:						
+						start = False
+						Log.debug("Complete sending requests")
+						break
+							
+					delay = random.randrange(1, 6)
+					time.sleep(delay)
 
-					Log.debug("Start to save results")
-					#self.saveResultToDataBase()
+					Log.debug("Start to communicate with servers\n")
+					dstIPAddress = self.startToCommunicationWithBroker(nextJobToWork)
+					if dstIPAddress:
+						self.startToCommunicateWithService(nextJobToWork, dstIPAddress)
 
+				if not self.continued:
+					break
+				
+				Log.debug("Wait for next hour\n")
+				wait = timer.getWaitTimeForNextHour()
+				time.sleep(wait)
 				timer.setCurrentDateAndTime()
-
-				Log.debug("Next Hour")
 			except Exception as e:
 				Log.error("There is error in scheduler")
 				Log.error(e)
+				sys.exit(1)
 
-				continued = False
-			
-	def checkNextDay(self, firstStep):
-		if firstStep == True:
-			firstStep = False
-			return
+		Log.debug("Successfully end the one day job")
+		sys.exit(0)
+		
+	def checkNextHour(self, timer):
+		if self.firstStep == True:
+			return True
 
-		if timer.compareDayWithNowDay():
-			return
-		
-		timer.setCurrentDateAndTime()
-		self.patternDelegator.startToGetPattern(self.jobHashMap)
-		
-	def startToCommunicateWithServer(self, nextJobToWork):
-		# 1. communicate with Broker
+		if self.oneDayCounter == 24:
+			self.continued = False
+			return False
+
+		self.oneDayCounter += 1
+		return True
+
+	# 1. communicate with Broker
+	def startToCommunicationWithBroker(self, nextJobToWork):
 		Log.debug("Start to build data for Broker")
 		dataToSend = makeBrokerJsonData(self.userID, nextJobToWork)
 		Log.debug(dataToSend)
@@ -85,25 +116,32 @@ class Scheduler:
 		Log.debug("Start to send to data to Broker")
 		recvDataFromBroker = self.networkingWithBroker(dataToSend)
 		Log.debug(recvDataFromBroker)
-
+		
 		dstIPAddress = self.getResponseData(recvDataFromBroker)
 
-		# 2. communicate with Server
+		return dstIPAddress
+
+	# 2. communicate with Server
+	def startToCommunicateWithService(self, nextJobToWork, dstIPAddress):
 		Log.debug("Start to build data for SNS Server")
 		dataToSend = makeEntryPointJsonData(self.userID, nextJobToWork, self.userPlace)
 		Log.debug(dataToSend)
 
 		Log.debug("Start to send to data to SNS Server")
+		
 		recvDataFromEP = self.networkingWithEntryPoint(dstIPAddress, dataToSend)
 		Log.debug(recvDataFromEP)
 
-		# 3. For saving data to database.
-		# Todo.
-		#self.getResponseData(recvDataFromEP)
-
+		delayTime = self.getDelayData(recvDataFromEP)
+		Log.debug("ENTRYPOINT RTT: " + str(delayTime))
+				
 	def getResponseData(self, recvDataFromBroker):
 		jsonParser = JsonParser(recvDataFromBroker)
 		return jsonParser.getValue("RESPONSE")
+
+	def getDelayData(self, recvDataFromEP):
+		jsonParser = JsonParser(recvDataFromEP)
+		return jsonParser.getValue("RTT")
 
 	def saveResultToDataBase(self):
 		'''
@@ -119,11 +157,25 @@ class Scheduler:
 
 	def networkingWithBroker(self, dataToSend):
 		brServer = Broker()
-		return brServer.startNetworkingWithData(dataToSend)
+		recvData = brServer.startNetworkingWithData(dataToSend)
+		brServer.closeConnection()
+
+		return recvData
 
 	def networkingWithEntryPoint(self, dstIPAddress, dataToSend):
 		epServer = EntryPoint(dstIPAddress)
-		return epServer.startNetworkingWithData(dataToSend)
+		recvData = epServer.startNetworkingWithData(dataToSend)
+		epServer.closeConnection()
+
+		return recvData
+
+	def networkingWithManager(self, reportToSend):
+		managerIPAddress = socket.gethostbyname(socket.gethostname())
+		mnServer = Manager(managerIPAddress)
+		recvData = mnServer.startNetworkingWithData(reportToSend)
+		mnServer.closeConnection()
+
+		return recvData
 
 def getCommonType(jobToWork):
 	'''
@@ -135,14 +187,30 @@ def getCommonType(jobToWork):
 		TYPE 4 : SHARE
 	'''
 
+
+	'''
+		READ_TYPE 		= 1
+		WRITE_TYPE 		= 2
+
+		MSG_WRITE 		= 1
+		MSG_REPLY 		= 2
+		MSG_LIKE 		= 3
+		MSG_NOTHING		= 0
+	'''
+
+	# READ_TYPE
 	if jobToWork.getRWType() == 1:
 		opType = 2
+	# WRITE_TYPE
 	else:
 		writeType = jobToWork.getWriteType()
+		#MSG_WRITE
 		if writeType == 1:
 			opType = 1
+		#MSG_REPLY
 		elif writeType == 2:
 			opType = 3
+		#MSG_LIKE
 		else:
 			opType = 4
 
@@ -163,7 +231,7 @@ def makeEntryPointJsonData(userID, jobToWork, userPlace):
 	jsonGenerator.appendElement("SRC", userID)
 
 	if len(jobToWork.getWhoName()) > 0:
-		whoName = jobToWork.getWhoName()[0]
+		whoName = jobToWork.getWhoName()
 	else:
 		whoName = userID
 	jsonGenerator.appendElement("DST", whoName)
@@ -179,9 +247,19 @@ def makeBrokerJsonData(userID, jobToWork):
 	jsonGenerator.appendElement("SRC", userID)
 
 	if len(jobToWork.getWhoName()) > 0:
-		whoName = jobToWork.getWhoName()[0]
+		whoName = jobToWork.getWhoName()
 	else:
 		whoName = userID
 	jsonGenerator.appendElement("DST", whoName)
 
+	return jsonGenerator.toString()
+
+def makeManagerJsonData(userID):
+	jsonGenerator = JsonGenerator()
+
+	processID = os.getpid()
+	jsonGenerator.appendElement("pid", processID)
+	jsonGenerator.appendElement("uid", userID)
+	jsonGenerator.appendElement("action", 1)
+	
 	return jsonGenerator.toString()

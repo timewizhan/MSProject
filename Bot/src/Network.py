@@ -2,6 +2,7 @@ from socket import *
 from Log import *
 from Recorder import *
 import time
+import select
 
 TYPE_AF_INET 	= AF_INET
 TYPE_AF_INET6 	= AF_INET6
@@ -54,10 +55,10 @@ class NetworkSettingComponent:
 	def getProtocolType(self):
 		return self.ProtocolType
 
-
 TYPE_NT_BROKER = 1
-TYPE_NT_EP = 2
-TYPE_NT_DBCS = 3
+TYPE_NT_MANAGER = 2
+TYPE_NT_EP = 3
+TYPE_NT_DBCS = 4
 
 class AbstractNetwork:
 	DEFAULT_RECV_BUF_SIZE = 8192
@@ -72,7 +73,12 @@ class AbstractNetwork:
 
 		self.configureEnviromentAndSocket(networkSettingComponent)
 
+	'''
 	def __del__(self):
+		self.socketToConnect.close()
+	'''
+
+	def closeConnection(self):
 		self.socketToConnect.close()
 
 	def configureEnviromentAndSocket(self, networkSettingComponent):
@@ -85,11 +91,23 @@ class AbstractNetwork:
 		self.socketToConnect = socket(serverAFType, serverProtoType)
 
 	def connectToServer(self):
-		try:
-			self.socketToConnect.connect(self.serverConnectionAddress)
-		except Exception as e:
-			return 0
-		return 1
+		ONE_SECOND = 1
+		SleepCount = 1
+
+		bConnected = True
+		while bConnected:
+			try:
+				self.socketToConnect.connect(self.serverConnectionAddress)
+				bConnected = False
+			except Exception as e: 
+				Log.error("Connection ReTry and Sleep [" + str(SleepCount) + "]")
+				Log.error(e)
+				time.sleep(ONE_SECOND * SleepCount)
+				SleepCount = SleepCount * 2
+				if SleepCount > 60:
+					SleepCount = 1
+         
+		return True      
 
 	def sendDataToServer(self, jsonData):
 		sizeOfDataToSend = len(jsonData)
@@ -98,25 +116,34 @@ class AbstractNetwork:
 		try:
 			firstPos = 0
 			self.socketToConnect.sendall(jsonData[firstPos:] + "\r\n")	
-			'''
-			while totalSizeOfDataSent < sizeOfDataToSend:
-				remainedSize = sizeOfDataToSend - totalSizeOfDataSent
-				firstPos = sizeOfDataToSend - remainedSize
 
-				lengthOfDataSent = self.socketToConnect.send(jsonData[firstPos:])
-				totalSizeOfDataSent += lengthOfDataSent
-
-			if totalSizeOfDataSent > sizeOfDataToSend:
-				pass
-			'''
 		except NetworkError as e:
 			print e	
 
 		return 1
-
+	
 	def recvDataFromServer(self):
-		DEFAULT_RECV_BUF_SIZE = 2 << 16
-		return self.socketToConnect.recv(DEFAULT_RECV_BUF_SIZE)
+		DEFAULT_RECV_BUF_SIZE = 2 << 16	
+		BLOCK_TIME = 5
+
+		ConnectionReadSet = [self.socketToConnect]
+		recvData = ""
+
+		Running = True
+		while Running:
+			FD_ReadSet, FD_WriteSet, FD_ExceptionSet = select.select(ConnectionReadSet, [], [], BLOCK_TIME) 
+
+			dataFromServer = ""
+
+			for ReadSocket in FD_ReadSet:
+				dataFromServer = ReadSocket.recv(DEFAULT_RECV_BUF_SIZE) 
+				if dataFromServer:
+					recvData += dataFromServer
+				else:
+					Running = False
+
+		Log.debug("Received data From server [%d]" % len(recvData))
+		return recvData
 
 	def startNetworkingWithData(self, data, nttype):
 		recvData = ""
@@ -130,23 +157,22 @@ class AbstractNetwork:
 
 			ret = self.sendDataToServer(data)
 			if ret != 1:
-				raise NetworkError(ret)
+				raise NetworkError(ret)			
 
-			time.sleep(1)
-
-			recvData = self.recvDataFromServer()
+			recvData = self.recvDataFromServer()			
+			
 			sizeOfRecvData = len(recvData)
 			if sizeOfRecvData < 1:
 				raise NetworkError(sizeOfRecvData)
 
 			Recorder.endRecord()
-			responseTime = Recorder.gerResultTime()
+			responseTime = Recorder.getResponseTime()
 
 			if nttype == TYPE_NT_BROKER:
 				Log.debug("BROKER RES : " + str(responseTime))
 			elif nttype == TYPE_NT_EP:
 				Log.debug("ENTRYPOINT RES : " + str(responseTime))
-			else:
+			elif nttype == TYPE_NT_DBCS:
 				Log.debug("DBPOOLSERVER RES : " + str(responseTime))
 
 		except NetworkError as e:
@@ -159,12 +185,17 @@ class Broker(AbstractNetwork):
 		'''
 			Broker IP, Port are fixed
 		'''
-		brokerIPAddress = "165.132.122.243"
+		brokerIPAddress = "165.132.122.242"
 		brokerPort = 7500
 		AbstractNetwork.__init__(self, brokerIPAddress, brokerPort)
 
+	'''
 	def __del__(self):
 		AbstractNetwork.__del__(self)
+	'''
+
+	def closeConnection(self):
+		AbstractNetwork.closeConnection(self)
 
 	def startNetworkingWithData(self, data):
 		return AbstractNetwork.startNetworkingWithData(self, data, TYPE_NT_BROKER)
@@ -177,8 +208,13 @@ class EntryPoint(AbstractNetwork):
 		entrypointPort = 7777
 		AbstractNetwork.__init__(self, ipAddress, entrypointPort)
 
+	'''
 	def __del__(self):
 		AbstractNetwork.__del__(self)
+	'''
+
+	def closeConnection(self):
+		AbstractNetwork.closeConnection(self)
 
 	def startNetworkingWithData(self, data):
 		return AbstractNetwork.startNetworkingWithData(self, data, TYPE_NT_EP)
@@ -193,8 +229,30 @@ class DBPoolServer(AbstractNetwork):
 		dbPoolServerPort = 6000
 		AbstractNetwork.__init__(self, dbPoolServerIPAddress, dbPoolServerPort)
 
+	'''
 	def __del__(self):
 		AbstractNetwork.__del__(self)
+	'''
+
+	def closeConnection(self):
+		AbstractNetwork.closeConnection(self)
 
 	def startNetworkingWithData(self, data):
 		return AbstractNetwork.startNetworkingWithData(self, data, TYPE_NT_DBCS)
+
+class Manager(AbstractNetwork):
+	def __init__(self, managerIPAddress):
+		#managerIPAddress = socket.gethostbyname(socket.gethostname())
+		managerPort = 7200
+		AbstractNetwork.__init__(self, managerIPAddress, managerPort)
+	
+	'''
+	def __del__(self):
+		AbstractNetwork.__del__(self)
+	'''
+
+	def closeConnection(self):
+		AbstractNetwork.closeConnection(self)
+
+	def startNetworkingWithData(self, data):
+		return AbstractNetwork.startNetworkingWithData(self, data, TYPE_NT_MANAGER)

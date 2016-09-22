@@ -13,8 +13,8 @@ if __name__ == "__main__":
 		To do.
 		extract user name to operate bot
 	'''
-
-	currentPath = getCurrentDir()
+	
+	currentPath = getCurrentDir()	
 	setEnvPath(currentPath)
 	from Log import *
 	from Scheduler import Scheduler

@@ -1,1 +1,1 @@
-{"LOC": "KR", "MSG": "Test for dummy162039", "SRC": "bokor8888", "TYPE": "1", "DST": "bokorkim"}
+{"LOC": "NEWYORK", "MSG": "Test for dummy162039", "SRC": "bokor8888", "TYPE": "5", "DST": "bokorkim"}

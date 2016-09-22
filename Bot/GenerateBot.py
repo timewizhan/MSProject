@@ -1,6 +1,5 @@
 from multiprocessing import Process
 import os, sys, time
-import pdb
 ####################################
 def getCurrentDir():
 	return os.getcwd()
@@ -21,12 +20,11 @@ def findBotFile():
 	return os.path.exists(botFilePath)
 
 def getUsersInfoFromDB(botNumber):
-	#pdb.set_trace()
 	sql = "SELECT \"userName\", \"userPlace\" FROM public.\"completeUserid\" WHERE \"classifier\"=" + botNumber
 
 	DBPSServer = DBPoolServer()
 	recvFromServer = DBPSServer.startNetworkingWithData(sql)
-	del DBPSServer
+	DBPSServer.closeConnection()
 
 	usersInfoList = []
 	userInfoList = recvFromServer.split()
@@ -57,7 +55,7 @@ def operateMultiProcess(usersInfoList, botTotal):
 		eachBot.start()
 		print "[Debug] Process [%d] : [%s] is started" % (procNumber + 1, usersInfoList[procNumber][0])
 		
-		if procNumber >= int(botTotal):
+		if procNumber >= (int(botTotal) - 1):
 			break
 		
 		time.sleep(1)
@@ -91,7 +89,7 @@ if __name__ == "__main__":
 
 	currentPath = getCurrentDir()
 	setEnvPath(currentPath)
-	#from DataBase import *
+
 	from Network import *
 
 	print "**************************************"
