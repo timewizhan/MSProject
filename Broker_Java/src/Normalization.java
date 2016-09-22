@@ -31,6 +31,13 @@ public class Normalization {
 		Callable<Integer> callableNormDist = new CNormalizeDistance();
 		Future<Integer> futureNormDist = ThreadPool.GetInstance().submit(callableNormDist);
 		set.add(futureNormDist);
+		
+		if(CBroker.prevMatch.isEmpty()){
+			
+			Callable<Integer> initPrevMatch = new CInitPrevMatch();
+			Future<Integer> futureInitPrevMatch = ThreadPool.GetInstance().submit(initPrevMatch);
+			set.add(futureInitPrevMatch);
+		}
 /*		
 		//set to normalize social level
 		Callable<Integer> callableNormSocialLvl = new CNormalizeSocialLvl();

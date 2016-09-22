@@ -44,7 +44,11 @@ public class CLPCalculation implements Runnable {
 					Counter.GetInstance().setRecvCompletedCountZero();
 					log.debug("# SET EP CONNECTIION COUNTER ZERO \r\n");
 					
-				//	System.out.println(Counter.GetInstance().getRecvCompletedCount());
+					//Stop BrokerGiver
+					CNetworkBrokerGiver.initSocket();
+					CNetworkBrokerGiver.sendStopMsg();
+					CNetworkBrokerGiver.closeSocket();
+					
 					break;
 				}
 			}
@@ -75,7 +79,6 @@ public class CLPCalculation implements Runnable {
 		//각 엣지에 대한 가중치(weight) 계산
 		calculateWeight();
 		
-		
 		try {
 			calculateLP();
 		} catch (LpSolveException e) {
@@ -100,9 +103,8 @@ public class CLPCalculation implements Runnable {
 		//유저 수 멤버 변수에 저장
 		ArrayList<ClientData> userList = databaseInstance.getUserList();
 		NUM_OF_USERS = userList.size();
-		
 		log.debug("	* number of user : " + NUM_OF_USERS);
-		log.debug("	----------------------------------------------------------------------");
+	
 		//유저 별로 반복
 		UserWeight userWeight;
 		for(int i=0; i<NUM_OF_USERS; i++){
@@ -124,25 +126,20 @@ public class CLPCalculation implements Runnable {
 			
 			//ep개수에 맞게 weight를 줘서 두개의 값을 합침
 			int a = 1;	//distance weight
-			int b = 0;	//social weight
+			int b = 1;	//social weight
 			double tmpWeightValues [] = new double [CBroker.NUM_OF_EP];
 			for(int j=0; j<CBroker.NUM_OF_EP; j++){
-				log.debug("	user id : " + userList.get(i).getUserID() + ", norm dist (ep"+ (int)(j+1) + ") : " + NormDistValueArray[j] 
-						+ ", norm social weight (ep" + (int)(j+1) + ") :" + NormSocialWeightValueArray[j]);
+			//	log.debug("	user id : " + userList.get(i).getUserID() + ", norm dist (ep"+ (int)(j+1) + ") : " + NormDistValueArray[j] 
+			//			+ ", norm social weight (ep" + (int)(j+1) + ") :" + NormSocialWeightValueArray[j]);
 				tmpWeightValues[j] = a*NormDistValueArray[j] + b*NormSocialWeightValueArray[j];
 			}
 			userWeight.setWeightValues(tmpWeightValues);
 			userWeightList.add(userWeight);
 		}
-		log.debug("	----------------------------------------------------------------------");
 
 		databaseInstance.disconnectBrokerDatabase();
 		
 		log.info("[calculateWeight method] - End \r\n");
-	}
-	
-	public void getWeight() {
-		
 	}
 	
 	public int calculateLP() throws LpSolveException{
@@ -367,13 +364,13 @@ public class CLPCalculation implements Runnable {
 
 			/* we are done now */
 			//test
-			System.out.println();
-			for(int i=0; i<lpMatchResult.size(); i++){
-				log.debug("	* ID:" + lpMatchResult.get(i).getUserId()
-						+ ", No.:" + lpMatchResult.get(i).getUserNo()
-						+ ", Cloud No.:" + lpMatchResult.get(i).getCloudNo());
-			}
-			System.out.println();
+		//	System.out.println();
+		//	for(int i=0; i<lpMatchResult.size(); i++){
+		//		log.debug("	* ID:" + lpMatchResult.get(i).getUserId()
+		//				+ ", No.:" + lpMatchResult.get(i).getUserNo()
+		//				+ ", Cloud No.:" + lpMatchResult.get(i).getCloudNo());
+		//	}
+		//	System.out.println();
 		}
 
 		/* clean up such that all used memory by lpsolve is freed */

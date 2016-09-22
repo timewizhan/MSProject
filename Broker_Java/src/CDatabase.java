@@ -27,17 +27,11 @@ public class CDatabase {
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 			epConn = DriverManager.getConnection("jdbc:mysql:/" + url + ":" + port + "/" + dbName + "?autoReconnect=true&useSSL=false", id, password);
-		//	epConn = DriverManager.getConnection("jdbc:mysql:/" + url + ":" + port + "/" + dbName, id, password);
-		//	System.out.println("Entry Point database was connected successfully");
-			log.info("# CONNECT EP DATABASE SESSION");
+		//	log.info("# CONNECT EP DATABASE SESSION");
 		}catch(ClassNotFoundException cnfe){
-		//	System.out.println("해당 클래스를 찾을수 없습니다."+cnfe.getMessage());
 			log.error("CDatabase.connectEntryPointDatabase() ClassNotFoundException Error! ", cnfe);
-
 		}catch(SQLException se){
 			log.error("CDatabase.connectEntryPointDatabase() SQLException Error! ", se);
-		//	System.out.println(se.getMessage());
-
 		}
 		
 	}
@@ -107,8 +101,7 @@ public class CDatabase {
 		
 		try {
 			epConn.close();
-			log.info("# DISCONNECT EP DATABASE SESSION");
-		//	System.out.println("Disconnect EntryPoint database session");
+		//	log.info("# DISCONNECT EP DATABASE SESSION");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -314,6 +307,30 @@ public class CDatabase {
 		}
 		
 		return alServerData;
+	}
+	
+	public int getEachServerTraffic(String ip){
+		
+		int amountOfTraffic = 0;
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select server_side_traffic from server_table where ep = '" + ip + "';");
+
+			while(rs.next()){
+				amountOfTraffic = Integer.parseInt(rs.getString("server_side_traffic"));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return amountOfTraffic;
 	}
 	
 	public int getServerTotalTraffic(){
@@ -942,7 +959,6 @@ public class CDatabase {
 		
 		try {
 			brokerConn.close();
-		//	System.out.println("Disconnect Broker database session");
 		//	log.info("# DISCONNECT BROKER DATABASE SESSION");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -968,15 +984,12 @@ public class CDatabase {
 		try{
 			Class.forName("com.mysql.jdbc.Driver");  //jdbc 드라이버로 연결하고 
 			brokerGiverConn = DriverManager.getConnection("jdbc:mysql://165.132.122.242:3306/broker2?autoReconnect=true&useSSL=false","root","cclab");
-			log.info("# CONNECT BROKER GIVER DATABASE SESSION");
-		//	System.out.println("Broker Giver Database was connected successfully");
-
+		//	log.info("# CONNECT BROKER GIVER DATABASE SESSION");
+		
 		}catch(ClassNotFoundException cnfe){
-		//	System.out.println("해당 클래스를 찾을수 없습니다."+cnfe.getMessage());
 			log.error("CDatabase.connectBrokerGiverDatabase() ClassNotFoundException Error! ", cnfe);
 		}catch(SQLException se){
 			log.error("CDatabase.connectBrokerGiverDatabase() SQLException Error! ", se);
-		//	System.out.println(se.getMessage());
 		}
 	}
 	
@@ -1056,8 +1069,7 @@ public class CDatabase {
 		
 		try {
 			brokerGiverConn.close();
-		//	System.out.println("Disconnect Broker Giver database session");
-			log.info("# DISCONNECT BROKER GIVER DATABASE SESSION");
+		//	log.info("# DISCONNECT BROKER GIVER DATABASE SESSION");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,5 +1,8 @@
 import org.apache.log4j.Logger;
 import org.apache.log4j.Logger;
+
+import java.util.HashMap;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -28,8 +31,9 @@ future work로 해야할까..
 
 public class CBroker {
 
-	static Logger log = Logger.getLogger(CBroker.class.getName());		//initiate logger
-	static final int NUM_OF_EP = 3; 									//set number of clouds
+	static Logger log = Logger.getLogger(CBroker.class.getName());				//initiate logger
+	static final int NUM_OF_EP = 3; 											//set number of clouds
+	static HashMap<String, Integer> prevMatch = new HashMap<String, Integer>();	//previous matched result
 	
 	public static void main(String [] args){
 		

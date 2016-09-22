@@ -24,9 +24,9 @@ public class CLBCalculation {
 		//ex) 165.132.120.144에 있는 서버의 최대 트래픽 양은 500Gbyte이다
 		map = new HashMap<String , Integer>();
 		map.put("165.132.120.144", 100);
-		map.put("165.132.123.73", 1000000);
-		map.put("165.132.122.244", 1000000);
-		map.put("165.132.122.245", 1000000);
+		map.put("165.132.123.73", 10000000);
+		map.put("165.132.122.244", 10000000);
+		map.put("165.132.122.245", 10000000);
 		
 		log.debug("	* set capacity limitation of each cloud (server) using HashMap");
 		log.debug("	* current map.size() : " + map.size());
@@ -64,6 +64,11 @@ public class CLBCalculation {
 		
 		//broker giver database update
 		updateBrokerGiver();
+		
+		//Resume BrokerGiver
+		CNetworkBrokerGiver.initSocket();
+		CNetworkBrokerGiver.sendResumeMsg();
+		CNetworkBrokerGiver.closeSocket();
 		
 		//테이블 초기화
 		resetTables();
@@ -105,6 +110,10 @@ public class CLBCalculation {
 		
 		String processType = null;
 	
+		for(int epNo=1; epNo<=CBroker.NUM_OF_EP; epNo++){
+			int eachServerTraffic = getEachServerTraffic(epNo);
+			log.debug("		* " + "EP" + (int)(epNo) + " : " + eachServerTraffic);
+		}
 		int serverTotalTraffic = getTotalTraffic();			//해당시간에 발생한 트래픽 총량
 		log.debug("		* server total traffic : " + serverTotalTraffic);
 		
@@ -125,6 +134,35 @@ public class CLBCalculation {
 		log.info("	[determineProcessType method] - End");
 		
 		return processType;
+	}
+	
+	public int getEachServerTraffic(int epNo){
+		
+		int amountOfTraffic = 0;
+		
+		CDatabase databaseInstance = new CDatabase();
+		databaseInstance.connectBrokerDatabase();
+		
+		String ip = null;
+		ip = getIpFromEpNo(epNo);
+		amountOfTraffic = databaseInstance.getEachServerTraffic(ip);
+		
+		databaseInstance.disconnectBrokerDatabase();
+		
+		return amountOfTraffic;
+	}
+	
+	public String getIpFromEpNo(int epNo){
+		String ip = null;
+		
+		CDatabase databaseInstance = new CDatabase();
+		databaseInstance.connectBrokerDatabase();
+		
+		ip = databaseInstance.getIpWithEpNo(epNo);
+		
+		databaseInstance.disconnectBrokerDatabase();
+		
+		return ip;
 	}
 	
 	public int getTotalTraffic(){
@@ -187,51 +225,6 @@ public class CLBCalculation {
 		return serverList;
 	}
 	
-	public void rematchForMaximumCase(){
-	/*	
-		//초과한 클라우드가 어떤 건지 파악 //초과한 트래픽 용량이 얼마인지 계산
-		ArrayList<ServerStatus> serverStateList = getCloudsStatus();
-
-		//서버들을 쭈욱 보면서, 상태를 확인한다. 각 서버의 맥시멈 트래픽은 얼마인지, 예상되는 트래픽은 얼마인지
-		//그래서 예상되는 트래픽이 맥시멈 트래픽을 초과하는지 초과하지 않는지
-		ArrayList<ServerStatus> surplusServerList = new ArrayList<ServerStatus>();
-		ArrayList<ClientTrafficData> extractedUsersList = new ArrayList<ClientTrafficData>(); 
-		ArrayList<ClientTrafficData> extractedUsersFromCloud = new ArrayList<ClientTrafficData>();
-		
-		for(int i=0; i<serverStateList.size(); i++){
-
-			//test
-			System.out.println("EP no.:" + serverStateList.get(i).getEpNo()
-					+ ", Maximum Traffic:" + serverStateList.get(i).getMaximumTraffic()
-					+ ", Expected Traffic:" + serverStateList.get(i).getExpectedTraffic());
-
-			int expectedTraffic = serverStateList.get(i).getExpectedTraffic();
-			int maximumTraffic = serverStateList.get(i).getMaximumTraffic();
-
-			if(expectedTraffic > maximumTraffic){
-
-				// 어떤 EP에서, 몇 명 빼올지 결정
-				int trafficGap = expectedTraffic - maximumTraffic;
-				int epNo = serverStateList.get(i).getEpNo();
-
-				// trafficGap을 만족할때까지 애들 빼오기
-				extractedUsersFromCloud = extractUsers(epNo, trafficGap);
-				// 빼내온 모든 애들을 모아두는 list에 각 cloud에서 빼내온 애들을 추가
-				for(int j=0; j<extractedUsersFromCloud.size(); j++){
-					extractedUsersList.add(extractedUsersFromCloud.get(j));
-				}
-
-			} else if (expectedTraffic < maximumTraffic){
-				surplusServerList.add(serverStateList.get(i));
-
-			} else {
-				//expectedTraffic == maximumTraffic
-				//do nothing
-			}
-		}
-	*/
-	}
-	
 	public void rematchForLoadBalancing(String processType){
 		
 		log.info("	[rematchForLoadBalancing method] - Start");
@@ -247,17 +240,17 @@ public class CLBCalculation {
 		
 		//test
 		log.debug("[after sorting]");
-		for(int i=0; i<initialUsersOfClouds.size(); i++){
-			if(initialUsersOfClouds.get(i) != null){
-				
-				ArrayList<ClientTrafficData> usersOfCloud = initialUsersOfClouds.get(i);
-				for(int j=0; j<usersOfCloud.size(); j++){
-					log.debug("user id : " + usersOfCloud.get(j).getUserId()
-							+ ", cloud No : " + usersOfCloud.get(j).getCloudNo()
-							+ ", traffic : " + usersOfCloud.get(j).getUserTraffic());
-				}
-			}
-		}
+//		for(int i=0; i<initialUsersOfClouds.size(); i++){
+//			if(initialUsersOfClouds.get(i) != null){
+//				
+//				ArrayList<ClientTrafficData> usersOfCloud = initialUsersOfClouds.get(i);
+//				for(int j=0; j<usersOfCloud.size(); j++){
+//					log.debug("user id : " + usersOfCloud.get(j).getUserId()
+//							+ ", cloud No : " + usersOfCloud.get(j).getCloudNo()
+//							+ ", traffic : " + usersOfCloud.get(j).getUserTraffic());
+//				}
+//			}
+//		}
 		
 		
 		//초과한 클라우드가 어떤 건지 파악 //초과한 트래픽 용량이 얼마인지 계산
@@ -312,17 +305,17 @@ public class CLBCalculation {
 			
 			log.info("	* after rematching process");
 			
-			for(int i=0; i<initialUsersOfClouds.size(); i++){
-				if(initialUsersOfClouds.get(i) != null){
-					
-					ArrayList<ClientTrafficData> usersOfCloud = initialUsersOfClouds.get(i);
-					for(int j=0; j<usersOfCloud.size(); j++){
-						log.debug("user id : " + usersOfCloud.get(j).getUserId()
-								+ ", cloud No : " + usersOfCloud.get(j).getCloudNo()
-								+ ", traffic : " + usersOfCloud.get(j).getUserTraffic());
-					}
-				}
-			}
+//			for(int i=0; i<initialUsersOfClouds.size(); i++){
+//				if(initialUsersOfClouds.get(i) != null){
+//					
+//					ArrayList<ClientTrafficData> usersOfCloud = initialUsersOfClouds.get(i);
+//					for(int j=0; j<usersOfCloud.size(); j++){
+//						log.debug("user id : " + usersOfCloud.get(j).getUserId()
+//								+ ", cloud No : " + usersOfCloud.get(j).getCloudNo()
+//								+ ", traffic : " + usersOfCloud.get(j).getUserTraffic());
+//					}
+//				}
+//			}
 			
 			serverStateList = getCloudsStatus();
 			for(int i=0; i<serverStateList.size(); i++){
@@ -461,10 +454,10 @@ public class CLBCalculation {
 					int priority = 1;
 
 					while(numRemainClouds>1){
-
+						
 						//우선순위 1. social + distance
 						if(priority == 1){
-							/*
+						///*	
 							log.debug("		Priority 1. social + distance");
 
 							//각 사용자에 대한 잉여 클라우드들의 가중치 값 리스트 구하기
@@ -480,10 +473,10 @@ public class CLBCalculation {
 							//최소 값을 가지고 있는 클라우드 개수 구하기
 							numRemainClouds = priorWeight.size();
 							log.debug("		after process, the number of remaining surplus clouds : " + numRemainClouds);
-							*/
+						//*/	
 							//우선순위 2. social	
 						}else if(priority == 2){	
-						
+						///*	
 							log.debug("		Priority 2. social");
 							
 							//각 사용자에 대한 잉여 클라우드들의 가중치 값 리스트 구하기
@@ -499,10 +492,10 @@ public class CLBCalculation {
 							//최소 값을 가지고 있는 클라우드 개수 구하기
 							numRemainClouds = priorWeight.size();
 							log.debug("		after process, the number of remaining surplus clouds : " + numRemainClouds);
-							/**/
+						//*/	
 							//우선순위 3. distance
 						}else if(priority == 3){	
-						/*	
+						///*	
 							log.debug("		Priority 3. distance");
 							
 							//각 사용자에 대한 잉여 클라우드들의 가중치 값 리스트 구하기
@@ -518,7 +511,7 @@ public class CLBCalculation {
 							//최소 값을 가지고 있는 클라우드 개수 구하기
 							numRemainClouds = priorWeight.size();
 							log.debug("		after process, the number of remaining surplus clouds : " + numRemainClouds);
-						*/
+						//*/
 							//우선순위 4. traffic
 						}else if(priority == 4){
 							log.debug("		Priority 4. traffic");
@@ -623,10 +616,8 @@ public class CLBCalculation {
 
 						//우선순위 1. social + distance
 						if(priority == 1){
-						/*	
+					//	/*	
 							log.debug("		Priority 1. social + distance");
-						//	System.out.println("[priority == 1]");
-						//	System.out.println("before process, Number of remaining clouds : " + numRemainClouds);
 							//각 사용자에 대한 잉여 클라우드들의 가중치 값 리스트 구하기
 							String userId = extractedUsersList.get(i).getUserId();
 							priorWeight = getSurplusCloudWeight(surplusServerList, userId, userTraffic);
@@ -640,14 +631,11 @@ public class CLBCalculation {
 							//최소 값을 가지고 있는 클라우드 개수 구하기
 							numRemainClouds = priorWeight.size();
 							log.debug("		after process, the number of remaining surplus clouds : " + numRemainClouds);
-						//	System.out.println("after process, Number of remaining clouds : " + numRemainClouds);
-						*/
-							//우선순위 2. social	
+					//	*/
+						//우선순위 2. social	
 						}else if(priority == 2){
-						/*	
+					//	/*	
 							log.debug("		Priority 2. social");
-						//	System.out.println("[priority == 2]");
-						//	System.out.println("before process, Number of remaining clouds : " + numRemainClouds);
 							//각 사용자에 대한 잉여 클라우드들의 가중치 값 리스트 구하기
 							String userId = extractedUsersList.get(i).getUserId();
 							priorWeight = getSurplusCloudSocialWeight(surplusServerList, userId, userTraffic);
@@ -661,14 +649,11 @@ public class CLBCalculation {
 							//최소 값을 가지고 있는 클라우드 개수 구하기
 							numRemainClouds = priorWeight.size();
 							log.debug("		after process, the number of remaining surplus clouds : " + numRemainClouds);
-						//	System.out.println("after process, Number of remaining clouds : " + numRemainClouds);
-						*/
-							//우선순위 3. distance
+					//	*/
+						//우선순위 3. distance
 						}else if(priority == 3){
-							/*
+					//	/*
 							log.debug("		Priority 3. distance");
-						//	System.out.println("[priority == 3]");
-						//	System.out.println("before process, Number of remaining clouds : " + numRemainClouds);
 							//각 사용자에 대한 잉여 클라우드들의 가중치 값 리스트 구하기
 							String userId = extractedUsersList.get(i).getUserId();
 							priorWeight = getSurplusCloudDistanceWeight(surplusServerList, userId, userTraffic);
@@ -682,9 +667,8 @@ public class CLBCalculation {
 							//최소 값을 가지고 있는 클라우드 개수 구하기
 							numRemainClouds = priorWeight.size();
 							log.debug("		after process, the number of remaining surplus clouds : " + numRemainClouds);
-						//	System.out.println("after process, Number of remaining clouds : " + numRemainClouds);
-							*/
-							//우선순위 4. traffic
+					//	*/
+						//우선순위 4. traffic
 						}else if(priority == 4){
 							log.debug("		Priority 4. traffic");
 							
@@ -703,7 +687,7 @@ public class CLBCalculation {
 							log.debug("		after process, the number of remaining surplus clouds : " + numRemainClouds);
 						//	System.out.println("[priority == 4], Number of remaining clouds : " + numRemainClouds);
 
-							//우선순위 5. random
+						//우선순위 5. random
 						}else if(priority == 5){
 							log.debug("		Priority 5. random");
 							log.debug("		Error!!! Not implemented yet!!!");
@@ -746,8 +730,6 @@ public class CLBCalculation {
 						
 						int changedRemainTraffic = surplusServerList.get(rematchEpIndex).getRemainTraffic() - (int)expectedUserTraffic;
 						surplusServerList.get(rematchEpIndex).setRemainTraffic(changedRemainTraffic);
-				//		System.out.println("  rematch ep no : " + rematchEpNo);
-				//		System.out.println();
 						
 						//사용자 EpNo 정보 업데이트
 						extractedUsersList.get(i).setCloudNo(rematchEpNo);
@@ -794,6 +776,11 @@ public class CLBCalculation {
 		
 		/////////////////////////////////////////////////////////////
 		//update
+		int basicCount = 0;
+		int nullIdCount = 0;
+		int skipCount = 0;
+		int updateCount = 0;
+		log.debug(" 		* Previous Matching HashMap size : " + CBroker.prevMatch.size());
 		for(int i=0; i<initialUsersOfClouds.size(); i++){
 			
 			ArrayList<ClientTrafficData> usersOfCloud = initialUsersOfClouds.get(i);
@@ -803,14 +790,55 @@ public class CLBCalculation {
 				String userId = usersOfCloud.get(j).getUserId();
 				int cloudNo = usersOfCloud.get(j).getCloudNo();
 				
-				databaseInstance2.connectBrokerDatabase();
-				String ip = databaseInstance2.getIpWithEpNo(cloudNo);
-				String location = databaseInstance2.getLocationWithIp(ip);
-				databaseInstance2.disconnectBrokerDatabase();
-			
-				databaseInstance.updateBrokerGiverTable(userId, cloudNo, ip, location);
+				//prevMatch에 해당 아이디가 없으면
+				if(CBroker.prevMatch.containsKey(userId)){
+					//새로 추가
+					CBroker.prevMatch.put(userId, cloudNo);
+					
+					//BrokerGiver update
+					databaseInstance2.connectBrokerDatabase();
+					String ip = databaseInstance2.getIpWithEpNo(cloudNo);
+					String location = databaseInstance2.getLocationWithIp(ip);
+					databaseInstance2.disconnectBrokerDatabase();
+				
+					databaseInstance.updateBrokerGiverTable(userId, cloudNo, ip, location);
+					
+					nullIdCount++;
+					
+				//prevMatch에 해당 아이디가 있으면
+				} else {
+					
+					//prevMatch값과 같으면 그냥 넘어간다
+					if(CBroker.prevMatch.get(userId) == cloudNo){
+						//do nothing
+						skipCount++;
+						
+					//prevMatch값 업데이트한다	
+					//다르면 BrokerGiver서버에도 업데이트한다
+					} else {
+						
+						//prevMatch update
+						CBroker.prevMatch.put(userId, cloudNo);
+						
+						//BrokerGiver update
+						databaseInstance2.connectBrokerDatabase();
+						String ip = databaseInstance2.getIpWithEpNo(cloudNo);
+						String location = databaseInstance2.getLocationWithIp(ip);
+						databaseInstance2.disconnectBrokerDatabase();
+					
+						databaseInstance.updateBrokerGiverTable(userId, cloudNo, ip, location);
+						System.out.println();
+						System.out.println("update count : " + updateCount + " ");
+						updateCount++;
+					}
+				}
 			}
+			System.out.print("(" + basicCount + ") ");
 		}
+		log.debug(" 			- null id count (so, put into the HashMap) : " + nullIdCount);
+		log.debug(" 			- skip count (cuz, same with the existing match) : " + skipCount);
+		log.debug(" 			- update count (cuz, different with the existing match): " + updateCount);
+		log.debug(" 		* After Matching HashMap size : " + CBroker.prevMatch.size());
 		
 		/////////////////////////////////////////////////////////////
 		//print log
@@ -828,30 +856,6 @@ public class CLBCalculation {
 		
 		databaseInstance.disconnectBrokerGiverDatabase();
 		
-		/*
-		if(prevInitialUsersOfClouds.size() == 0){
-			
-			//initialUsersOfClouds ArrayList 깊은 복사
-			for(int i=0; i<initialUsersOfClouds.size(); i++){
-				
-				ArrayList<ClientTrafficData> prevUsersOfCloud = initialUsersOfClouds.get(i);
-				ArrayList<ClientTrafficData> currUsersOfCloud = new ArrayList<ClientTrafficData>();
-				
-				for(int j=0; j<prevUsersOfCloud.size(); j++){
-					currUsersOfCloud.add(new ClientTrafficData(prevUsersOfCloud.get(j)));
-				}
-				
-				prevInitialUsersOfClouds.add(currUsersOfCloud);
-			}
-			
-			
-			 여기서 디비 호출해서 업데이트
-			
- 			
-		} else {
-			
-		}
-		*/
 		log.info("	[updateBrokerGiver method] - End");
 	}
 	
@@ -885,10 +889,9 @@ public class CLBCalculation {
 			double expectedTrafficRatio = surplusServerList.get(j).getRatioOfTraffic(); 
 			double expectedUserTraffic = userTraffic * expectedTrafficRatio;
 			
-			log.debug("  * user id : " + userId);
-			log.debug("  * remain traffic : " + remainTraffic);
-		//	System.out.println("  * expected traffic ratio : " + expectedTrafficRatio);
-			log.debug("  * user traffic : " + expectedUserTraffic);
+		//	log.debug("				* user id : " + userId);
+		//	log.debug("				* remain traffic : " + remainTraffic);
+		//	log.debug("				* user traffic : " + expectedUserTraffic);
 			
 			//만약에 해당 유저의 예상 트래픽 값을 포함하는것이, 서버 트래픽 허용 범위에 포함되는 거면 계속 진행 아니면 break; 
 			if(remainTraffic >= expectedUserTraffic){
@@ -921,10 +924,9 @@ public class CLBCalculation {
 			double expectedTrafficRatio = surplusServerList.get(j).getRatioOfTraffic(); 
 			double expectedUserTraffic = userTraffic * expectedTrafficRatio;
 			
-			log.debug("  * user id : " + userId);
-			log.debug("  * remain traffic : " + remainTraffic);
-		//	System.out.println("  * expected traffic ratio : " + expectedTrafficRatio);
-			log.debug("  * user traffic : " + expectedUserTraffic);
+		//	log.debug("  * user id : " + userId);
+		//	log.debug("  * remain traffic : " + remainTraffic);
+		//	log.debug("  * user traffic : " + expectedUserTraffic);
 			
 			//만약에 해당 유저의 예상 트래픽 값을 포함하는것이, 서버 트래픽 허용 범위에 포함되는 거면 계속 진행 아니면 break; 
 			if(remainTraffic >= expectedUserTraffic){
@@ -957,10 +959,9 @@ public class CLBCalculation {
 			double expectedTrafficRatio = surplusServerList.get(j).getRatioOfTraffic(); 
 			double expectedUserTraffic = userTraffic * expectedTrafficRatio;
 			
-			log.debug("  * user id : " + userId);
-			log.debug("  * remain traffic : " + remainTraffic);
-		//	System.out.println("  * expected traffic ratio : " + expectedTrafficRatio);
-			log.debug("  * user traffic : " + expectedUserTraffic);
+		//	log.debug("  * user id : " + userId);
+		//	log.debug("  * remain traffic : " + remainTraffic);
+		//	log.debug("  * user traffic : " + expectedUserTraffic);
 			
 			//만약에 해당 유저의 예상 트래픽 값을 포함하는것이, 서버 트래픽 허용 범위에 포함되는 거면 계속 진행 아니면 break; 
 			if(remainTraffic >= expectedUserTraffic){
@@ -976,37 +977,13 @@ public class CLBCalculation {
 		
 		return priorWeight;
 	}
-/*	
-	public ArrayList<SurCloudWeight> getSurplusCloudWeight(ArrayList<ServerStatus> surplusServerList, String userId){
-		
-		ArrayList<SurCloudWeight> priorWeight = new ArrayList<SurCloudWeight>();
-		
-		SurCloudWeight surCloudWeight = null;
-		
-		for(int j=0; j<surplusServerList.size(); j++){
-					
-			//user index 찾기
-			int userIndex = getUserIndex(userId);
-		
-			//normalized 값 가져오기
-			int surplusEpNo = surplusServerList.get(j).getEpNo();
-			double normalizedValue = userWeightList.get(userIndex).getWeightValues()[surplusEpNo-1];
-			surCloudWeight = new SurCloudWeight(surplusEpNo, normalizedValue);
-			
-			//추가
-			priorWeight.add(surCloudWeight);
-		}
-		
-		return priorWeight;
-	}
-*/	
+
 	public ArrayList<SurCloudWeight> getSurplusCloudWeight(ArrayList<ServerStatus> surplusServerList, String userId, int userTraffic){
 		
 		ArrayList<SurCloudWeight> priorWeight = new ArrayList<SurCloudWeight>();
 		SurCloudWeight surCloudWeight = null;
 		
 		log.debug(" -- getSurplusCloudWeight method");
-	//	System.out.println(" -- getSurplusCloudWeight method");
 		for(int j=0; j<surplusServerList.size(); j++){
 			System.out.println();		
 			//user index 찾기
@@ -1019,10 +996,9 @@ public class CLBCalculation {
 			double expectedTrafficRatio = surplusServerList.get(j).getRatioOfTraffic(); 
 			double expectedUserTraffic = userTraffic * expectedTrafficRatio;
 			
-			log.debug("  * user id : " + userId);
-			log.debug("  * remain traffic : " + remainTraffic);
-		//	System.out.println("  * expected traffic ratio : " + expectedTrafficRatio);
-			log.debug("  * user traffic : " + expectedUserTraffic);
+	//		log.debug("  * user id : " + userId);
+	//		log.debug("  * remain traffic : " + remainTraffic);
+	//		log.debug("  * user traffic : " + expectedUserTraffic);
 			
 			//만약에 해당 유저의 예상 트래픽 값을 포함하는것이, 서버 트래픽 허용 범위에 포함되는 거면 계속 진행 아니면 break; 
 			if(remainTraffic >= expectedUserTraffic){
