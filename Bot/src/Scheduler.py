@@ -85,7 +85,7 @@ class Scheduler:
 						self.isSession = True
 
 					if self.dstIPAddress:
-						self.startToCommunicateWithService(nextJobToWork, dstIPAddress)
+						self.startToCommunicateWithService(nextJobToWork, self.dstIPAddress)
 
 				if not self.continued:
 					break
