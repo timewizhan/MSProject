@@ -791,7 +791,8 @@ public class CLBCalculation {
 				int cloudNo = usersOfCloud.get(j).getCloudNo();
 				
 				//prevMatch에 해당 아이디가 없으면
-				if(CBroker.prevMatch.containsKey(userId)){
+				if(!CBroker.prevMatch.containsKey(userId)){
+				//	log.debug(" 			- no user id -> insert new id : " + userId);
 					//새로 추가
 					CBroker.prevMatch.put(userId, cloudNo);
 					
@@ -811,11 +812,13 @@ public class CLBCalculation {
 					//prevMatch값과 같으면 그냥 넘어간다
 					if(CBroker.prevMatch.get(userId) == cloudNo){
 						//do nothing
+					//	log.debug(" 			- same user id -> do nothing : " + userId);
 						skipCount++;
 						
 					//prevMatch값 업데이트한다	
 					//다르면 BrokerGiver서버에도 업데이트한다
 					} else {
+					//	log.debug(" 			- same user id -> update broker giver table (UserId, CloudNo) : " + userId + ", " + cloudNo);
 						
 						//prevMatch update
 						CBroker.prevMatch.put(userId, cloudNo);
@@ -827,13 +830,13 @@ public class CLBCalculation {
 						databaseInstance2.disconnectBrokerDatabase();
 					
 						databaseInstance.updateBrokerGiverTable(userId, cloudNo, ip, location);
-						System.out.println();
-						System.out.println("update count : " + updateCount + " ");
+					//	System.out.println();
+					//	System.out.println("update count : " + updateCount + " ");
 						updateCount++;
 					}
 				}
 			}
-			System.out.print("(" + basicCount + ") ");
+		//	System.out.print("(" + basicCount + ") ");
 		}
 		log.debug(" 			- null id count (so, put into the HashMap) : " + nullIdCount);
 		log.debug(" 			- skip count (cuz, same with the existing match) : " + skipCount);

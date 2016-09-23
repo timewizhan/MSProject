@@ -18,10 +18,9 @@ public class CNetworkServer {
 			
 			while(true){
 				Socket socket = serverSocket.accept();
-				log.info("# EP SOCKET CONNECTION ACCEPTED");
+			//	log.info("# EP SOCKET CONNECTION ACCEPTED");
 				ThreadPool.GetInstance().execute(new CConnectionWrap(socket));
 			}
-		
 		} catch (IOException e) {
 			log.error("CNetworkServer.start() Error!", e);
 		}
