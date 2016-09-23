@@ -79,12 +79,12 @@ class Scheduler:
 					time.sleep(delay)
 
 					Log.debug("Start to communicate with servers\n")
-					dstName = getDstName(nextJobToWork)
+					dstName = self.getDstName(nextJobToWork)
 
 					Log.debug("Start to find dstName in Hash\n")
-					if not isIncludedInHash(dstName):
+					if not self.isIncludedInHash(dstName):
 						dstIPAddress = self.startToCommunicationWithBroker(nextJobToWork)
-						addInHash(dstName, dstIPAddress)
+						self.addInHash(dstName, dstIPAddress)
 
 					if self.hash_dstIPAddress[dstName]:
 						self.startToCommunicateWithService(nextJobToWork, dstIPAddress)
