@@ -23,6 +23,9 @@ class Scheduler:
 		self.firstStep = True
 		self.oneDayCounter = 0
 
+		self.isSession = False
+		self.dstIPAddress = ""
+
 	def start(self):
 		from Log import *
 		Log.debug("Start scheduler")
@@ -77,8 +80,11 @@ class Scheduler:
 					time.sleep(delay)
 
 					Log.debug("Start to communicate with servers\n")
-					dstIPAddress = self.startToCommunicationWithBroker(nextJobToWork)
-					if dstIPAddress:
+					if not self.isSession:
+						self.dstIPAddress = self.startToCommunicationWithBroker(nextJobToWork)
+						self.isSession = True
+
+					if self.dstIPAddress:
 						self.startToCommunicateWithService(nextJobToWork, dstIPAddress)
 
 				if not self.continued:
@@ -105,6 +111,7 @@ class Scheduler:
 			return False
 
 		self.oneDayCounter += 1
+		self.isSession = False
 		return True
 
 	# 1. communicate with Broker
