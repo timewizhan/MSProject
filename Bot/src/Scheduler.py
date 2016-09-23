@@ -120,7 +120,7 @@ class Scheduler:
 		return False
 
 	def addInHash(self, key, value):
-		dstName = getDstName(jobToWork)
+		dstName = self.getDstName(jobToWork)
 		self.hash_dstIPAddress[key] = value
 		
 	def checkNextHour(self, timer):
