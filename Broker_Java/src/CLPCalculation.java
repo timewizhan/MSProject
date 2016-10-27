@@ -119,19 +119,30 @@ public class CLPCalculation implements Runnable {
 			//normalized_distance_table에서 user명 이용해서 ep 개수에 맞게 값 추출
 			double NormDistValueArray[];
 			NormDistValueArray = databaseInstance.getNormalizedDistanceValues(userList.get(i).getUserID(), CBroker.NUM_OF_EP);
+			log.debug("	* Get Distance: user id - " + userList.get(i).getUserID() + ", EP1 - " + NormDistValueArray[0] + ", EP2 - " + NormDistValueArray[1] + ", EP3 - " + NormDistValueArray[2]);
 			
 			//normalized_social_level_table에서 user명 이용해서 ep 개수에 맞게 값 추출
 			double NormSocialWeightValueArray[];
 			NormSocialWeightValueArray = databaseInstance.getNormalizedSocialWeightValues(userList.get(i).getUserID(), CBroker.NUM_OF_EP);
+			log.debug("	* Get Social Weight: user id - " + userList.get(i).getUserID() + ", EP1 - " + NormSocialWeightValueArray[0] + ", EP2 - " + NormSocialWeightValueArray[1] + ", EP3 - " + NormSocialWeightValueArray[2]);
+			
+			//normalized_server_traffic 값 (norm_server_table)에서 ep 개수에 맞게 값 추출
+			double NormServerTrafficValueArray[];
+			NormServerTrafficValueArray = databaseInstance.getNormalizedServerTrafficValues(CBroker.NUM_OF_EP);
+			log.debug("	* Get Server Traffic: user id - " + userList.get(i).getUserID() + ", EP1 - " + NormServerTrafficValueArray[0] + ", EP2 - " + NormServerTrafficValueArray[1] + ", EP3 - " + NormServerTrafficValueArray[2] + "\r\n");
 			
 			//ep개수에 맞게 weight를 줘서 두개의 값을 합침
-			int a = 1;	//distance weight
-			int b = 1;	//social weight
+			int distanceWeight = 1;	//distance weight
+			int socialWeight = 1;	//social weight
+			int serverTrafficWeight = 0; //server traffic weight
+			log.debug("	* distance weight ratio : " + distanceWeight + ", social weight ratio : " + socialWeight + ", serverTrafficWeight : " + serverTrafficWeight);
 			double tmpWeightValues [] = new double [CBroker.NUM_OF_EP];
 			for(int j=0; j<CBroker.NUM_OF_EP; j++){
 			//	log.debug("	user id : " + userList.get(i).getUserID() + ", norm dist (ep"+ (int)(j+1) + ") : " + NormDistValueArray[j] 
 			//			+ ", norm social weight (ep" + (int)(j+1) + ") :" + NormSocialWeightValueArray[j]);
-				tmpWeightValues[j] = a*NormDistValueArray[j] + b*NormSocialWeightValueArray[j];
+				tmpWeightValues[j] = distanceWeight*NormDistValueArray[j] 
+										+ socialWeight*NormSocialWeightValueArray[j]
+											+ serverTrafficWeight*NormServerTrafficValueArray[j];
 			}
 			userWeight.setWeightValues(tmpWeightValues);
 			userWeightList.add(userWeight);
@@ -365,11 +376,11 @@ public class CLPCalculation implements Runnable {
 			/* we are done now */
 			//test
 		//	System.out.println();
-		//	for(int i=0; i<lpMatchResult.size(); i++){
-		//		log.debug("	* ID:" + lpMatchResult.get(i).getUserId()
-		//				+ ", No.:" + lpMatchResult.get(i).getUserNo()
-		//				+ ", Cloud No.:" + lpMatchResult.get(i).getCloudNo());
-		//	}
+			for(int i=0; i<lpMatchResult.size(); i++){
+				log.debug("	* ID:" + lpMatchResult.get(i).getUserId()
+						+ ", No.:" + lpMatchResult.get(i).getUserNo()
+						+ ", Cloud No.:" + lpMatchResult.get(i).getCloudNo());
+			}
 		//	System.out.println();
 		}
 

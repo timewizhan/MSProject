@@ -630,7 +630,7 @@ public class CDatabase {
 				eachServerState.setEpNo(epNo);
 				//expectedTraffic
 				eachServerState.setExpectedTraffic(epNo, initUsrsOfClouds.get(epNo-1));
-				
+				eachServerState.setRemainTraffic(eachServerState.getMaximumTraffic() - eachServerState.getExpectedTraffic());
 				serverStateList.add(eachServerState);
 			}
 
@@ -733,6 +733,7 @@ public class CDatabase {
 			stmt = brokerConn.createStatement();
 		    sql = "update previous_server_traffic set total_traffic = " + currTotalTraffic;
 		    stmt.executeUpdate(sql);
+		    log.info(" Update Previous Total Traffic : " + currTotalTraffic);
 		} catch (SQLException e) {
 		    // TODO Auto-generated catch block
 		    e.printStackTrace();
@@ -761,6 +762,7 @@ public class CDatabase {
 			stmt = brokerConn.createStatement();
 			stmt.executeUpdate("insert into previous_server_traffic values("+currTotalTraffic+");");
 			stmt.close();
+			log.debug(" Insert Previous Total Traffic : " + currTotalTraffic);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -782,7 +784,7 @@ public class CDatabase {
 		    	sql += ", " + normalizedDistances[i];
 		    }
 		    sql += ");";
-		    
+		//  log.info("SQL(insert into normalized_distance_table) : " + sql);
 		    stmt.executeUpdate(sql);
 		    
 		} catch (SQLException e) {
@@ -792,6 +794,17 @@ public class CDatabase {
 		}
 		
 	//	log.debug("    - insertNormDistanceData method end");
+	}
+	
+	public double [] getNormalizedServerTrafficValues (int NumOfEp) {
+		double NormServerTrafficValueArray [] = new double [NumOfEp];
+		
+		for(int i=0; i<NumOfEp; i++){
+			int epNo = i+1;
+			NormServerTrafficValueArray[i] = getNormalizedTrafficWeightValue(epNo);
+		}
+		
+		return NormServerTrafficValueArray;
 	}
 	
 	public double getNormalizedTrafficWeightValue(int epNo){
