@@ -108,7 +108,7 @@ class TimePattern(AbstractPattern):
 		return int(round(selectedTimeRatio))
 
 class BehaviorPattern(AbstractPattern):
-	RW_RATIO = 5
+	RW_RATIO = 10
 
 	WORK_FOR_ME 	= 1
 	WORK_FOR_YOU 	= 2

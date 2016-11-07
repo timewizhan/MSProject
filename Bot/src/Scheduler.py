@@ -23,8 +23,6 @@ class Scheduler:
 		self.firstStep = True
 		self.oneDayCounter = 0
 
-		self.hash_dstIPAddress = {}
-
 	def start(self):
 		from Log import *
 		Log.debug("Start scheduler")
@@ -79,14 +77,8 @@ class Scheduler:
 					time.sleep(delay)
 
 					Log.debug("Start to communicate with servers\n")
-					dstName = self.getDstName(nextJobToWork)
-
-					Log.debug("Start to find dstName in Hash\n")
-					if not self.isIncludedInHash(dstName):
-						dstIPAddress = self.startToCommunicationWithBroker(nextJobToWork)
-						self.addInHash(dstName, dstIPAddress)
-
-					if self.hash_dstIPAddress[dstName]:
+					dstIPAddress = self.startToCommunicationWithBroker(nextJobToWork)
+					if dstIPAddress:
 						self.startToCommunicateWithService(nextJobToWork, dstIPAddress)
 
 				if not self.continued:
@@ -103,24 +95,6 @@ class Scheduler:
 
 		Log.debug("Successfully end the one day job")
 		sys.exit(0)
-
-	def getDstName(self, jobToWork):
-		if len(jobToWork.getWhoName()) > 0:
-			dstName = jobToWork.getWhoName()
-		else:
-			dstName = self.userID
-
-		return dstName
-
-	def isIncludedInHash(self, dstName):
-		for k in self.hash_dstIPAddress.keys():
-			if k != dstName:
-				continue
-			return True
-		return False
-
-	def addInHash(self, key, value):
-		self.hash_dstIPAddress[key] = value
 		
 	def checkNextHour(self, timer):
 		if self.firstStep == True:
@@ -131,7 +105,6 @@ class Scheduler:
 			return False
 
 		self.oneDayCounter += 1
-		self.hash_dstIPAddress.clear()
 		return True
 
 	# 1. communicate with Broker
