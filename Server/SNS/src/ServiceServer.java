@@ -5,6 +5,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.log4j.Logger;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.PropertyConfigurator;
 
 import Utility.CoordHandler;
 import Wrapper.coordInfo;
@@ -15,6 +18,8 @@ import Wrapper.coordInfo;
  * accept the client's connection and give the thread it to handle the request
  */
 public class ServiceServer {
+	
+	static Logger log = Logger.getLogger(ServiceServer.class.getName());				//initiate logger
 	
 	private final int mServerPort = 7777;
 	private final int mMaxCon = 2147483647;		
@@ -37,7 +42,9 @@ public class ServiceServer {
 	 * @param: None
 	 * @return: None
 	 */
-	public static void main(String[] args) throws IOException {						
+	public static void main(String[] args) throws IOException {
+		PropertyConfigurator.configure("log/log4j.properties");
+		
 		// create server
 		ServiceServer server = new ServiceServer(CoordHandler.setLocation());
 		server.initializeDBCP();
@@ -56,9 +63,14 @@ public class ServiceServer {
 		mCoord = new coordInfo();
 		CoordHandler.readCoord(mCoord, loc);
 		
+		log.debug("location : " + loc);
+		
 		int processors = Runtime.getRuntime().availableProcessors();
 		mNumThread = processors * 2;
-		mThreadPool = Executors.newFixedThreadPool(mNumThread);				
+		mThreadPool = Executors.newFixedThreadPool(mNumThread);
+		
+		//initialize counter
+		Counter.initializeCounter();
 	}
 	
 	/**
@@ -68,7 +80,7 @@ public class ServiceServer {
 		mBDS = new BasicDataSource();
 		mBDS.setDriverClassName("com.mysql.jdbc.Driver");
 		mBDS.setUsername("root");
-		mBDS.setPassword("cclabj0gg00");
+		mBDS.setPassword("cclab");
 		mBDS.setUrl("jdbc:mysql://localhost:3306/snsdb?autoReconnect=true&useSSL=false");
 		
 		// optional
