@@ -13,12 +13,12 @@ public class CDatabase {
 	Connection epConn = null;
 	Connection brokerConn = null;
 	Connection brokerGiverConn = null;
-	String epUrl = null;
+//	String epUrl = null;
 	
 	public void connectEntryPointDatabase(Socket socket){
 		
 		String url = socket.getInetAddress().toString();
-		epUrl = url.substring(1);
+	//	epUrl = url.substring(1);
 		String port = "3306";
 		String dbName = "snsdb";
 		String id = "root";
@@ -36,7 +36,7 @@ public class CDatabase {
 		
 	}
 	
-	public void extractServerMonitoredResult(){
+	public void extractServerMonitoredResult(Socket socket){
 		
 		Statement stmt= null;
 		
@@ -51,13 +51,13 @@ public class CDatabase {
 					String serverTraffic = rs.getString("server_side_traffic");
 					String cpuUtil = rs.getString("cpu_util");
 
-					insertServerMonitoredResult(serverTraffic, cpuUtil);
+					insertServerMonitoredResult(socket, serverTraffic, cpuUtil);
 				} while(rs.next());
 
 			}else{
 				String serverTraffic = "0";
 				String cpuUtil = "0";
-				insertServerMonitoredResult(serverTraffic, cpuUtil);
+				insertServerMonitoredResult(socket, serverTraffic, cpuUtil);
 			}
 			
 			rs.close();
@@ -235,9 +235,11 @@ public class CDatabase {
 		}
 	}
 	
-	public void insertServerMonitoredResult(String serverTraffic, String cpuUtil){
+	public void insertServerMonitoredResult(Socket socket, String serverTraffic, String cpuUtil){
 		
 		Statement stmt = null;
+		String url = socket.getInetAddress().toString();
+		String epUrl = url.substring(1);
 		
 		try {
 			stmt = brokerConn.createStatement();
@@ -251,16 +253,45 @@ public class CDatabase {
 	
 	public void insertClientMonitoredResult(String user, String location, String cst){
 		
-		Statement stmt = null;
+		boolean isDuplicated = checkDuplicatedinUsers(user.toString());
 		
+		if(!isDuplicated){
+		
+			Statement stmt = null;
+			
+			try {
+				stmt = brokerConn.createStatement();
+				stmt.executeUpdate("insert into client_table (user, location, client_side_traffic) values('" + user + "','" + location + "'," + Integer.parseInt(cst) + ");");
+				stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	boolean checkDuplicatedinUsers(String user) {
+		
+		boolean isDuplicated = false;
+		Statement stmt = null;
+
 		try {
 			stmt = brokerConn.createStatement();
-			stmt.executeUpdate("insert into client_table (user, location, client_side_traffic) values('" + user + "','" + location + "'," + Integer.parseInt(cst) + ");");
+			ResultSet resSet = stmt.executeQuery("select * from client_table where user = '" + user + "';");
+
+			if(resSet.next()){
+				isDuplicated = true;
+			}
+
+			resSet.close();
 			stmt.close();
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return isDuplicated;
 	}
 	
 	public ArrayList<ServerData> extractServerData(){
@@ -604,7 +635,7 @@ public class CDatabase {
 		return traffic;
 	}
 
-	public ArrayList<ServerStatus> getServersStatus(HashMap<String , Integer> map, ArrayList<ArrayList<ClientTrafficData>> initUsrsOfClouds){
+	public ArrayList<ServerStatus> getServersStatus(HashMap<String , Long> map, ArrayList<ArrayList<ClientTrafficData>> initUsrsOfClouds){
 
 		ArrayList<ServerStatus> serverStateList = new ArrayList<ServerStatus>();
 		ServerStatus eachServerState = null;
@@ -628,9 +659,22 @@ public class CDatabase {
 				//epNo
 				int epNo = getEpNoWithIp(serverIp);
 				eachServerState.setEpNo(epNo);
+				
 				//expectedTraffic
-				eachServerState.setExpectedTraffic(epNo, initUsrsOfClouds.get(epNo-1));
-				eachServerState.setRemainTraffic(eachServerState.getMaximumTraffic() - eachServerState.getExpectedTraffic());
+				if(CBroker.isFirstMedium){
+					
+					if(initUsrsOfClouds.get(epNo-1) == null){
+						eachServerState.setExpectedTraffic(epNo, 0);
+					} else {
+						eachServerState.setExpectedTraffic(epNo, initUsrsOfClouds.get(epNo-1));
+					}
+					eachServerState.setRemainTraffic(eachServerState.getMaximumTraffic() - eachServerState.getExpectedTraffic());
+					
+				} else {
+					
+					eachServerState.setRemainTraffic(eachServerState.getMaximumTraffic() - eachServerState.getCurrentTraffic());
+				}
+				
 				serverStateList.add(eachServerState);
 			}
 
@@ -734,6 +778,20 @@ public class CDatabase {
 		    sql = "update previous_server_traffic set total_traffic = " + currTotalTraffic;
 		    stmt.executeUpdate(sql);
 		    log.info(" Update Previous Total Traffic : " + currTotalTraffic);
+		} catch (SQLException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+	}
+	
+	public void setPrivServerTrafficZero() {
+		Statement stmt = null;
+		String sql = null;
+		try {
+			stmt = brokerConn.createStatement();
+		    sql = "update previous_server_traffic set total_traffic = " + 0;
+		    stmt.executeUpdate(sql);
+		    
 		} catch (SQLException e) {
 		    // TODO Auto-generated catch block
 		    e.printStackTrace();
@@ -1076,6 +1134,30 @@ public class CDatabase {
 		disconnectBrokerDatabase();
 		
 		return ip;
+	}
+	
+	public int getEpNo(String userId){
+		
+		int epNo = 0;
+		Statement stmt = null;
+		
+		try {
+			stmt = brokerGiverConn.createStatement();
+			ResultSet rs = stmt.executeQuery("select ep_num from redirection_table where user_id = '" + userId +"';");
+
+			while(rs.next()){
+				epNo = Integer.parseInt(rs.getString("ep_num"));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return epNo;
 	}
 	
 	public void disconnectBrokerGiverDatabase(){

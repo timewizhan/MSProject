@@ -35,7 +35,7 @@ public class CConnectionWrap implements Runnable{
              */
             CDatabase databaseInstance = new CDatabase();
             databaseInstance.connectEntryPointDatabase(socket);
-            databaseInstance.extractServerMonitoredResult();
+            databaseInstance.extractServerMonitoredResult(socket);
             databaseInstance.extractClientMonitoredResult();
             databaseInstance.disconnectEntryPointDatabase();
 

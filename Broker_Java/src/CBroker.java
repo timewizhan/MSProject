@@ -1,6 +1,7 @@
 import org.apache.log4j.Logger;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.log4j.ConsoleAppender;
@@ -33,7 +34,12 @@ public class CBroker {
 
 	static Logger log = Logger.getLogger(CBroker.class.getName());				//initiate logger
 	static final int NUM_OF_EP = 3; 											//set number of clouds
+	
 	static HashMap<String, Integer> prevMatch = new HashMap<String, Integer>();	//previous matched result
+	static ArrayList<ArrayList<ClientTrafficData>> prevInitialUsersOfClouds = new ArrayList<ArrayList<ClientTrafficData>>();
+	static boolean isFirstMinimum = true;
+	static boolean isFirstMedium = true;
+	static boolean isFirstMaximum = true;
 	
 	public static void main(String [] args){
 		

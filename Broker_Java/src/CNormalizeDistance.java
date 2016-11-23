@@ -43,7 +43,7 @@ public class CNormalizeDistance implements Callable{
 						ClientData.maxDistance = dist;
 				}
 			}
-			log.debug("	* Calculate Distance: user id - " + clientData.getUserID() + "("+ clientData.getUserLocation() +"), EP1 - " + distances[0] + ", EP2 - " + distances[1] + ", EP3 - " + distances[2]);
+		//	log.debug("	* Calculate Distance: user id - " + clientData.getUserID() + "("+ clientData.getUserLocation() +"), EP1 - " + distances[0] + ", EP2 - " + distances[1] + ", EP3 - " + distances[2]);
 			
 			double [] normalizedDistances = new double [CBroker.NUM_OF_EP];
 			for(int i=0; i<alServerInfo.size(); i++){

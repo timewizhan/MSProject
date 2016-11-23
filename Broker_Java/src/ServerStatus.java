@@ -8,12 +8,12 @@ public class ServerStatus {
 
 	static Logger log = Logger.getLogger(CBroker.class.getName());
 	
-	private int currentTraffic;
-	private int expectedTraffic;
-	private int maximumTraffic;
+	private long currentTraffic;
+	private long expectedTraffic;
+	private long maximumTraffic;
 	private String serverIp;
 	private int epNo;
-	private int remainTraffic;
+	private long remainTraffic;
 	static public double ratioOfTraffic;
 	
 	public double getRatioOfTraffic(){
@@ -24,19 +24,19 @@ public class ServerStatus {
 		this.ratioOfTraffic = ratioOfTraffic;
 	}
 	
-	public int getRemainTraffic(){
+	public long getRemainTraffic(){
 		return remainTraffic;
 	}
-	public void setRemainTraffic(int remainTraffic){
+	public void setRemainTraffic(long remainTraffic){
 		this.remainTraffic = remainTraffic;
 	}
-	public int getCurrentTraffic() {
+	public long getCurrentTraffic() {
 		return currentTraffic;
 	}
 	public void setCurrentTraffic(int currentTraffic) {
 		this.currentTraffic = currentTraffic;
 	}
-	public int getExpectedTraffic() {
+	public long getExpectedTraffic() {
 		return expectedTraffic;
 	}
 	/*
@@ -46,29 +46,18 @@ public class ServerStatus {
 	*/
 	public void setExpectedTraffic(int epNo, ArrayList<ClientTrafficData> clientTrafficData) {
 		
-	//	log.debug("		EP No. : " + epNo);
-		
-		//현재 토탈 서버 트래픽
-		double currTotalTraffic = (double)getCurrentTotalCloudsTraffic();
-	//	log.debug("		Current Total Traffic : " + currTotalTraffic);
-		
-		//previous 토탈 서버 트래픽
-		double prevTotalTraffic = (double)getPreviousTotalCloudsTraffic(currTotalTraffic);
-	//	log.debug("		Previous Total Traffic : " + prevTotalTraffic);
-		
-		//현재 예상되는 각 사용자들의 트래픽을 구하기위한,
-		//이전 토탈 트래픽과 현재 토탈 트래픽의 비율
-		double ratioOfTraffic = currTotalTraffic/prevTotalTraffic;
-		setRatioOfTraffic(ratioOfTraffic);
-		
-	//	log.debug("		Ratio of Traffic : " + ratioOfTraffic + "\n");
-		
 		//현재 해당 서버에 매칭된 각 유저들의 트래픽 + 비율 => 예상되는 토탈 트래픽
 		int expectedTraffic = 0;
 		for(int i=0; i<clientTrafficData.size(); i++){
 			int currClientTraffic = clientTrafficData.get(i).getUserTraffic();
-			expectedTraffic += (ratioOfTraffic * currClientTraffic);
+		//	expectedTraffic += (ratioOfTraffic * currClientTraffic);
+			expectedTraffic += currClientTraffic;
 		}
+		
+		this.expectedTraffic = expectedTraffic;
+	}
+	
+	public void setExpectedTraffic(int epNo, int expectedTraffic) {
 		
 		this.expectedTraffic = expectedTraffic;
 	}
@@ -105,10 +94,10 @@ public class ServerStatus {
 		return currTotalTraffic;
 	}
 	
-	public int getMaximumTraffic() {
+	public long getMaximumTraffic() {
 		return maximumTraffic;
 	}
-	public void setMaximumTraffic(int maximumTraffic) {
+	public void setMaximumTraffic(long maximumTraffic) {
 		this.maximumTraffic = maximumTraffic;
 	}
 	public String getServerIp() {
