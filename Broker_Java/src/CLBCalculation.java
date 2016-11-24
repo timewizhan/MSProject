@@ -293,7 +293,7 @@ public class CLBCalculation {
 			long expectedTraffic = 0;
 			long maximumTraffic = 0;
 			
-			if(CBroker.isFirstMedium){
+			if(CBroker.isFirstMedium || CBroker.isFirstMaximum){
 				expectedTraffic = serverStateList.get(i).getExpectedTraffic();
 				maximumTraffic = serverStateList.get(i).getMaximumTraffic();
 				
@@ -320,7 +320,7 @@ public class CLBCalculation {
 					//expectedTraffic == maximumTraffic
 					//do nothing
 				}
-			//is NOT first Medium
+			//is NOT first Medium, is NOT first Maximum
 			} else {
 				expectedTraffic = serverStateList.get(i).getCurrentTraffic();
 				maximumTraffic = serverStateList.get(i).getMaximumTraffic();
@@ -430,11 +430,11 @@ public class CLBCalculation {
 			
 		//	if(isFirstMedium) {
 			if(CBroker.isFirstMedium) {
-				log.debug("is First!");
+				log.debug("is First! (Medium)");
 				initialRematchProcess("MEDIUM_TRAFFIC");
 			 
 			} else {
-				log.debug("is NOT First!");
+				log.debug("is NOT First! (Medium)");
 				// prevInitialUsrsOfClouds를 initialUsersOfClouds에 복사한다
 				initialUsersOfClouds = CBroker.prevInitialUsersOfClouds;
 				 
@@ -468,7 +468,44 @@ public class CLBCalculation {
 			}
 			
 		} else if(processType.equals("MAXIMUM_TRAFFIC")) {
-			
+		
+			if(CBroker.isFirstMaximum) {
+				log.debug("is First! (Maximum)");
+				initialRematchProcess("MAXIMUM_TRAFFIC");
+			 
+			} else {
+				log.debug("is NOT First! (Maximum)");
+				// prevInitialUsrsOfClouds를 initialUsersOfClouds에 복사한다
+				initialUsersOfClouds = CBroker.prevInitialUsersOfClouds;
+				 
+				// 각 cloud 의 capacity가 만족하는지 안하는지 검사
+				boolean isEnoughCapacity = checkCapacity();
+				if(isEnoughCapacity){ // i) capacity를 모두 만족할 때
+					//do nothing
+				
+				} else { // ii) capacity를 모두 만족하지 않을 때
+					
+					// getUserTraffic 메소드를 이용해서 각 사용자들의 이번 시간 traffic을 업데이트 한다
+					for(int i=0; i<initialUsersOfClouds.size(); i++){
+					
+						ArrayList<ClientTrafficData> eachCloudUsers = new ArrayList<ClientTrafficData>();
+						eachCloudUsers = initialUsersOfClouds.get(i);
+						
+						for(int j=0; j<eachCloudUsers.size(); j++){
+						
+							int userTraffic = 0;
+							String userId = null;
+							
+							userId = eachCloudUsers.get(j).getUserId();
+							userTraffic = getUserTraffic(userId);
+							
+							eachCloudUsers.get(j).setUserTraffic(userTraffic);
+						}
+					}
+					
+					commonRematchProcess(processType);
+				}
+			}
 		}
 	}
 	
@@ -1308,8 +1345,7 @@ public class CLBCalculation {
 	}
 	
 	public void sortUsersWithTraffic(ArrayList<ClientTrafficData> S){
-		//	public void sortUsersWithTraffic(ArrayList<ClientTrafficData> usersOfCloud){
-
+		
 		//quick sort
 		if (S.size() < 2) return; // Nothing needs to be done if S has zero or one element)
 
@@ -1317,11 +1353,12 @@ public class CLBCalculation {
 		ArrayList<ClientTrafficData> L = new ArrayList<ClientTrafficData>(); // L, storing the elements in S less than pivot
 		ArrayList<ClientTrafficData> E = new ArrayList<ClientTrafficData>(); // E, storing the elements in S equal to pivot
 		ArrayList<ClientTrafficData> G = new ArrayList<ClientTrafficData>(); // G, storing the elements in S greater than pivot
+		
 		int pivot = (int)S.get(S.size() - 1).getUserTraffic();
 	
 		E.add(S.get(S.size() - 1));
 		S.remove(S.size() - 1);
-		
+/*		
 		while (S.size() > 0) {
 			if ((int)S.get(0).getUserTraffic() < pivot) {
 				L.add(S.get(0));
@@ -1332,7 +1369,18 @@ public class CLBCalculation {
 			}
 			S.remove(0);
 		}
-
+*/	
+		while (S.size() > 0) {
+			if ((int)S.get(0).getUserTraffic() < pivot) {
+				G.add(S.get(0));
+			} else if ((int)S.get(0).getUserTraffic() == pivot) {
+				E.add(S.get(0));
+			} else {
+				L.add(S.get(0));
+			}
+			S.remove(0);
+		}
+		
 		// Conquer: Recursively sort sequences L and G.
 		sortUsersWithTraffic(L);
 		sortUsersWithTraffic(G);
