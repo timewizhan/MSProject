@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 public class Database {
 	
-	static Logger log = Logger.getLogger(DataAnalyzer.class.getName());
+	static Logger log = Logger.getLogger(CompleteLink.class.getName());
 	
 	Connection connection = null;
 	Statement st = null;
@@ -103,51 +103,6 @@ public class Database {
 		}
 	}
 	
-	void insertUsersNotHavingManyFriends(String user, String location){
-		
-		boolean isDuplicated = checkDuplicatedinUsersNotHavingMany(user);
-		
-		if(!isDuplicated){
-		
-			Statement stmt = null;
-		
-			try {
-				stmt = mySqlConn.createStatement();
-				stmt.executeUpdate("INSERT INTO UsersNotHavingManyFriends VALUES('" + user + "', '" + location + "') ");
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	void insertFriends(Friend user, String friendOf){
-		
-		boolean isDuplicated = checkDuplicatedinFriends(user.getUserId().toString());
-		
-		if(!isDuplicated){
-		
-			Statement stmt = null;
-		
-			try {
-				stmt = mySqlConn.createStatement();
-				stmt.executeUpdate("INSERT INTO Friends (uid, isComplete, friendOf, isFollower, followingPortion, followerPortion, location) VALUES('" 
-														+ user.getUserId() + "', "  
-														+ user.getIsCompleteUserId()  + ", '"
-														+ friendOf + "', "
-														+ user.getIsFollower() + ", "
-														+ user.getFollowingPortion() + ", "
-														+ user.getFollowerPortion() + ", '"
-														+ user.getLocation() + "') ");
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
 	boolean checkDuplicatedinFriends(String user) {
 		
 		boolean isDuplicated = false;
@@ -220,30 +175,6 @@ public class Database {
 		return isDuplicated;
 	}
 	
-	boolean checkDuplicatedinUsersNotHavingMany(String user) {
-		
-		boolean isDuplicated = false;
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select * from UsersNotHavingManyFriends where uid = '" + user + "';");
-
-			if(resSet.next()){
-				isDuplicated = true;
-			}
-
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return isDuplicated;
-	}
-	
 	ArrayList<Friend> getAllTheFriends(){
 
 		ArrayList<Friend> allFriends = new ArrayList<Friend>();
@@ -275,39 +206,6 @@ public class Database {
 		}
 		
 		return allFriends;
-	}
-	
-	ArrayList<User> getUsersNotHavingManyFriends(){
-		ArrayList<User> usersNotHavingManyFriends = new ArrayList<User>();
-		
-		User eachUser = null;
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select uid, location from UsersNotHavingManyFriends;");
-			
-			while(resSet.next()){
-				eachUser = new User();
-				
-				String userId = resSet.getString("uid");
-				String location = resSet.getString("location");
-				
-				eachUser.setUserId(userId);
-				eachUser.setUserLocation(location);
-				
-				usersNotHavingManyFriends.add(eachUser);
-			}
-			
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return usersNotHavingManyFriends;
 	}
 	
 	ArrayList<User> getAllFriendsNotInHeavy(){
@@ -394,67 +292,6 @@ public class Database {
 		}
 		
 		return userList;
-	}
-	
-	ArrayList<User> getFinalUsers(){
-
-		Statement stmt = null;
-		ArrayList<User> userList = new ArrayList<User>();
-		User eachUser = new User();
-		
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select userName, userPlace, classifier from CompleteUserId");
-			
-			while(resSet.next()){
-				eachUser = new User();
-				eachUser.setUserId(resSet.getString("userName"));
-				eachUser.setUserLocation(resSet.getString("userPlace"));
-				eachUser.setClassifier(Integer.parseInt(resSet.getString("classifier")));
-			
-				userList.add(eachUser);
-			}
-			
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return userList;
-	}
-	
-	UserProperty getRandUserProperty(){
-
-		Statement stmt = null;
-		UserProperty eachUserProperty = new UserProperty();
-		
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select TweetTime, UserName, TweetPlace, UserPlace, TweetID from newUserProperty "
-													+ "order by rand() limit 1");
-			
-			if(resSet.next()){
-				eachUserProperty = new UserProperty();
-				
-				eachUserProperty.setTweetTime(resSet.getString("TweetTime"));
-				eachUserProperty.setUserName(resSet.getString("UserName"));
-				eachUserProperty.setTweetPlace(resSet.getString("TweetPlace"));
-				eachUserProperty.setUserPlace(resSet.getString("UserPlace"));
-				eachUserProperty.setTweetID(resSet.getString("TweetID"));
-			}
-			
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return eachUserProperty;
 	}
 	
 	ArrayList<User> getUsersSameLocation(String location, int numUsersSamePlace){
@@ -552,10 +389,10 @@ public class Database {
 		return addedUserLinks;
 	}
 	
-	ArrayList<UserLink> getFriendInSocialLevelPerUser(String sourceName){
+	ArrayList<Friend> getFriendInSocialLevelPerUser(String sourceName){
 
-		ArrayList<UserLink> addedUserLinks = new ArrayList<UserLink>();
-		UserLink eachLink = null;
+		ArrayList<Friend> addedUserLinks = new ArrayList<Friend>();
+		Friend eachFriend = null;
 		Statement stmt = null;
 
 		try {
@@ -565,15 +402,17 @@ public class Database {
 												+ "WHERE sourceName = '" + sourceName + "';");
 			
 			while(resSet.next()){
-				eachLink = new UserLink();
+				eachFriend = new Friend();
 				
-				String dstName = resSet.getString("destinationName");
+				String friendId = resSet.getString("destinationName");
 				double portion = Double.parseDouble(resSet.getString("portion"));
+				String location = getLocation(friendId);
 				
-				eachLink.setDestinationName(dstName);
-				eachLink.setPortion(portion);
+				eachFriend.setUserId(friendId);
+				eachFriend.setPortion(portion);
+				eachFriend.setLocation(location);
 				
-				addedUserLinks.add(eachLink);
+				addedUserLinks.add(eachFriend);
 			}
 			
 			resSet.close();
@@ -585,6 +424,77 @@ public class Database {
 		}
 		
 		return addedUserLinks;
+	}
+	
+	String getLocation(String userId){
+		
+		String location = null;
+		Statement st = null;
+
+		try {
+			st = mySqlConn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT userPlace " 
+											+ "FROM CompleteUserId " 
+											+ "WHERE userName = '" + userId + "';");
+			
+			if(rs.next()){
+				location = rs.getString("userPlace");
+			}
+			
+			rs.close();
+			st.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return location;
+	}
+	
+	boolean checkCompleteLink(String sourceName, String destinationName){
+		boolean isCompleteLink = false;
+		
+		Statement stmt = null;
+
+		try {
+			stmt = mySqlConn.createStatement();
+			ResultSet resSet = stmt.executeQuery("SELECT sourceName, destinationName, portion " 
+												+ "FROM SocialLevelPerUser " 
+												+ "WHERE sourceName = '" + sourceName + "' AND destinationName = '" + destinationName + "';");
+			
+			if(resSet.next()){
+				isCompleteLink = true;
+			}
+			
+			resSet.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return isCompleteLink;
+	}
+	
+	void insertNewLink(String sourceName, String destinationName, double portion){
+		
+		Statement stmt = null;
+
+		try {
+			stmt = mySqlConn.createStatement();
+			stmt.executeUpdate("INSERT INTO SocialLevelPerUser (sourceName, destinationName, portion) " 
+								+ "VALUES('" 
+								+ sourceName + "', '" 
+								+ destinationName + "', " 
+								+ portion + ") ");
+			
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	void createCompleteUserIdTable(String userId, String userLocation, int classifier){
@@ -606,108 +516,6 @@ public class Database {
 		}
 	}
 	
-	void insertMFRatio(User eachUser, MFRatio mfRatio){
-		
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			stmt.executeUpdate("INSERT INTO MFRatio (SourceName, MyselfRatio, FriendRatio) " 
-								+ "VALUES('" 
-								+ eachUser.getUserId().toString() + "', '" 
-								+ mfRatio.getMyselfRatio().toString() + "', " 
-								+ mfRatio.getFriendRatio().toString() + ") ");
-			
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	void insertRandMFRatio(User eachUser, MFRatio mfRatio){
-		
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			stmt.executeUpdate("INSERT INTO MFRatio (SourceName, MyselfRatio, FriendRatio) " 
-								+ "VALUES('" 
-								+ eachUser.getUserId() + "', '" 
-								+ mfRatio.getMyselfRatio().toString() + "', " 
-								+ mfRatio.getFriendRatio().toString() + ") ");
-			
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	void insertRandUserProperty(User eachUser, UserProperty eachUserProperty){
-		
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			stmt.executeUpdate("INSERT INTO madeUserProperty (TweetTime, UserName, TweetPlace, UserPlace, TweetID) " 
-								+ "VALUES('" 
-								+ eachUserProperty.getTweetTime() + "', '" 
-								+ eachUser.getUserId().toString() + "', '"
-								+ eachUserProperty.getTweetPlace().toString() + "', '"
-								+ eachUserProperty.getUserPlace().toString() + "', '"
-								+ eachUserProperty.getTweetID().toString() + "') ");
-			
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	void insertUserProperty(User eachUser, UserProperty eachUserProperty){
-		
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			stmt.executeUpdate("INSERT INTO madeUserProperty (TweetTime, UserName, TweetPlace, UserPlace, TweetID) " 
-								+ "VALUES('" 
-								+ eachUserProperty.getTweetTime() + "', '" 
-								+ eachUser.getUserId().toString() + "', '"
-								+ eachUserProperty.getTweetPlace().toString() + "', '"
-								+ eachUserProperty.getUserPlace().toString() + "', '"
-								+ eachUserProperty.getTweetID().toString() + "') ");
-			
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	void insertIntoSocialLevelPerUser(User existingUser){
-		
-		Statement stmt = null;
-		
-		for(int i=0; i<existingUser.getFriendList().size(); i++){
-			
-			try {
-				stmt = mySqlConn.createStatement();
-				stmt.executeUpdate("INSERT INTO SocialLevelPerUser (sourceName, destinationName, portion) " 
-									+ "VALUES('" 
-									+ existingUser.getUserId().toString() + "', '" 
-									+ existingUser.getFriendList().get(i).getUserId().toString() + "', " 
-									+ existingUser.getFriendList().get(i).getFollowingPortion() + ") ");
-				
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
 	void insertAddedUsersIntoSocialLevelPerUser(UserLink addedUserLink){
 		
 		Statement stmt = null;
@@ -725,63 +533,6 @@ public class Database {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	void insertIntoAddedSocialLevelPerUser(User user, ArrayList<User> samePlaceUsers, ArrayList<User> otherPlaceUsers){
-		
-		Statement stmt = null;
-		double portion = 0.0;
-		double samePlaceUsersSize = samePlaceUsers.size();
-		double otherPlaceUsersSize = otherPlaceUsers.size();
-		double totalSize = samePlaceUsersSize + otherPlaceUsersSize;
-	//	portion = 1 / (samePlaceUsersSize + otherPlaceUsersSize);
-		
-		if(totalSize < 10 || totalSize > 20){	
-			log.error("There's no case of TOTAL SIZE = " + totalSize);
-		}
-		
-		Portion portions = new Portion();
-		ArrayList<Double> portionList = portions.getPortionList(totalSize);
-		int portionCnt = 0;
-		
-		for(int i=0; i<samePlaceUsers.size(); i++){
-			try {
-				stmt = mySqlConn.createStatement();
-				stmt.executeUpdate("INSERT INTO addedSocialLevelPerUser (sourceName, sourceLocation, destinationName, destinationLocation, portion) " 
-									+ " VALUES('" 
-									+ user.getUserId().toString() + "', '" 
-									+ user.getUserLocation().toString() + "', '"
-									+ samePlaceUsers.get(i).getUserId().toString() + "', '" 
-									+ samePlaceUsers.get(i).getUserLocation().toString() + "', "
-									+ portionList.get(portionCnt).doubleValue() + ") ");
-				
-				portionCnt++;
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		for(int i=0; i<otherPlaceUsers.size(); i++){
-			try {
-				stmt = mySqlConn.createStatement();
-				stmt.executeUpdate("INSERT INTO addedSocialLevelPerUser (sourceName, sourceLocation, destinationName, destinationLocation, portion) " 
-									+ " VALUES('" 
-									+ user.getUserId().toString() + "', '" 
-									+ user.getUserLocation().toString() + "', '"
-									+ otherPlaceUsers.get(i).getUserId().toString() + "', '" 
-									+ otherPlaceUsers.get(i).getUserLocation().toString() + "', "
-									+ portionList.get(portionCnt).doubleValue() + ") ");
-				
-				portionCnt++;
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
 	}
 	
 	void insertFriendsInHeavy(String user){
@@ -921,7 +672,7 @@ public class Database {
 	
 	void connect(){
 		try {
-			connection = DriverManager.getConnection("jdbc:postgresql://165.132.123.83:5432/postgres","postgres","1111");
+			connection = DriverManager.getConnection("jdbc:postgresql://165.132.123.83:5432/import","postgres","1111");
 		}catch (SQLException e){
 			System.out.println("Connection failed!");
 			e.printStackTrace();
@@ -959,74 +710,15 @@ public class Database {
 		}
 	}
 	
-	ArrayList<User> getUsersFromUserProperty(){
-		
-		ArrayList<User> users = new ArrayList<User>();
-		User eachUser = new User();
-		
-		try {
-			st = mySqlConn.createStatement();
-			rs = st.executeQuery("SELECT distinct userName, userPlace "
-					            + "FROM newUserProperty");
-			
-			while(rs.next()){
-				eachUser = new User();
-				
-				String userId = rs.getString("userName");
-				String userPlace = rs.getString("userPlace");
-			//	int classifier = Integer.parseInt(rs.getString("classifier"));
-				
-				eachUser.setUserId(userId);
-				eachUser.setUserLocation(userPlace);
-			//	eachUser.setClassifier(classifier);
-				
-				users.add(eachUser);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return users;
-	}
-	
-	UserProperty getUserProperty(String userId){
-		
-		UserProperty eachUserProperty = null;
-		Statement stmt = null;
-		
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("SELECT TweetTime, UserName, TweetPlace, UserPlace, TweetID "
-					            + "FROM newUserProperty "
-								+ "WHERE UserName ='" + userId + "'");
-			
-			if(resSet.next()){
-				eachUserProperty = new UserProperty();
-				eachUserProperty.setTweetTime(resSet.getString("TweetTime"));
-				eachUserProperty.setUserName(resSet.getString("UserName"));
-				eachUserProperty.setTweetPlace(resSet.getString("TweetPlace"));
-				eachUserProperty.setUserPlace(resSet.getString("UserPlace"));
-				eachUserProperty.setTweetID(resSet.getString("TweetID"));
-			}
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return eachUserProperty;
-	}
-	
 	ArrayList<User> getCompletedUserIdList(){
 		
 		ArrayList<User> users = new ArrayList<User>();
 		User eachUser = new User();
 		
 		try {
-			st = connection.createStatement();
-			rs = st.executeQuery("SELECT \"userName\", \"userPlace\", classifier "
-					            + "FROM public.\"completeUserid\"");
+			st = mySqlConn.createStatement();
+			rs = st.executeQuery("SELECT userName, userPlace, classifier "
+					            + "FROM completeUserid");
 			
 			while(rs.next()){
 				eachUser = new User();
@@ -1047,48 +739,6 @@ public class Database {
 		}
 		
 		return users;
-	}
-	
-	ArrayList<Friend> getFriendList(String userId){
-		
-		ArrayList<Friend> friendList = new ArrayList<Friend>();
-		Friend eachFriend = new Friend();
-		try {
-			st = connection.createStatement();
-			rs = st.executeQuery("SELECT \"SourceName\", \"DestinationName\", \"Portion\" "
-					            + "FROM public.\"SocialLevelPerUser\" "
-					            + "WHERE \"SourceName\" = '" + userId + "'");
-			
-			while(rs.next()){
-				eachFriend = new Friend();
-				
-				String friendId = rs.getString("DestinationName");
-				double followingPortion = Double.parseDouble(rs.getString("Portion"));
-				
-				eachFriend.setUserId(friendId);
-				eachFriend.setFollowingPortion(followingPortion);
-				
-				boolean isComplete = isCompleteUserId(friendId);
-				boolean isFollow = isFollower(friendId, userId);
-				double followerPortion = getFollowerPortion(friendId, userId);
-				
-				eachFriend.setIsCompleteUserId(isComplete);
-				eachFriend.setIsFollower(isFollow);
-				eachFriend.setFollowerPortion(followerPortion);
-				
-				String location = getFriendLocation(friendId);
-				eachFriend.setLocation(location);
-				
-				friendList.add(eachFriend);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		
-		return friendList;
 	}
 	
 	String getFriendLocation(String userId){
@@ -1119,78 +769,6 @@ public class Database {
 		}
 		
 		return location;
-	}
-	
-	MFRatio getMFRatio(String userId){
-		
-		Statement state = null;
-		ResultSet res = null;
-		
-		MFRatio eachMFRatio = null;
-		
-		try {
-			state = connection.createStatement();
-			res = state.executeQuery("SELECT \"SourceName\", \"MyselfRatio\", \"FriendRatio\" "
-					            + "FROM public.\"MFRatio\" "
-								+ "WHERE \"SourceName\" = '" + userId + "'");
-			
-			if(res.next()){
-				eachMFRatio = new MFRatio();
-				eachMFRatio.setSourceName(res.getString("SourceName"));
-				eachMFRatio.setMyselfRatio(res.getString("MyselfRatio"));
-				eachMFRatio.setFriendRatio(res.getString("FriendRatio"));
-			}
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				res.close();
-				state.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		return eachMFRatio;
-	}
-	
-	MFRatio getRandMFRatio() {
-		
-		Statement state = null;
-		ResultSet res = null;
-		
-		MFRatio eachMFRatio = null;
-		
-		try {
-			state = connection.createStatement();
-			res = state.executeQuery("SELECT \"SourceName\", \"MyselfRatio\", \"FriendRatio\" "
-					            + "FROM public.\"MFRatio\" "
-								+ "ORDER BY random() LIMIT 1");
-			
-			if(res.next()){
-				eachMFRatio = new MFRatio();
-				eachMFRatio.setSourceName(res.getString("SourceName"));
-				eachMFRatio.setMyselfRatio(res.getString("MyselfRatio"));
-				eachMFRatio.setFriendRatio(res.getString("FriendRatio"));
-			}
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				res.close();
-				state.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		return eachMFRatio;
 	}
 	
 	int getTotalNumWriteOfMyself(String userId){

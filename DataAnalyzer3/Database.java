@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 public class Database {
 	
-	static Logger log = Logger.getLogger(DataAnalyzer.class.getName());
+	static Logger log = Logger.getLogger(NewNewDataAnalyzer.class.getName());
 	
 	Connection connection = null;
 	Statement st = null;
@@ -426,9 +426,10 @@ public class Database {
 		return userList;
 	}
 	
-	UserProperty getRandUserProperty(){
+	ArrayList<UserProperty> getRandUserProperty(){
 
 		Statement stmt = null;
+		ArrayList<UserProperty> propertyList = new ArrayList<UserProperty>();
 		UserProperty eachUserProperty = new UserProperty();
 		
 		try {
@@ -444,6 +445,8 @@ public class Database {
 				eachUserProperty.setTweetPlace(resSet.getString("TweetPlace"));
 				eachUserProperty.setUserPlace(resSet.getString("UserPlace"));
 				eachUserProperty.setTweetID(resSet.getString("TweetID"));
+				
+				propertyList = getUserProperty(resSet.getString("UserName").toString());
 			}
 			
 			resSet.close();
@@ -454,7 +457,7 @@ public class Database {
 			e.printStackTrace();
 		}
 		
-		return eachUserProperty;
+		return propertyList;
 	}
 	
 	ArrayList<User> getUsersSameLocation(String location, int numUsersSamePlace){
@@ -644,45 +647,52 @@ public class Database {
 		}
 	}
 	
-	void insertRandUserProperty(User eachUser, UserProperty eachUserProperty){
+	void insertRandUserProperty(User eachUser, ArrayList<UserProperty> propertyList){
 		
 		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			stmt.executeUpdate("INSERT INTO madeUserProperty (TweetTime, UserName, TweetPlace, UserPlace, TweetID) " 
-								+ "VALUES('" 
-								+ eachUserProperty.getTweetTime() + "', '" 
-								+ eachUser.getUserId().toString() + "', '"
-								+ eachUserProperty.getTweetPlace().toString() + "', '"
-								+ eachUserProperty.getUserPlace().toString() + "', '"
-								+ eachUserProperty.getTweetID().toString() + "') ");
+	//	UserProperty eachUserProperty = new UserProperty();
+		
+		for(int i=0; i<propertyList.size(); i++){
 			
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try {
+				stmt = mySqlConn.createStatement();
+				stmt.executeUpdate("INSERT INTO madeUserProperty (TweetTime, UserName, TweetPlace, UserPlace, TweetID) " 
+									+ "VALUES('" 
+									+ propertyList.get(i).getTweetTime() + "', '" 
+									+ eachUser.getUserId().toString() + "', '"
+									+ propertyList.get(i).getTweetPlace().toString() + "', '"
+									+ propertyList.get(i).getUserPlace().toString() + "', '"
+									+ propertyList.get(i).getTweetID().toString() + "') ");
+				
+				stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	void insertUserProperty(User eachUser, UserProperty eachUserProperty){
+	void insertUserProperty(User eachUser, ArrayList<UserProperty> propertyList){
 		
 		Statement stmt = null;
 
-		try {
-			stmt = mySqlConn.createStatement();
-			stmt.executeUpdate("INSERT INTO madeUserProperty (TweetTime, UserName, TweetPlace, UserPlace, TweetID) " 
-								+ "VALUES('" 
-								+ eachUserProperty.getTweetTime() + "', '" 
-								+ eachUser.getUserId().toString() + "', '"
-								+ eachUserProperty.getTweetPlace().toString() + "', '"
-								+ eachUserProperty.getUserPlace().toString() + "', '"
-								+ eachUserProperty.getTweetID().toString() + "') ");
+		for(int i=0; i<propertyList.size(); i++){
 			
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try {
+				stmt = mySqlConn.createStatement();
+				stmt.executeUpdate("INSERT INTO madeUserProperty (TweetTime, UserName, TweetPlace, UserPlace, TweetID) " 
+									+ "VALUES('" 
+									+ propertyList.get(i).getTweetTime() + "', '" 
+									+ eachUser.getUserId().toString() + "', '"
+									+ propertyList.get(i).getTweetPlace().toString() + "', '"
+									+ propertyList.get(i).getUserPlace().toString() + "', '"
+									+ propertyList.get(i).getTweetID().toString() + "') ");
+				
+				stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -990,8 +1000,9 @@ public class Database {
 		return users;
 	}
 	
-	UserProperty getUserProperty(String userId){
+	ArrayList<UserProperty> getUserProperty(String userId){
 		
+		ArrayList<UserProperty> propertyList = new ArrayList<UserProperty>();
 		UserProperty eachUserProperty = null;
 		Statement stmt = null;
 		
@@ -1001,13 +1012,15 @@ public class Database {
 					            + "FROM newUserProperty "
 								+ "WHERE UserName ='" + userId + "'");
 			
-			if(resSet.next()){
+			while(resSet.next()){
 				eachUserProperty = new UserProperty();
 				eachUserProperty.setTweetTime(resSet.getString("TweetTime"));
 				eachUserProperty.setUserName(resSet.getString("UserName"));
 				eachUserProperty.setTweetPlace(resSet.getString("TweetPlace"));
 				eachUserProperty.setUserPlace(resSet.getString("UserPlace"));
 				eachUserProperty.setTweetID(resSet.getString("TweetID"));
+				
+				propertyList.add(eachUserProperty);
 			}
 			
 		} catch (SQLException e) {
@@ -1015,7 +1028,7 @@ public class Database {
 			e.printStackTrace();
 		}
 		
-		return eachUserProperty;
+		return propertyList;
 	}
 	
 	ArrayList<User> getCompletedUserIdList(){

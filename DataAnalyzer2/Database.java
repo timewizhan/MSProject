@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 public class Database {
 	
-	static Logger log = Logger.getLogger(DataAnalyzer.class.getName());
+	static Logger log = Logger.getLogger(NewDataAnalyzer.class.getName());
 	
 	Connection connection = null;
 	Statement st = null;
@@ -46,415 +46,109 @@ public class Database {
 		}
 	}
 	
+	ArrayList<User> getUserListFromUserProperty() {
+		ArrayList<User> users = new ArrayList<User>();
+		User eachUser = new User();
+		
+		try {
+			st = mySqlConn.createStatement();
+			rs = st.executeQuery("SELECT userName, userPlace, COUNT(userName) AS num "
+					            + "FROM UserProperty GROUP BY userName");
+			
+			while(rs.next()){
+				eachUser = new User();
+				
+				String userId = rs.getString("userName");
+				String userPlace = rs.getString("userPlace");
+				int numOfTweet = Integer.parseInt(rs.getString("num"));
+				
+				eachUser.setUserId(userId);
+				eachUser.setUserLocation(userPlace);
+				eachUser.setNumOfTweet(numOfTweet);
+				
+				users.add(eachUser);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return users;
+	}
+	
+	ArrayList<UserProperty> getUserProperties(String userID) {
+		ArrayList<UserProperty> properties = new ArrayList<UserProperty>();
+		UserProperty eachProperty = new UserProperty();
+		
+		try {
+			st = mySqlConn.createStatement();
+			rs = st.executeQuery("SELECT TweetTime, UserName, TweetPlace, UserPlace, TweetID "
+					            + "FROM UserProperty WHERE UserName = '" + userID + "'");
+			
+			while(rs.next()){
+				eachProperty = new UserProperty();
+				
+				String tweetTime = rs.getString("TweetTime");
+				String userName = rs.getString("UserName");
+				String tweetPlace = rs.getString("TweetPlace");
+				String userPlace = rs.getString("UserPlace");
+				String tweetID = rs.getString("TweetID");
+				
+				if(userID.equals(userName)){
+					eachProperty.setTweetTime(tweetTime);
+					eachProperty.setUserName(userName);
+					eachProperty.setTweetPlace(tweetPlace);
+					eachProperty.setUserPlace(userPlace);
+					eachProperty.setTweetID(tweetID);
+					
+					properties.add(eachProperty);
+				
+				} else {
+					System.out.println("UserID is different with UserName! It's an error! ");
+				}
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return properties;
+	}
+	
+	void insertNewUserProperty(ArrayList<UserProperty> properties) {
+		
+		for(int i=0; i<properties.size(); i++){
+			
+			Statement stmt = null;
+			
+			try {
+				stmt = mySqlConn.createStatement();
+				stmt.executeUpdate("INSERT INTO NewUserProperty VALUES('" + properties.get(i).getTweetTime() + "', '" 
+																		+ properties.get(i).getUserName() + "', '" 
+																		+ properties.get(i).getTweetPlace() + "', '"
+																		+ properties.get(i).getUserPlace() + "', '"
+																		+ properties.get(i).getTweetID() + "')");
+				stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	void insertUsers(User user){
 		
-		boolean isDuplicated = checkDuplicatedinUsers(user.getUserId().toString());
-		
-		if(!isDuplicated){
-			
-			Statement stmt = null;
-			
-			try {
-				stmt = mySqlConn.createStatement();
-				stmt.executeUpdate("INSERT INTO Users VALUES('" + user.getUserId() + "', '" + user.getUserLocation() + "')");
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	void insertUsers(Friend user){
-		
-		boolean isDuplicated = checkDuplicatedinUsers(user.getUserId().toString());
-		
-		if(!isDuplicated){
-			
-			Statement stmt = null;
-			
-			try {
-				stmt = mySqlConn.createStatement();
-				stmt.executeUpdate("INSERT INTO Users VALUES('" + user.getUserId() + "', '" + user.getLocation() + "')");
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	void insertUsersHavingManyFriends(String user){
-		
-		boolean isDuplicated = checkDuplicatedinUsersHavingMany(user);
-		
-		if(!isDuplicated){
-		
-			Statement stmt = null;
-		
-			try {
-				stmt = mySqlConn.createStatement();
-				stmt.executeUpdate("INSERT INTO UsersHavingManyFriends VALUES('" + user + "') ");
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	void insertUsersNotHavingManyFriends(String user, String location){
-		
-		boolean isDuplicated = checkDuplicatedinUsersNotHavingMany(user);
-		
-		if(!isDuplicated){
-		
-			Statement stmt = null;
-		
-			try {
-				stmt = mySqlConn.createStatement();
-				stmt.executeUpdate("INSERT INTO UsersNotHavingManyFriends VALUES('" + user + "', '" + location + "') ");
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	void insertFriends(Friend user, String friendOf){
-		
-		boolean isDuplicated = checkDuplicatedinFriends(user.getUserId().toString());
-		
-		if(!isDuplicated){
-		
-			Statement stmt = null;
-		
-			try {
-				stmt = mySqlConn.createStatement();
-				stmt.executeUpdate("INSERT INTO Friends (uid, isComplete, friendOf, isFollower, followingPortion, followerPortion, location) VALUES('" 
-														+ user.getUserId() + "', "  
-														+ user.getIsCompleteUserId()  + ", '"
-														+ friendOf + "', "
-														+ user.getIsFollower() + ", "
-														+ user.getFollowingPortion() + ", "
-														+ user.getFollowerPortion() + ", '"
-														+ user.getLocation() + "') ");
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	boolean checkDuplicatedinFriends(String user) {
-		
-		boolean isDuplicated = false;
 		Statement stmt = null;
-
+		
 		try {
 			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select * from Friends where uid = '" + user + "';");
-
-			if(resSet.next()){
-				isDuplicated = true;
-			}
-
-			resSet.close();
+			stmt.executeUpdate("INSERT INTO Users VALUES('" + user.getUserId() + "', '" + user.getUserLocation() + "')");
 			stmt.close();
-
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return isDuplicated;
-	}
-	
-	boolean checkDuplicatedinUsers(String user) {
-	
-		boolean isDuplicated = false;
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select * from Users where uid = '" + user + "';");
-
-			if(resSet.next()){
-				isDuplicated = true;
-			}
-
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return isDuplicated;
-	}
-	
-	boolean checkDuplicatedinUsersHavingMany(String user) {
-		
-		boolean isDuplicated = false;
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select * from UsersHavingManyFriends where uid = '" + user + "';");
-
-			if(resSet.next()){
-				isDuplicated = true;
-			}
-
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return isDuplicated;
-	}
-	
-	boolean checkDuplicatedinUsersNotHavingMany(String user) {
-		
-		boolean isDuplicated = false;
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select * from UsersNotHavingManyFriends where uid = '" + user + "';");
-
-			if(resSet.next()){
-				isDuplicated = true;
-			}
-
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return isDuplicated;
-	}
-	
-	ArrayList<Friend> getAllTheFriends(){
-
-		ArrayList<Friend> allFriends = new ArrayList<Friend>();
-		Friend eachFriend = null;
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select uid, location from Friends;");
-			
-			while(resSet.next()){
-				eachFriend = new Friend();
-				
-				String userId = resSet.getString("uid");
-				String location = resSet.getString("location");
-				
-				eachFriend.setUserId(userId);
-				eachFriend.setLocation(location);
-				
-				allFriends.add(eachFriend);
-			}
-			
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return allFriends;
-	}
-	
-	ArrayList<User> getUsersNotHavingManyFriends(){
-		ArrayList<User> usersNotHavingManyFriends = new ArrayList<User>();
-		
-		User eachUser = null;
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select uid, location from UsersNotHavingManyFriends;");
-			
-			while(resSet.next()){
-				eachUser = new User();
-				
-				String userId = resSet.getString("uid");
-				String location = resSet.getString("location");
-				
-				eachUser.setUserId(userId);
-				eachUser.setUserLocation(location);
-				
-				usersNotHavingManyFriends.add(eachUser);
-			}
-			
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return usersNotHavingManyFriends;
-	}
-	
-	ArrayList<User> getAllFriendsNotInHeavy(){
-
-		ArrayList<User> allFriends = new ArrayList<User>();
-		User eachUser = null;
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select uid, location from FriendsNotInHeavy;");
-			
-			while(resSet.next()){
-				eachUser = new User();
-				
-				String userId = resSet.getString("uid");
-				String location = resSet.getString("location");
-				
-				eachUser.setUserId(userId);
-				eachUser.setUserLocation(location);
-				
-				allFriends.add(eachUser);
-			}
-			
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return allFriends;
-	}	
-	
-	boolean findInHeavyUsers(String users){
-
-		boolean isInHeavyUsers = false;
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select uid from UsersHavingManyFriends "
-													+ "where uid ='" + users + "'");
-			
-			if(resSet.next()){
-				isInHeavyUsers = true;
-			}
-			
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return isInHeavyUsers;
-	}
-	
-	ArrayList<User> getUsers(){
-
-		Statement stmt = null;
-		ArrayList<User> userList = new ArrayList<User>();
-		User eachUser = new User();
-		
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select uid, location from Users");
-			
-			while(resSet.next()){
-				eachUser = new User();
-				eachUser.setUserId(resSet.getString("uid"));
-				eachUser.setUserLocation(resSet.getString("location"));
-				userList.add(eachUser);
-			}
-			
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return userList;
-	}
-	
-	ArrayList<User> getFinalUsers(){
-
-		Statement stmt = null;
-		ArrayList<User> userList = new ArrayList<User>();
-		User eachUser = new User();
-		
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select userName, userPlace, classifier from CompleteUserId");
-			
-			while(resSet.next()){
-				eachUser = new User();
-				eachUser.setUserId(resSet.getString("userName"));
-				eachUser.setUserLocation(resSet.getString("userPlace"));
-				eachUser.setClassifier(Integer.parseInt(resSet.getString("classifier")));
-			
-				userList.add(eachUser);
-			}
-			
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return userList;
-	}
-	
-	UserProperty getRandUserProperty(){
-
-		Statement stmt = null;
-		UserProperty eachUserProperty = new UserProperty();
-		
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("select TweetTime, UserName, TweetPlace, UserPlace, TweetID from newUserProperty "
-													+ "order by rand() limit 1");
-			
-			if(resSet.next()){
-				eachUserProperty = new UserProperty();
-				
-				eachUserProperty.setTweetTime(resSet.getString("TweetTime"));
-				eachUserProperty.setUserName(resSet.getString("UserName"));
-				eachUserProperty.setTweetPlace(resSet.getString("TweetPlace"));
-				eachUserProperty.setUserPlace(resSet.getString("UserPlace"));
-				eachUserProperty.setTweetID(resSet.getString("TweetID"));
-			}
-			
-			resSet.close();
-			stmt.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return eachUserProperty;
 	}
 	
 	ArrayList<User> getUsersSameLocation(String location, int numUsersSamePlace){
@@ -598,86 +292,6 @@ public class Database {
 								+ userId + "', '" 
 								+ userLocation + "', " 
 								+ classifier + ") ");
-			
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	void insertMFRatio(User eachUser, MFRatio mfRatio){
-		
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			stmt.executeUpdate("INSERT INTO MFRatio (SourceName, MyselfRatio, FriendRatio) " 
-								+ "VALUES('" 
-								+ eachUser.getUserId().toString() + "', '" 
-								+ mfRatio.getMyselfRatio().toString() + "', " 
-								+ mfRatio.getFriendRatio().toString() + ") ");
-			
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	void insertRandMFRatio(User eachUser, MFRatio mfRatio){
-		
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			stmt.executeUpdate("INSERT INTO MFRatio (SourceName, MyselfRatio, FriendRatio) " 
-								+ "VALUES('" 
-								+ eachUser.getUserId() + "', '" 
-								+ mfRatio.getMyselfRatio().toString() + "', " 
-								+ mfRatio.getFriendRatio().toString() + ") ");
-			
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	void insertRandUserProperty(User eachUser, UserProperty eachUserProperty){
-		
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			stmt.executeUpdate("INSERT INTO madeUserProperty (TweetTime, UserName, TweetPlace, UserPlace, TweetID) " 
-								+ "VALUES('" 
-								+ eachUserProperty.getTweetTime() + "', '" 
-								+ eachUser.getUserId().toString() + "', '"
-								+ eachUserProperty.getTweetPlace().toString() + "', '"
-								+ eachUserProperty.getUserPlace().toString() + "', '"
-								+ eachUserProperty.getTweetID().toString() + "') ");
-			
-			stmt.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	void insertUserProperty(User eachUser, UserProperty eachUserProperty){
-		
-		Statement stmt = null;
-
-		try {
-			stmt = mySqlConn.createStatement();
-			stmt.executeUpdate("INSERT INTO madeUserProperty (TweetTime, UserName, TweetPlace, UserPlace, TweetID) " 
-								+ "VALUES('" 
-								+ eachUserProperty.getTweetTime() + "', '" 
-								+ eachUser.getUserId().toString() + "', '"
-								+ eachUserProperty.getTweetPlace().toString() + "', '"
-								+ eachUserProperty.getUserPlace().toString() + "', '"
-								+ eachUserProperty.getTweetID().toString() + "') ");
 			
 			stmt.close();
 		} catch (SQLException e) {
@@ -921,7 +535,7 @@ public class Database {
 	
 	void connect(){
 		try {
-			connection = DriverManager.getConnection("jdbc:postgresql://165.132.123.83:5432/postgres","postgres","1111");
+			connection = DriverManager.getConnection("jdbc:postgresql://165.132.123.83:5432/import","postgres","1111");
 		}catch (SQLException e){
 			System.out.println("Connection failed!");
 			e.printStackTrace();
@@ -957,65 +571,6 @@ public class Database {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	ArrayList<User> getUsersFromUserProperty(){
-		
-		ArrayList<User> users = new ArrayList<User>();
-		User eachUser = new User();
-		
-		try {
-			st = mySqlConn.createStatement();
-			rs = st.executeQuery("SELECT distinct userName, userPlace "
-					            + "FROM newUserProperty");
-			
-			while(rs.next()){
-				eachUser = new User();
-				
-				String userId = rs.getString("userName");
-				String userPlace = rs.getString("userPlace");
-			//	int classifier = Integer.parseInt(rs.getString("classifier"));
-				
-				eachUser.setUserId(userId);
-				eachUser.setUserLocation(userPlace);
-			//	eachUser.setClassifier(classifier);
-				
-				users.add(eachUser);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return users;
-	}
-	
-	UserProperty getUserProperty(String userId){
-		
-		UserProperty eachUserProperty = null;
-		Statement stmt = null;
-		
-		try {
-			stmt = mySqlConn.createStatement();
-			ResultSet resSet = stmt.executeQuery("SELECT TweetTime, UserName, TweetPlace, UserPlace, TweetID "
-					            + "FROM newUserProperty "
-								+ "WHERE UserName ='" + userId + "'");
-			
-			if(resSet.next()){
-				eachUserProperty = new UserProperty();
-				eachUserProperty.setTweetTime(resSet.getString("TweetTime"));
-				eachUserProperty.setUserName(resSet.getString("UserName"));
-				eachUserProperty.setTweetPlace(resSet.getString("TweetPlace"));
-				eachUserProperty.setUserPlace(resSet.getString("UserPlace"));
-				eachUserProperty.setTweetID(resSet.getString("TweetID"));
-			}
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return eachUserProperty;
 	}
 	
 	ArrayList<User> getCompletedUserIdList(){
@@ -1119,78 +674,6 @@ public class Database {
 		}
 		
 		return location;
-	}
-	
-	MFRatio getMFRatio(String userId){
-		
-		Statement state = null;
-		ResultSet res = null;
-		
-		MFRatio eachMFRatio = null;
-		
-		try {
-			state = connection.createStatement();
-			res = state.executeQuery("SELECT \"SourceName\", \"MyselfRatio\", \"FriendRatio\" "
-					            + "FROM public.\"MFRatio\" "
-								+ "WHERE \"SourceName\" = '" + userId + "'");
-			
-			if(res.next()){
-				eachMFRatio = new MFRatio();
-				eachMFRatio.setSourceName(res.getString("SourceName"));
-				eachMFRatio.setMyselfRatio(res.getString("MyselfRatio"));
-				eachMFRatio.setFriendRatio(res.getString("FriendRatio"));
-			}
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				res.close();
-				state.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		return eachMFRatio;
-	}
-	
-	MFRatio getRandMFRatio() {
-		
-		Statement state = null;
-		ResultSet res = null;
-		
-		MFRatio eachMFRatio = null;
-		
-		try {
-			state = connection.createStatement();
-			res = state.executeQuery("SELECT \"SourceName\", \"MyselfRatio\", \"FriendRatio\" "
-					            + "FROM public.\"MFRatio\" "
-								+ "ORDER BY random() LIMIT 1");
-			
-			if(res.next()){
-				eachMFRatio = new MFRatio();
-				eachMFRatio.setSourceName(res.getString("SourceName"));
-				eachMFRatio.setMyselfRatio(res.getString("MyselfRatio"));
-				eachMFRatio.setFriendRatio(res.getString("FriendRatio"));
-			}
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				res.close();
-				state.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		return eachMFRatio;
 	}
 	
 	int getTotalNumWriteOfMyself(String userId){
