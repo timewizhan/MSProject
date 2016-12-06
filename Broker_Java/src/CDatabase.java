@@ -364,9 +364,65 @@ public class CDatabase {
 		return amountOfTraffic;
 	}
 	
-	public int getServerTotalTraffic(){
+	public ArrayList<UserPlacement> getClosestUserList(){
 		
-		int totalTraffic = 0;
+		ArrayList<UserPlacement> userList = new ArrayList<UserPlacement>();
+		UserPlacement userPlacement = new UserPlacement();
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT user_id, ep_num, ip, port, location FROM closest_cloud_users");
+
+			while(rs.next()){
+				userPlacement = new UserPlacement();
+				userPlacement.setUserId(rs.getString("user_id"));
+				userPlacement.setEp_num(Integer.parseInt(rs.getString("ep_num")));
+				userPlacement.setIp(rs.getString("ip"));
+				userPlacement.setPort(rs.getString("port"));
+				userPlacement.setCloudLocation(rs.getString("location"));
+				
+				userList.add(userPlacement);
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return userList;
+	}
+	
+	public long getEachUserTraffic(String userId){
+		
+		long userTraffic = 0;
+		Statement stmt = null;
+
+		try {
+			stmt = brokerConn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT client_side_traffic FROM client_table where user = '" + userId + "';");
+
+			while(rs.next()){
+				userTraffic = Long.parseLong(rs.getString("client_side_traffic"));
+			}
+
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return userTraffic;
+	}
+	
+	public long getServerTotalTraffic(){
+		
+		long totalTraffic = 0;
 		
 		Statement stmt = null;
 
@@ -375,7 +431,7 @@ public class CDatabase {
 			ResultSet rs = stmt.executeQuery("select sum(server_side_traffic) from server_table;");
 
 			while(rs.next()){
-				totalTraffic = Integer.parseInt(rs.getString("sum(server_side_traffic)"));
+				totalTraffic = Long.parseLong(rs.getString("sum(server_side_traffic)"));
 			}
 
 			rs.close();
