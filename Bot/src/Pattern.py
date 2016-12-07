@@ -152,7 +152,10 @@ class BehaviorPattern(AbstractPattern):
 
 			#assume that read/write ratio = 70 / 30	
 			readFriend = float(round(writtenNumInHour * self.RW_RATIO))
-
+			if writtenNumInHour >= 1:
+				if readFriend < 100:
+					readFriend = 100
+			
 			finalWriteFriend, wFriendList = self.getFinalOperationFriend(writeFriend, friendInfoList)
 			finalReadFriend, rFriendList = self.getFinalOperationFriend(readFriend, friendInfoList)						
 
