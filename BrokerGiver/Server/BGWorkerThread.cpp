@@ -126,7 +126,7 @@ void CBGWorkerThread::RequestDataBase(ST_CLIENT_REQ &refstReqClient, ST_DB_RESUL
 	}
 
 	ST_DB_SQL stDBSql;
-	stDBSql.strSQL = "SELECT ip from prev_matching_table WHERE user=\"" + refstReqClient.strDst + "\"";
+	stDBSql.strSQL = "SELECT ip from redirection_table WHERE user_id=\"" + refstReqClient.strDst + "\"";
 
 	DWORD dwRet;
 	ST_DB_RESULT stDBResult;

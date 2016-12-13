@@ -29,8 +29,8 @@ m_dwAcceptCount(0)
 		return;
 	}
 
-	m_stDBLoginToken.strDatabaseName = "broker_table";
-	m_stDBLoginToken.strDatabaseIP = "165.132.122.243";
+	m_stDBLoginToken.strDatabaseName = "broker2";
+	m_stDBLoginToken.strDatabaseIP = "127.0.0.1";
 	m_stDBLoginToken.strPort = "3306";
 	m_stDBLoginToken.strUserName = "root";
 	m_stDBLoginToken.strPassword = "cclab";
@@ -424,6 +424,8 @@ unsigned int WINAPI WorkerCompletionThread(void *pIOCPData)
 			ErrorLog("Fail to operate StartWorkerThread");
 			continue;
 		}
+		
+		delete pstServerConnection;
 		DebugLog("Success to operate StartWorkerThread");
 	}
 
