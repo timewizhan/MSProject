@@ -63,7 +63,7 @@ public class MessageHandler {
 	 * @return the response message in string
 	 */
 	@SuppressWarnings("unchecked")
-	public static String msgGenerator(int result, long delay) {
+	public static String msgGenerator(int result, double delay) {
 		JSONObject response = new JSONObject();
 		response.put("RESPONSE", result);
 		response.put("RTT", delay);

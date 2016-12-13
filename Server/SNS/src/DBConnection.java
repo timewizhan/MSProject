@@ -184,7 +184,8 @@ public class DBConnection {
 			
 			prepared.setInt(1, uid);					
 			prepared.setString(2, msg);				
-			prepared.setInt(3, reqSize + mBasicResponseSize);
+		//	prepared.setInt(3, reqSize + mBasicResponseSize);
+			prepared.setInt(3, 1);
 			prepared.executeUpdate();
 			
 			conn.commit();			
@@ -300,7 +301,8 @@ public class DBConnection {
 			
 			for (int i = 0; i < num; i++) {
 				prepared.setInt(1, uid);				
-				prepared.setInt(2, Math.round(reqSize/num) + mBasicStatusSize);
+			//	prepared.setInt(2, Math.round(reqSize/num) + mBasicStatusSize);
+				prepared.setInt(2, 1);
 				prepared.addBatch();
 			}
 			
@@ -367,7 +369,8 @@ public class DBConnection {
 			
 			prepared.setInt(1, uid);			
 			prepared.setString(2, msg);
-			prepared.setInt(3, reqSize + mBasicResponseSize);																					
+		//	prepared.setInt(3, reqSize + mBasicResponseSize);
+			prepared.setInt(3, 1);
 			prepared.executeUpdate();
 			
 			conn.commit();			

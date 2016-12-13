@@ -25,7 +25,7 @@ public class opType {
 	/**
 	 * Additional variables to define the number of read and share operations
 	 */
-	public final static int mNUM_READ = 10;
+	public final static int mNUM_READ = 1;
 	public final static int mNUM_SHARE = 5;				
 	
 	/**

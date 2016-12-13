@@ -82,6 +82,7 @@ public class ServiceServer {
 		mBDS.setUsername("root");
 		mBDS.setPassword("cclab");
 		mBDS.setUrl("jdbc:mysql://localhost:3306/snsdb?autoReconnect=true&useSSL=false");
+	//	mBDS.setUrl("jdbc:mysql://165.132.123.73:3306/snsdb?autoReconnect=true&useSSL=false");
 		
 		// optional
 		// can be worked with defaults		

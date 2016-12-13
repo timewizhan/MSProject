@@ -75,9 +75,9 @@ public class WorkerRunnable implements Runnable {
 	        		Counter.retweet++;
 	        	}
 	        	
-	        	long delay = CoordHandler.calRTT(ServiceServer.mCoord, (String) request.get("LOC"));
+	        	double delay = CoordHandler.calRTT(ServiceServer.mCoord, (String) request.get("LOC"));
 	        	response = MessageHandler.msgGenerator(result, delay);
-        		Thread.sleep(delay);
+        	//	Thread.sleep((long)delay);
         	}
         	
         	out = new BufferedWriter(new OutputStreamWriter(
@@ -185,6 +185,9 @@ public class WorkerRunnable implements Runnable {
 	    		
 	    		double totalCount = Counter.tweet + Counter.reply + Counter.retweet;
 	    		log.debug("total write count : " + totalCount + "\n");
+	    		
+	    		double totalOperationCount = Counter.tweet + Counter.read + Counter.reply + Counter.retweet;
+	    		log.debug("total write + read count : " + totalOperationCount + "\n");
 	    		
 	    		//initialize counter
 	    		Counter.initializeCounter();
