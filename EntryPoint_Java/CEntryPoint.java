@@ -49,76 +49,77 @@ public class CEntryPoint {
 
 		boolean bSharpTime = false;
 
-		if (hour == 0 && min == 0){
+
+		if (hour == 0 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 1 && min == 30){
+		else if (hour == 1 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 2 && min == 30){
+		else if (hour == 2 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 3 && min == 30){
+		else if (hour == 3 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 4 && min == 30){
+		else if (hour == 4 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 5 && min == 30){
+		else if (hour == 5 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 6 && min == 30){
+		else if (hour == 6 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 7 && min == 30){
+		else if (hour == 7 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 8 && min == 30){
+		else if (hour == 8 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 9 && min == 30){
+		else if (hour == 9 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 10 && min == 30){
+		else if (hour == 10 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 11 && min == 30){
+		else if (hour == 11 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 12 && min == 30){
+		else if (hour == 12 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 13 && min == 30){
+		else if (hour == 13 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 14 && min == 30){
+		else if (hour == 14 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 15 && min == 30){
+		else if (hour == 15 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 16 && min == 30){
+		else if (hour == 16 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 17 && min == 30){
+		else if (hour == 17 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 18 && min == 30){
+		else if (hour == 18 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 19 && min == 30){
+		else if (hour == 19 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 20 && min == 30){
+		else if (hour == 20 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 21 && min == 30){
+		else if (hour == 21 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 22 && min == 30){
+		else if (hour == 22 && min == 50){
 			bSharpTime = true;
 		}
-		else if (hour == 23 && min == 30){
+		else if (hour == 23 && min == 50){
 			bSharpTime = true;
 		}
 
