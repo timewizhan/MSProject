@@ -132,8 +132,8 @@ public class CLPCalculation implements Runnable {
 		//	log.debug("	* Get Server Traffic: user id - " + userList.get(i).getUserID() + ", EP1 - " + NormServerTrafficValueArray[0] + ", EP2 - " + NormServerTrafficValueArray[1] + ", EP3 - " + NormServerTrafficValueArray[2] + "\r\n");
 			
 			//ep개수에 맞게 weight를 줘서 두개의 값을 합침
-			int distanceWeight = 1;	//distance weight
-			int socialWeight = 0;	//social weight
+			int distanceWeight = 0;	//distance weight
+			int socialWeight = 1;	//social weight
 			int serverTrafficWeight = 0; //server traffic weight
 		//	log.debug("	* distance weight ratio : " + distanceWeight + ", social weight ratio : " + socialWeight + ", serverTrafficWeight : " + serverTrafficWeight);
 			double tmpWeightValues [] = new double [CBroker.NUM_OF_EP];

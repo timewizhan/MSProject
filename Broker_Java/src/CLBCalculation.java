@@ -23,16 +23,26 @@ public class CLBCalculation {
 		//특정 아이피에 있는 서버의 최대 트래픽 값
 		//ex) 165.132.120.144에 있는 서버의 최대 트래픽 양은 500Gbyte이다
 		map = new HashMap<String , Long>();
-	
+
+	//  medium 50%
+	//	map.put("165.132.123.73", (long)65000);
+	//	map.put("165.132.122.244", (long)130000);
+	//	map.put("165.132.122.245", (long)130000);
+		
 	//  medium 70%
 	//	map.put("165.132.123.73", (long)90000);
 	//	map.put("165.132.122.244", (long)130000);
 	//	map.put("165.132.122.245", (long)130000);
-		
+
+	//  medium 90%
+		map.put("165.132.123.73", (long)117000);
+		map.put("165.132.122.244", (long)130000);
+		map.put("165.132.122.245", (long)130000);
+	
 		//minimum
-		map.put("165.132.123.73", (long)10000000);
-		map.put("165.132.122.244", (long)10000000);
-		map.put("165.132.122.245", (long)10000000);
+	//	map.put("165.132.123.73", (long)10000000);
+	//	map.put("165.132.122.244", (long)10000000);
+	//	map.put("165.132.122.245", (long)10000000);
 		
 		log.debug("	* set capacity limitation of each cloud (server) using HashMap");
 		log.debug("	* current map.size() : " + map.size());
