@@ -1,0 +1,1753 @@
+[INFO ][2016-12-02 08:00:39,763](CBroker.java:47) - ========================================================================================================
+[INFO ][2016-12-02 08:00:39,763](CBroker.java:48) - ============================================= BROKER START =============================================
+[INFO ][2016-12-02 08:00:39,763](CBroker.java:49) - ========================================================================================================
+
+[INFO ][2016-12-02 08:00:39,779](CLPCalculation.java:413) - LP Thread is Running Now..
+[INFO ][2016-12-02 08:00:39,779](CLPCalculation.java:24) - check the number of receiving monitored data 
+
+[INFO ][2016-12-02 08:00:39,794](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 08:00:39,794](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 08:00:39,794](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 08:00:39,810](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 08:50:59,165](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 08:51:15,073](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 08:51:27,543](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 08:51:27,637](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-02 08:51:29,512](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 08:51:29,684](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-02 08:51:29,684](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 08:51:29,684](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 08:51:29,684](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 08:51:29,684](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 08:51:29,700](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 08:51:29,700](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 08:51:29,700](CInitPrevMatch.java:12) - Initialize previous match - start
+[DEBUG][2016-12-02 08:51:29,700](CInitPrevMatch.java:32) - 	Number of users : 944
+[DEBUG][2016-12-02 08:51:29,700](CInitPrevMatch.java:33) - 	Previous match size : 944
+[DEBUG][2016-12-02 08:51:29,700](CInitPrevMatch.java:34) - Initialize previous match - end
+[DEBUG][2016-12-02 08:51:29,872](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 08:52:11,001](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 08:52:11,001](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 08:52:11,001](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 08:52:11,016](CLPCalculation.java:106) - 	* number of user : 944
+[INFO ][2016-12-02 08:52:11,985](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 08:52:11,985](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 08:52:12,204](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 08:52:12,204](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 08:52:12,204](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 08:52:12,204](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 08:52:12,204](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 08:52:12,204](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 08:52:12,204](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 08:52:12,220](CLBCalculation.java:181) - 		* EP1 : 14491
+[DEBUG][2016-12-02 08:52:12,220](CLBCalculation.java:181) - 		* EP2 : 59680
+[DEBUG][2016-12-02 08:52:12,220](CLBCalculation.java:181) - 		* EP3 : 59147
+[DEBUG][2016-12-02 08:52:12,235](CLBCalculation.java:184) - 		* server total traffic : 133318
+[DEBUG][2016-12-02 08:52:12,235](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 08:52:12,235](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 08:52:12,235](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 08:52:12,235](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 08:52:12,235](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 08:52:12,235](CLBCalculation.java:484) - is First! (Medium)
+[INFO ][2016-12-02 08:52:13,751](CLBCalculation.java:336) - 	* before rematching process
+[INFO ][2016-12-02 08:52:13,751](CLBCalculation.java:340) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:59147, (Expected Traffic:29098,) Remain Traffic:60902
+[INFO ][2016-12-02 08:52:13,767](CLBCalculation.java:340) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:59680, (Expected Traffic:23905,) Remain Traffic:106095
+[INFO ][2016-12-02 08:52:13,767](CLBCalculation.java:340) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:14491, (Expected Traffic:6160,) Remain Traffic:123840
+[DEBUG][2016-12-02 08:52:13,782](CLBCalculation.java:410) - 	* there's no extracted users list
+[INFO ][2016-12-02 08:52:13,782](CLBCalculation.java:413) - 	* after rematching process
+[INFO ][2016-12-02 08:52:13,782](CLBCalculation.java:417) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:59147, (Expected Traffic:29098,) Remain Traffic:60902
+[INFO ][2016-12-02 08:52:13,782](CLBCalculation.java:417) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:59680, (Expected Traffic:23905,) Remain Traffic:106095
+[INFO ][2016-12-02 08:52:13,798](CLBCalculation.java:417) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:14491, (Expected Traffic:6160,) Remain Traffic:123840
+[INFO ][2016-12-02 08:52:13,798](CLBCalculation.java:433) - 	[rematchForLoadBalancing method] - End
+[INFO ][2016-12-02 08:52:13,814](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 08:52:13,829](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 08:52:13,829](CLBCalculation.java:1084) - 			EP1:174 EP2:793 EP3:1034 
+[INFO ][2016-12-02 08:52:18,267](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 08:52:18,283](CLBCalculation.java:1139) - 			EP1:174 EP2:793 EP3:1034 
+[INFO ][2016-12-02 08:52:18,283](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 08:52:18,674](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 08:52:18,674](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 08:52:18,674](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 08:52:18,689](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 08:52:18,689](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 08:52:18,689](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 09:51:00,489](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 09:51:16,115](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 09:51:29,085](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 09:51:29,148](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-02 09:51:30,132](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 09:51:30,289](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-02 09:51:30,289](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 09:51:30,289](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 09:51:30,304](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 09:51:30,304](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 09:51:30,304](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 09:51:30,304](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 09:51:30,507](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 09:52:11,481](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 09:52:11,481](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 09:52:11,481](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 09:52:11,496](CLPCalculation.java:106) - 	* number of user : 921
+[INFO ][2016-12-02 09:52:12,449](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 09:52:12,449](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 09:52:12,653](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 09:52:12,653](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 09:52:12,653](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 09:52:12,653](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 09:52:12,653](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 09:52:12,653](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 09:52:12,668](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 09:52:12,668](CLBCalculation.java:181) - 		* EP1 : 13818
+[DEBUG][2016-12-02 09:52:12,684](CLBCalculation.java:181) - 		* EP2 : 57509
+[DEBUG][2016-12-02 09:52:12,684](CLBCalculation.java:181) - 		* EP3 : 57693
+[DEBUG][2016-12-02 09:52:12,684](CLBCalculation.java:184) - 		* server total traffic : 129020
+[DEBUG][2016-12-02 09:52:12,684](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 09:52:12,684](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 09:52:12,684](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 09:52:12,684](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 09:52:12,684](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 09:52:12,700](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 09:52:12,700](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 09:52:12,715](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 09:52:12,715](CLBCalculation.java:1084) - 			EP1:174 EP2:793 EP3:1034 
+[DEBUG][2016-12-02 09:52:16,966](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-02 09:52:16,966](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 09:52:16,966](CLBCalculation.java:1139) - 			EP1:174 EP2:793 EP3:1034 
+[INFO ][2016-12-02 09:52:16,981](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 09:52:17,435](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 09:52:17,435](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 09:52:17,450](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 09:52:17,466](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 09:52:17,466](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 09:52:17,466](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 10:51:03,391](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 10:51:17,408](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 10:51:31,034](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 10:51:34,706](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 10:51:34,706](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-02 10:51:34,722](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-02 10:51:34,722](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 10:51:34,722](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 10:51:34,722](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 10:51:34,738](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 10:51:34,738](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 10:51:34,738](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 10:51:34,957](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 10:52:16,039](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 10:52:16,039](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 10:52:16,055](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 10:52:16,055](CLPCalculation.java:106) - 	* number of user : 1017
+[INFO ][2016-12-02 10:52:17,164](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 10:52:17,164](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 10:52:17,399](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 10:52:17,399](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 10:52:17,399](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 10:52:17,399](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 10:52:17,399](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 10:52:17,399](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 10:52:17,399](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 10:52:17,414](CLBCalculation.java:181) - 		* EP1 : 14979
+[DEBUG][2016-12-02 10:52:17,414](CLBCalculation.java:181) - 		* EP2 : 62694
+[DEBUG][2016-12-02 10:52:17,414](CLBCalculation.java:181) - 		* EP3 : 64633
+[DEBUG][2016-12-02 10:52:17,414](CLBCalculation.java:184) - 		* server total traffic : 142306
+[DEBUG][2016-12-02 10:52:17,414](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 10:52:17,430](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 10:52:17,430](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 10:52:17,430](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 10:52:17,430](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 10:52:17,430](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 10:52:17,430](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 10:52:17,445](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 10:52:17,461](CLBCalculation.java:1084) - 			EP1:174 EP2:793 EP3:1034 
+[DEBUG][2016-12-02 10:52:21,696](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-02 10:52:21,696](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 10:52:21,696](CLBCalculation.java:1139) - 			EP1:174 EP2:793 EP3:1034 
+[INFO ][2016-12-02 10:52:21,696](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 10:52:22,165](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 10:52:22,180](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 10:52:22,180](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 10:52:22,180](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 10:52:22,196](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 10:52:22,196](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 11:51:07,527](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 11:51:19,747](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 11:51:32,373](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 11:51:40,796](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 11:51:40,827](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-02 11:51:40,843](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-02 11:51:40,843](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 11:51:40,843](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 11:51:40,843](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 11:51:40,843](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 11:51:40,859](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 11:51:40,859](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 11:51:41,015](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 11:52:29,364](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 11:52:29,380](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 11:52:29,380](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 11:52:29,380](CLPCalculation.java:106) - 	* number of user : 1196
+[INFO ][2016-12-02 11:52:30,708](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 11:52:30,708](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 11:52:31,020](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 11:52:31,020](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 11:52:31,020](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 11:52:31,020](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 11:52:31,020](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 11:52:31,020](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 11:52:31,020](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 11:52:31,036](CLBCalculation.java:181) - 		* EP1 : 17460
+[DEBUG][2016-12-02 11:52:31,036](CLBCalculation.java:181) - 		* EP2 : 74445
+[DEBUG][2016-12-02 11:52:31,036](CLBCalculation.java:181) - 		* EP3 : 77532
+[DEBUG][2016-12-02 11:52:31,052](CLBCalculation.java:184) - 		* server total traffic : 169437
+[DEBUG][2016-12-02 11:52:31,052](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 11:52:31,052](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 11:52:31,052](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 11:52:31,052](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 11:52:31,052](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 11:52:31,052](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 11:52:31,052](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 11:52:31,067](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 11:52:31,083](CLBCalculation.java:1084) - 			EP1:174 EP2:793 EP3:1034 
+[DEBUG][2016-12-02 11:52:35,177](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-02 11:52:35,177](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 11:52:35,177](CLBCalculation.java:1139) - 			EP1:174 EP2:793 EP3:1034 
+[INFO ][2016-12-02 11:52:35,177](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 11:52:35,474](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 11:52:35,474](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 11:52:35,490](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 11:52:35,490](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 11:52:35,490](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 11:52:35,505](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 12:51:12,382](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 12:51:22,540](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 12:51:33,666](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 12:51:51,683](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 12:51:51,715](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-02 12:51:51,715](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-02 12:51:51,715](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 12:51:51,715](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 12:51:51,715](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 12:51:51,715](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 12:51:51,715](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 12:51:51,715](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 12:51:51,887](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 12:52:54,097](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 12:52:54,097](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 12:52:54,097](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 12:52:54,112](CLPCalculation.java:106) - 	* number of user : 1433
+[INFO ][2016-12-02 12:52:55,925](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 12:52:55,925](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 12:52:56,347](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 12:52:56,347](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 12:52:56,347](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 12:52:56,347](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 12:52:56,347](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 12:52:56,347](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 12:52:56,362](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 12:52:56,362](CLBCalculation.java:181) - 		* EP1 : 20673
+[DEBUG][2016-12-02 12:52:56,378](CLBCalculation.java:181) - 		* EP2 : 89038
+[DEBUG][2016-12-02 12:52:56,378](CLBCalculation.java:181) - 		* EP3 : 96913
+[DEBUG][2016-12-02 12:52:56,378](CLBCalculation.java:184) - 		* server total traffic : 206624
+[DEBUG][2016-12-02 12:52:56,378](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 12:52:56,378](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 12:52:56,378](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 12:52:56,378](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 12:52:56,378](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 12:52:56,394](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 12:52:57,706](CLBCalculation.java:336) - 	* before rematching process
+[INFO ][2016-12-02 12:52:57,706](CLBCalculation.java:340) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:96913, (Expected Traffic:0,) Remain Traffic:-6913
+[INFO ][2016-12-02 12:52:57,706](CLBCalculation.java:340) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:89038, (Expected Traffic:0,) Remain Traffic:40962
+[INFO ][2016-12-02 12:52:57,722](CLBCalculation.java:340) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:20673, (Expected Traffic:0,) Remain Traffic:109327
+[INFO ][2016-12-02 12:52:57,722](CLBCalculation.java:584) - 	[rematchUsersToCloud method] - Start
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:689) - 		surplusServerList.size() > 1
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:693) - 		* traffic type : * MEDIUM_TRAFFIC 
+
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 12:52:57,722](CLBCalculation.java:708) - 		Priority 1. social + distance
+[INFO ][2016-12-02 12:52:57,722](CLBCalculation.java:1062) - 	[rematchUsersToCloud method] - End
+[INFO ][2016-12-02 12:52:57,737](CLBCalculation.java:413) - 	* after rematching process
+[INFO ][2016-12-02 12:52:57,737](CLBCalculation.java:417) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:96913, (Expected Traffic:0,) Remain Traffic:-6913
+[INFO ][2016-12-02 12:52:57,753](CLBCalculation.java:417) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:89038, (Expected Traffic:0,) Remain Traffic:40962
+[INFO ][2016-12-02 12:52:57,753](CLBCalculation.java:417) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:20673, (Expected Traffic:0,) Remain Traffic:109327
+[INFO ][2016-12-02 12:52:57,769](CLBCalculation.java:433) - 	[rematchForLoadBalancing method] - End
+[INFO ][2016-12-02 12:52:57,769](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 12:52:57,784](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 12:52:57,784](CLBCalculation.java:1084) - 			EP1:174 EP2:793 EP3:1034 
+[DEBUG][2016-12-02 12:52:59,659](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CristobalGil_Lu, 3, 2
+[DEBUG][2016-12-02 12:52:59,675](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AhsanKh31215445, 3, 2
+[DEBUG][2016-12-02 12:52:59,675](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Giselasumarauw, 3, 2
+[DEBUG][2016-12-02 12:52:59,675](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BhekumuziGumede, 3, 2
+[DEBUG][2016-12-02 12:52:59,691](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : 0a3430129c1b4f5, 3, 2
+[DEBUG][2016-12-02 12:52:59,691](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AHSanchez128, 3, 2
+[DEBUG][2016-12-02 12:52:59,691](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Bridgenti, 3, 2
+[DEBUG][2016-12-02 12:52:59,691](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : blackstonephoto, 3, 2
+[DEBUG][2016-12-02 12:52:59,706](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : britishteal, 3, 2
+[DEBUG][2016-12-02 12:52:59,706](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : d13locker, 3, 2
+[DEBUG][2016-12-02 12:52:59,706](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ATHENA_RESE, 3, 2
+[DEBUG][2016-12-02 12:52:59,722](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : abhaynawani, 3, 2
+[DEBUG][2016-12-02 12:52:59,722](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : aka_delboy, 3, 2
+[DEBUG][2016-12-02 12:52:59,722](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AdityaSambuaga, 3, 2
+[DEBUG][2016-12-02 12:52:59,738](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DianneYanda, 3, 2
+[DEBUG][2016-12-02 12:52:59,738](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : easybuilder_in, 3, 2
+[DEBUG][2016-12-02 12:52:59,738](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : game_estates, 3, 2
+[DEBUG][2016-12-02 12:52:59,738](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : GASTWESOsmanlee, 3, 2
+[DEBUG][2016-12-02 12:52:59,753](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Geraldine_Julie, 3, 2
+[DEBUG][2016-12-02 12:52:59,753](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dale_scoc, 3, 2
+[DEBUG][2016-12-02 12:52:59,753](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FDeLucia, 3, 2
+[DEBUG][2016-12-02 12:52:59,769](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : anyonaalex, 3, 2
+[DEBUG][2016-12-02 12:52:59,769](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BruneParkSchool, 3, 2
+[DEBUG][2016-12-02 12:53:01,894](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 23
+[INFO ][2016-12-02 12:53:01,894](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 12:53:01,910](CLBCalculation.java:1139) - 			EP1:174 EP2:816 EP3:1011 
+[INFO ][2016-12-02 12:53:01,910](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 12:53:02,254](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 12:53:02,254](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 12:53:02,269](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 12:53:02,269](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 12:53:02,269](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 12:53:02,285](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 13:51:17,769](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 13:51:25,863](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 13:51:35,099](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 13:51:55,601](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 13:51:55,617](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-02 13:51:55,632](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-02 13:51:55,632](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 13:51:55,632](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 13:51:55,632](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 13:51:55,648](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 13:51:55,648](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 13:51:55,648](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 13:51:55,851](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 13:52:59,936](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 13:52:59,983](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 13:52:59,999](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 13:52:59,999](CLPCalculation.java:106) - 	* number of user : 1575
+[INFO ][2016-12-02 13:53:02,014](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 13:53:02,014](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 13:53:02,530](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 13:53:02,530](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 13:53:02,530](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 13:53:02,530](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 13:53:02,530](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 13:53:02,530](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 13:53:02,546](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 13:53:02,546](CLBCalculation.java:181) - 		* EP1 : 23042
+[DEBUG][2016-12-02 13:53:02,561](CLBCalculation.java:181) - 		* EP2 : 102554
+[DEBUG][2016-12-02 13:53:02,561](CLBCalculation.java:181) - 		* EP3 : 104647
+[DEBUG][2016-12-02 13:53:02,561](CLBCalculation.java:184) - 		* server total traffic : 230243
+[DEBUG][2016-12-02 13:53:02,561](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 13:53:02,561](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 13:53:02,561](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 13:53:02,561](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 13:53:02,561](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 13:53:02,577](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 13:53:03,843](CLBCalculation.java:336) - 	* before rematching process
+[INFO ][2016-12-02 13:53:03,843](CLBCalculation.java:340) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:104647, (Expected Traffic:0,) Remain Traffic:-14647
+[INFO ][2016-12-02 13:53:03,843](CLBCalculation.java:340) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:102554, (Expected Traffic:0,) Remain Traffic:27446
+[INFO ][2016-12-02 13:53:03,858](CLBCalculation.java:340) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:23042, (Expected Traffic:0,) Remain Traffic:106958
+[INFO ][2016-12-02 13:53:03,858](CLBCalculation.java:584) - 	[rematchUsersToCloud method] - Start
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:689) - 		surplusServerList.size() > 1
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:693) - 		* traffic type : * MEDIUM_TRAFFIC 
+
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,858](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 13:53:03,874](CLBCalculation.java:708) - 		Priority 1. social + distance
+[INFO ][2016-12-02 13:53:03,874](CLBCalculation.java:1062) - 	[rematchUsersToCloud method] - End
+[INFO ][2016-12-02 13:53:03,874](CLBCalculation.java:413) - 	* after rematching process
+[INFO ][2016-12-02 13:53:03,874](CLBCalculation.java:417) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:104647, (Expected Traffic:0,) Remain Traffic:-14647
+[INFO ][2016-12-02 13:53:03,890](CLBCalculation.java:417) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:102554, (Expected Traffic:0,) Remain Traffic:27446
+[INFO ][2016-12-02 13:53:03,890](CLBCalculation.java:417) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:23042, (Expected Traffic:0,) Remain Traffic:106958
+[INFO ][2016-12-02 13:53:03,905](CLBCalculation.java:433) - 	[rematchForLoadBalancing method] - End
+[INFO ][2016-12-02 13:53:03,905](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 13:53:03,921](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 13:53:03,937](CLBCalculation.java:1084) - 			EP1:174 EP2:816 EP3:1011 
+[DEBUG][2016-12-02 13:53:05,905](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : emileebake, 3, 2
+[DEBUG][2016-12-02 13:53:05,905](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : All_InMke, 3, 2
+[DEBUG][2016-12-02 13:53:05,905](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bhrioni, 3, 2
+[DEBUG][2016-12-02 13:53:05,921](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DohaExpat, 3, 2
+[DEBUG][2016-12-02 13:53:05,921](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : eve_kilel, 3, 2
+[DEBUG][2016-12-02 13:53:05,921](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : duane_08, 3, 2
+[DEBUG][2016-12-02 13:53:05,921](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ehardy_123, 3, 2
+[DEBUG][2016-12-02 13:53:05,937](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : 12jessicasims, 3, 2
+[DEBUG][2016-12-02 13:53:05,937](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ericamendevil, 3, 2
+[DEBUG][2016-12-02 13:53:05,937](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : atomspark1618, 3, 2
+[DEBUG][2016-12-02 13:53:05,952](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CarberryMedia, 3, 2
+[DEBUG][2016-12-02 13:53:05,952](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : GaranceRnr, 3, 2
+[DEBUG][2016-12-02 13:53:05,952](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BryanLucious, 3, 2
+[DEBUG][2016-12-02 13:53:05,952](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Cell_met, 3, 2
+[DEBUG][2016-12-02 13:53:05,968](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : franklychilli, 3, 2
+[DEBUG][2016-12-02 13:53:05,968](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Eduardo_J_Gomez, 3, 2
+[DEBUG][2016-12-02 13:53:05,968](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : benoitcorbel, 3, 2
+[DEBUG][2016-12-02 13:53:05,984](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : duncanmbodze2, 3, 2
+[DEBUG][2016-12-02 13:53:05,984](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Benoit_Lavier, 3, 2
+[DEBUG][2016-12-02 13:53:05,984](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : docarsenic, 3, 2
+[DEBUG][2016-12-02 13:53:05,984](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Axel_0197, 3, 2
+[DEBUG][2016-12-02 13:53:05,999](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Erelcaroline, 3, 2
+[DEBUG][2016-12-02 13:53:05,999](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : craigmoses14, 3, 2
+[DEBUG][2016-12-02 13:53:05,999](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DominosTaunton, 3, 2
+[DEBUG][2016-12-02 13:53:05,999](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Brigi68, 3, 2
+[DEBUG][2016-12-02 13:53:06,015](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AthenaBME, 3, 2
+[DEBUG][2016-12-02 13:53:06,015](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Cedriic_Obin, 3, 2
+[DEBUG][2016-12-02 13:53:06,015](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : funkyfield, 3, 2
+[DEBUG][2016-12-02 13:53:06,015](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DaseinUltimate, 3, 2
+[DEBUG][2016-12-02 13:53:06,030](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bary__meth, 3, 2
+[DEBUG][2016-12-02 13:53:06,030](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dipishrai, 3, 2
+[DEBUG][2016-12-02 13:53:06,030](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dearshakti, 3, 2
+[DEBUG][2016-12-02 13:53:06,046](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FaniMutiaraa, 3, 2
+[DEBUG][2016-12-02 13:53:06,046](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AnandamTV, 3, 2
+[DEBUG][2016-12-02 13:53:06,046](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bootsy_17, 3, 2
+[DEBUG][2016-12-02 13:53:06,046](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DJAFothergill, 3, 2
+[DEBUG][2016-12-02 13:53:06,062](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DMarketHall, 3, 2
+[DEBUG][2016-12-02 13:53:06,062](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : fugee37, 3, 2
+[DEBUG][2016-12-02 13:53:06,062](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DigitalPlymouth, 3, 2
+[DEBUG][2016-12-02 13:53:06,077](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : andyrtd, 3, 2
+[DEBUG][2016-12-02 13:53:06,077](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BartvanEijden, 3, 2
+[DEBUG][2016-12-02 13:53:06,077](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bjornerix, 3, 2
+[DEBUG][2016-12-02 13:53:06,077](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : aniatarazi, 3, 2
+[DEBUG][2016-12-02 13:53:06,093](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : derekalvarado50, 3, 2
+[DEBUG][2016-12-02 13:53:06,093](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : chrisketels, 3, 2
+[DEBUG][2016-12-02 13:53:06,093](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CountyGazetteEd, 3, 2
+[DEBUG][2016-12-02 13:53:06,109](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Al1shaK, 3, 2
+[DEBUG][2016-12-02 13:53:06,109](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dubcnews, 3, 2
+[DEBUG][2016-12-02 13:53:06,109](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : aiyananana, 3, 2
+[DEBUG][2016-12-02 13:53:06,124](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : baptistebonnef1, 3, 2
+[DEBUG][2016-12-02 13:53:06,124](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : digitalmaximal, 3, 2
+[DEBUG][2016-12-02 13:53:06,124](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AllyDillsworth, 3, 2
+[DEBUG][2016-12-02 13:53:06,124](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ChillieChill, 3, 2
+[DEBUG][2016-12-02 13:53:06,140](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ClaireyFiler, 3, 2
+[DEBUG][2016-12-02 13:53:06,140](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : binaryworker, 3, 2
+[DEBUG][2016-12-02 13:53:06,140](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FrediDervis, 3, 2
+[DEBUG][2016-12-02 13:53:06,155](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ArchieGameDev, 3, 2
+[DEBUG][2016-12-02 13:53:06,155](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : deb_staub, 3, 2
+[DEBUG][2016-12-02 13:53:06,155](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : David_Lehr, 3, 2
+[DEBUG][2016-12-02 13:53:06,171](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DaNoobSays, 3, 2
+[DEBUG][2016-12-02 13:53:06,171](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : alikennedy_, 3, 2
+[DEBUG][2016-12-02 13:53:06,171](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BaidManisha, 3, 2
+[DEBUG][2016-12-02 13:53:06,171](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : geudehradun, 3, 2
+[DEBUG][2016-12-02 13:53:06,187](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : benregez, 3, 2
+[DEBUG][2016-12-02 13:53:06,187](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Gauthierlb_, 3, 2
+[DEBUG][2016-12-02 13:53:06,187](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : davidjunge, 3, 2
+[DEBUG][2016-12-02 13:53:06,202](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Aleandre5, 3, 2
+[DEBUG][2016-12-02 13:53:06,202](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BCastellier, 3, 2
+[DEBUG][2016-12-02 13:53:06,202](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ColeShortliffe, 3, 2
+[DEBUG][2016-12-02 13:53:06,218](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AmplifyUrBrand, 3, 2
+[DEBUG][2016-12-02 13:53:06,218](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DonBaney111, 3, 2
+[DEBUG][2016-12-02 13:53:06,218](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Alex_06, 3, 2
+[DEBUG][2016-12-02 13:53:06,234](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : cardellw, 3, 2
+[DEBUG][2016-12-02 13:53:06,234](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : djitallkenya, 3, 2
+[DEBUG][2016-12-02 13:53:06,234](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Ale0099, 3, 2
+[DEBUG][2016-12-02 13:53:06,234](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : deVereMalaysia, 3, 2
+[DEBUG][2016-12-02 13:53:06,249](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BahadirDurak, 3, 2
+[DEBUG][2016-12-02 13:53:06,249](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AlombossChollo, 3, 2
+[DEBUG][2016-12-02 13:53:07,937](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 78
+[INFO ][2016-12-02 13:53:07,937](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 13:53:07,937](CLBCalculation.java:1139) - 			EP1:174 EP2:894 EP3:933 
+[INFO ][2016-12-02 13:53:07,937](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 13:53:08,281](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 13:53:08,281](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 13:53:08,281](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 13:53:08,296](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 13:53:08,296](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 13:53:08,296](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 14:51:23,218](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 14:51:29,531](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 14:51:36,782](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 14:52:06,801](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 14:52:06,832](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-02 14:52:06,863](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-02 14:52:06,863](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 14:52:06,863](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 14:52:06,863](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 14:52:06,863](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 14:52:06,863](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 14:52:06,863](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 14:52:06,973](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 14:53:16,558](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 14:53:16,558](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 14:53:16,558](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 14:53:16,574](CLPCalculation.java:106) - 	* number of user : 1696
+[INFO ][2016-12-02 14:53:19,012](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 14:53:19,012](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 14:53:19,605](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 14:53:19,605](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 14:53:19,605](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 14:53:19,605](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 14:53:19,605](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 14:53:19,605](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 14:53:19,605](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 14:53:19,605](CLBCalculation.java:181) - 		* EP1 : 25369
+[DEBUG][2016-12-02 14:53:19,621](CLBCalculation.java:181) - 		* EP2 : 125627
+[DEBUG][2016-12-02 14:53:19,621](CLBCalculation.java:181) - 		* EP3 : 107775
+[DEBUG][2016-12-02 14:53:19,621](CLBCalculation.java:184) - 		* server total traffic : 258771
+[DEBUG][2016-12-02 14:53:19,621](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 14:53:19,621](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 14:53:19,621](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 14:53:19,621](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 14:53:19,621](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 14:53:19,621](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 14:53:20,840](CLBCalculation.java:336) - 	* before rematching process
+[INFO ][2016-12-02 14:53:20,840](CLBCalculation.java:340) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:107775, (Expected Traffic:0,) Remain Traffic:-17775
+[INFO ][2016-12-02 14:53:20,856](CLBCalculation.java:340) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:125627, (Expected Traffic:0,) Remain Traffic:4373
+[INFO ][2016-12-02 14:53:20,856](CLBCalculation.java:340) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:25369, (Expected Traffic:0,) Remain Traffic:104631
+[INFO ][2016-12-02 14:53:20,871](CLBCalculation.java:584) - 	[rematchUsersToCloud method] - Start
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:689) - 		surplusServerList.size() > 1
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:693) - 		* traffic type : * MEDIUM_TRAFFIC 
+
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 14:53:20,871](CLBCalculation.java:708) - 		Priority 1. social + distance
+[INFO ][2016-12-02 14:53:20,871](CLBCalculation.java:1062) - 	[rematchUsersToCloud method] - End
+[INFO ][2016-12-02 14:53:20,887](CLBCalculation.java:413) - 	* after rematching process
+[INFO ][2016-12-02 14:53:20,887](CLBCalculation.java:417) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:107775, (Expected Traffic:0,) Remain Traffic:-17775
+[INFO ][2016-12-02 14:53:20,902](CLBCalculation.java:417) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:125627, (Expected Traffic:0,) Remain Traffic:4373
+[INFO ][2016-12-02 14:53:20,902](CLBCalculation.java:417) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:25369, (Expected Traffic:0,) Remain Traffic:104631
+[INFO ][2016-12-02 14:53:20,902](CLBCalculation.java:433) - 	[rematchForLoadBalancing method] - End
+[INFO ][2016-12-02 14:53:20,918](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 14:53:20,934](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 14:53:20,934](CLBCalculation.java:1084) - 			EP1:174 EP2:894 EP3:933 
+[DEBUG][2016-12-02 14:53:21,340](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : foolhardyGames, 3, 1
+[DEBUG][2016-12-02 14:53:21,356](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : donovanerba, 3, 1
+[DEBUG][2016-12-02 14:53:21,356](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ahvenaisesi, 3, 1
+[DEBUG][2016-12-02 14:53:21,356](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AshleyTryba, 3, 1
+[DEBUG][2016-12-02 14:53:21,371](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AliAliroper612, 3, 1
+[DEBUG][2016-12-02 14:53:21,371](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Chemical_spirit, 3, 1
+[DEBUG][2016-12-02 14:53:21,371](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : davepollackjazz, 3, 1
+[DEBUG][2016-12-02 14:53:21,371](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CharlieCaslick, 3, 1
+[DEBUG][2016-12-02 14:53:21,371](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : efirenzaputra, 3, 1
+[DEBUG][2016-12-02 14:53:21,387](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : deepikadharnaik, 3, 1
+[DEBUG][2016-12-02 14:53:21,387](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Alex_Mayberry, 3, 1
+[DEBUG][2016-12-02 14:53:21,387](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Expat_Chat, 3, 1
+[DEBUG][2016-12-02 14:53:21,387](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : cncownersoff, 3, 1
+[DEBUG][2016-12-02 14:53:21,402](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DMcFarlinUF, 3, 1
+[DEBUG][2016-12-02 14:53:21,402](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Ericksirali, 3, 1
+[DEBUG][2016-12-02 14:53:21,402](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : agrarealestate, 3, 1
+[DEBUG][2016-12-02 14:53:21,402](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dushiness, 3, 1
+[DEBUG][2016-12-02 14:53:21,418](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CharlvdMerwe, 3, 1
+[DEBUG][2016-12-02 14:53:21,418](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AplisoSA, 3, 1
+[DEBUG][2016-12-02 14:53:21,418](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : deepitome2015, 3, 1
+[DEBUG][2016-12-02 14:53:21,418](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CaroReporting, 3, 1
+[DEBUG][2016-12-02 14:53:21,434](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bseabolt33, 3, 1
+[DEBUG][2016-12-02 14:53:21,434](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CherrelJacobs, 3, 1
+[DEBUG][2016-12-02 14:53:21,434](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DeathOverDecaf, 3, 1
+[DEBUG][2016-12-02 14:53:21,434](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bitesize17, 3, 1
+[DEBUG][2016-12-02 14:53:21,449](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FezProvidence, 3, 1
+[DEBUG][2016-12-02 14:53:21,449](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : a_paranjpye, 3, 1
+[DEBUG][2016-12-02 14:53:21,449](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : antarcticdinos, 3, 1
+[DEBUG][2016-12-02 14:53:21,449](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BYZAUC, 3, 1
+[DEBUG][2016-12-02 14:53:21,465](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bogotacKD, 3, 1
+[DEBUG][2016-12-02 14:53:21,465](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BaconRules123, 3, 1
+[DEBUG][2016-12-02 14:53:21,465](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AlyshaBadour, 3, 1
+[DEBUG][2016-12-02 14:53:21,465](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : evenneman, 3, 1
+[DEBUG][2016-12-02 14:53:21,481](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DelhiNoidaProp, 3, 1
+[DEBUG][2016-12-02 14:53:21,481](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : echoedwalls, 3, 1
+[DEBUG][2016-12-02 14:53:21,481](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Dazzumbledor, 3, 1
+[DEBUG][2016-12-02 14:53:21,481](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : alberti47136988, 3, 1
+[DEBUG][2016-12-02 14:53:21,496](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BrooksTheGod, 3, 1
+[DEBUG][2016-12-02 14:53:21,496](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DoranSummers, 3, 1
+[DEBUG][2016-12-02 14:53:21,496](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : EdBiden, 3, 1
+[DEBUG][2016-12-02 14:53:21,496](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : funkyj, 3, 1
+[DEBUG][2016-12-02 14:53:21,512](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : angiePRmarino, 3, 1
+[DEBUG][2016-12-02 14:53:21,512](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : andrewsargeant, 3, 1
+[DEBUG][2016-12-02 14:53:21,512](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : brusomogyi, 3, 1
+[DEBUG][2016-12-02 14:53:21,512](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : GavinTanner, 3, 1
+[DEBUG][2016-12-02 14:53:21,528](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Angelica_werung, 3, 1
+[DEBUG][2016-12-02 14:53:21,528](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CoachClive10, 3, 1
+[DEBUG][2016-12-02 14:53:21,528](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Cen_health, 3, 1
+[DEBUG][2016-12-02 14:53:21,528](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Amanda_pike16, 3, 1
+[DEBUG][2016-12-02 14:53:21,543](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bonescosey, 3, 1
+[DEBUG][2016-12-02 14:53:21,543](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DestinyMcMurray, 3, 1
+[DEBUG][2016-12-02 14:53:21,543](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : esquire_mike, 3, 1
+[DEBUG][2016-12-02 14:53:21,543](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : coleleonoff, 3, 1
+[DEBUG][2016-12-02 14:53:21,559](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : blake_raven, 3, 1
+[DEBUG][2016-12-02 14:53:21,559](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BananaSalazar, 3, 1
+[DEBUG][2016-12-02 14:53:21,559](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ColtonFritts, 3, 1
+[DEBUG][2016-12-02 14:53:21,559](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : emibakes, 3, 1
+[DEBUG][2016-12-02 14:53:21,559](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FrediZohar, 3, 1
+[DEBUG][2016-12-02 14:53:21,574](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AlexFontana1995, 3, 1
+[DEBUG][2016-12-02 14:53:21,574](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ashaonthebeach, 3, 1
+[DEBUG][2016-12-02 14:53:21,574](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ben_batt, 3, 1
+[DEBUG][2016-12-02 14:53:21,574](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : chreko, 3, 1
+[DEBUG][2016-12-02 14:53:21,590](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Ejiigwuonyi, 3, 1
+[DEBUG][2016-12-02 14:53:21,590](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : amalthya, 3, 1
+[DEBUG][2016-12-02 14:53:21,590](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bisongruppe, 3, 1
+[DEBUG][2016-12-02 14:53:21,590](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FlatRoofManor, 3, 1
+[DEBUG][2016-12-02 14:53:21,606](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : emleebakes, 3, 1
+[DEBUG][2016-12-02 14:53:21,606](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : czatwins11, 3, 1
+[DEBUG][2016-12-02 14:53:21,606](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : GAlNSBOROUGH, 3, 1
+[DEBUG][2016-12-02 14:53:21,606](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : eusou7a, 3, 1
+[DEBUG][2016-12-02 14:53:21,606](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : fa1zaI, 3, 1
+[DEBUG][2016-12-02 14:53:21,621](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : GeorgeManiereg, 3, 1
+[DEBUG][2016-12-02 14:53:21,621](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Dinashawar, 3, 1
+[DEBUG][2016-12-02 14:53:21,621](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ChefWithPen, 3, 1
+[DEBUG][2016-12-02 14:53:21,621](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Axelpult, 3, 1
+[DEBUG][2016-12-02 14:53:21,637](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : EssaH52, 3, 1
+[DEBUG][2016-12-02 14:53:21,637](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BloopyFoxx, 3, 1
+[DEBUG][2016-12-02 14:53:21,637](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dens_milly, 3, 1
+[DEBUG][2016-12-02 14:53:21,637](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AimeeTay, 3, 1
+[DEBUG][2016-12-02 14:53:21,653](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : allisondone, 3, 1
+[DEBUG][2016-12-02 14:53:21,653](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : emehesz8, 3, 1
+[DEBUG][2016-12-02 14:53:23,309](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ExtonChamber, 3, 2
+[DEBUG][2016-12-02 14:53:23,325](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CCMVjVeriyan, 3, 2
+[DEBUG][2016-12-02 14:53:23,325](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ep_nola, 3, 2
+[DEBUG][2016-12-02 14:53:23,325](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : 123Viihlu, 3, 2
+[DEBUG][2016-12-02 14:53:23,325](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : 5148a274fa86451, 3, 2
+[DEBUG][2016-12-02 14:53:23,340](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DeviTenges, 3, 2
+[DEBUG][2016-12-02 14:53:23,340](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DaveyOil, 3, 2
+[DEBUG][2016-12-02 14:53:23,340](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Freestyle_ZiNeZ, 3, 2
+[DEBUG][2016-12-02 14:53:23,356](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Ester_jvita, 3, 2
+[DEBUG][2016-12-02 14:53:23,356](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AJYHYP, 3, 2
+[DEBUG][2016-12-02 14:53:23,356](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : aleeibuu, 3, 2
+[DEBUG][2016-12-02 14:53:23,371](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dchistorydept, 3, 2
+[DEBUG][2016-12-02 14:53:23,371](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CodedInColch, 3, 2
+[DEBUG][2016-12-02 14:53:23,371](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : barrycoltham, 3, 2
+[DEBUG][2016-12-02 14:53:23,387](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CUKPublicLife, 3, 2
+[DEBUG][2016-12-02 14:53:23,387](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AyeeeYouu, 3, 2
+[DEBUG][2016-12-02 14:53:23,387](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : chemonye, 3, 2
+[DEBUG][2016-12-02 14:53:23,403](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : anshuman_x, 3, 2
+[DEBUG][2016-12-02 14:53:23,403](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ekkosecurity, 3, 2
+[DEBUG][2016-12-02 14:53:23,403](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dailyfor69, 3, 2
+[DEBUG][2016-12-02 14:53:23,403](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Febriiyoga, 3, 2
+[DEBUG][2016-12-02 14:53:23,418](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Colourworks_ZA, 3, 2
+[DEBUG][2016-12-02 14:53:23,418](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : badlandslogan, 3, 2
+[DEBUG][2016-12-02 14:53:23,418](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : alainveuve, 3, 2
+[DEBUG][2016-12-02 14:53:23,434](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CelebVegasTours, 3, 2
+[DEBUG][2016-12-02 14:53:23,434](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Abdi272, 3, 2
+[DEBUG][2016-12-02 14:53:23,434](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Flvckxo22, 3, 2
+[DEBUG][2016-12-02 14:53:23,450](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AtorSeri, 3, 2
+[DEBUG][2016-12-02 14:53:23,450](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CrestronInt_MKT, 3, 2
+[DEBUG][2016-12-02 14:53:23,450](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DarrylBurnett, 3, 2
+[DEBUG][2016-12-02 14:53:23,465](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ES_Chrizz, 3, 2
+[DEBUG][2016-12-02 14:53:23,465](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bob_woodburn, 3, 2
+[DEBUG][2016-12-02 14:53:23,465](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ganeshdeals, 3, 2
+[DEBUG][2016-12-02 14:53:23,481](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DebbieOlsen01, 3, 2
+[DEBUG][2016-12-02 14:53:23,481](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : eventrealestate, 3, 2
+[DEBUG][2016-12-02 14:53:23,481](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CitrusFoam, 3, 2
+[DEBUG][2016-12-02 14:53:23,481](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : fckyesmichelle, 3, 2
+[DEBUG][2016-12-02 14:53:23,496](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ckirmizitas, 3, 2
+[DEBUG][2016-12-02 14:53:23,496](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DublinVipers, 3, 2
+[DEBUG][2016-12-02 14:53:23,496](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CiaMundung, 3, 2
+[DEBUG][2016-12-02 14:53:23,512](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AbbeyHassan, 3, 2
+[DEBUG][2016-12-02 14:53:23,512](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : asdavis_, 3, 2
+[DEBUG][2016-12-02 14:53:23,512](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : aetcars, 3, 2
+[DEBUG][2016-12-02 14:53:23,528](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : aljastylison, 3, 2
+[DEBUG][2016-12-02 14:53:23,528](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Chikkymo, 3, 2
+[DEBUG][2016-12-02 14:53:24,887](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 126
+[INFO ][2016-12-02 14:53:24,887](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 14:53:24,887](CLBCalculation.java:1139) - 			EP1:255 EP2:939 EP3:807 
+[INFO ][2016-12-02 14:53:24,887](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 14:53:25,278](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 14:53:25,278](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 14:53:25,278](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 14:53:25,294](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 14:53:25,294](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 14:53:25,309](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 15:51:28,866](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 15:51:33,820](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 15:51:38,836](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 15:52:08,073](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 15:52:08,104](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[DEBUG][2016-12-02 15:52:08,104](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 15:52:08,104](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 15:52:08,104](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-02 15:52:08,104](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 15:52:08,120](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 15:52:08,120](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 15:52:08,120](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 15:52:08,292](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 15:53:18,972](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 15:53:18,972](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 15:53:18,972](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 15:53:18,987](CLPCalculation.java:106) - 	* number of user : 1741
+[INFO ][2016-12-02 15:53:21,534](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 15:53:21,550](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 15:53:22,159](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 15:53:22,159](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 15:53:22,159](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 15:53:22,159](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 15:53:22,159](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 15:53:22,159](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 15:53:22,159](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 15:53:22,175](CLBCalculation.java:181) - 		* EP1 : 36154
+[DEBUG][2016-12-02 15:53:22,175](CLBCalculation.java:181) - 		* EP2 : 138708
+[DEBUG][2016-12-02 15:53:22,175](CLBCalculation.java:181) - 		* EP3 : 97107
+[DEBUG][2016-12-02 15:53:22,190](CLBCalculation.java:184) - 		* server total traffic : 271969
+[DEBUG][2016-12-02 15:53:22,190](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 15:53:22,190](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 15:53:22,190](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 15:53:22,190](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 15:53:22,190](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 15:53:22,190](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 15:53:23,441](CLBCalculation.java:336) - 	* before rematching process
+[INFO ][2016-12-02 15:53:23,441](CLBCalculation.java:340) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:97107, (Expected Traffic:0,) Remain Traffic:-7107
+[INFO ][2016-12-02 15:53:23,441](CLBCalculation.java:340) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:138708, (Expected Traffic:0,) Remain Traffic:-8708
+[INFO ][2016-12-02 15:53:23,456](CLBCalculation.java:340) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:36154, (Expected Traffic:0,) Remain Traffic:93846
+[INFO ][2016-12-02 15:53:23,456](CLBCalculation.java:584) - 	[rematchUsersToCloud method] - Start
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:590) - 		0 < surplusServerList.size() <= 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:594) - 		MEDIUM_TRAFFIC
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : AtrealJohnny 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : FxSnipes 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : babpreetika 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : giantblackdog 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : devita180 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : EastJesusArt 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : AccordingtoDrew 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : GiantRobotKillr 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : CBGphotos 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : CasperDeWinter 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : dianaaavee 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Duncan_Bramwell 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : CraigPeebles 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : BigWuiz 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : cuteri22 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : ChrissyFromPDX 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : abdullah_dawnak 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : DJTyga_SA 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : FightMuayThai 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : ChanceMaciolek 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Evan_Boyd412 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : FrederickSFWong 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : DripDropSA 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : aswin8783 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : 604arun 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : glenglet 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : AalexxxFoxwell 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : fosisnorth 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : ccampanellaa 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : dianejenflores 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : fluttergame 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : flynnstone70 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : blueskiesnola 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Anja66T 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Aayah6688 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Challyadds 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : bellgiunta 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : BerteroSindaco 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : ExpatGenius 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : 8dfb4f5d646346b 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : ElsieMbatha 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : FrostfireAudio 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : diane196030 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Cindy_Nagel 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Djaaaaayy 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Bethany_R_Brown 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Aparna160 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : anyanildefonso 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : EmmaLederer 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : damibarrio 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : 13DiYaNkA 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : CatherineKing10 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : AbiReimold 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Dakota_Roice206 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : agvthv 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : FiveFoldIreland 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Dallasx06 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : andrevsb 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : DanielMallia 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : cgriffrun 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : 123KatC 3 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : craigmoses14 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : ep_nola 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Avandros1 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : freddieinstein 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : AHafiz_core 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : EnriqueHuglin 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : ArchieGameDev 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : bhrioni 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : andyrtd 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : aleynquan 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : EmilioMateuJi 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : AIMMS 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : dubcnews 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Amu_Tsogoo 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : AlombossChollo 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : asbernstein2185 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : christel81570 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : am050505 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : davidjunge 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : ExtonChamber 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : DominosTaunton 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : donscheibenreif 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : FrazzyJazzy7 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : artofmithril 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Arushi134 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Giselasumarauw 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Flvckxo22 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Bridgenti 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : CarolynArthurs1 2 -> 1
+[DEBUG][2016-12-02 15:53:23,472](CLBCalculation.java:634) - 			* transferred user id : Arun_bravo_M 2 -> 1
+[INFO ][2016-12-02 15:53:23,472](CLBCalculation.java:1062) - 	[rematchUsersToCloud method] - End
+[INFO ][2016-12-02 15:53:23,472](CLBCalculation.java:413) - 	* after rematching process
+[INFO ][2016-12-02 15:53:23,472](CLBCalculation.java:417) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:97107, (Expected Traffic:0,) Remain Traffic:-7107
+[INFO ][2016-12-02 15:53:23,488](CLBCalculation.java:417) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:138708, (Expected Traffic:0,) Remain Traffic:-8708
+[INFO ][2016-12-02 15:53:23,503](CLBCalculation.java:417) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:36154, (Expected Traffic:0,) Remain Traffic:93846
+[INFO ][2016-12-02 15:53:23,503](CLBCalculation.java:433) - 	[rematchForLoadBalancing method] - End
+[INFO ][2016-12-02 15:53:23,503](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 15:53:23,519](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 15:53:23,534](CLBCalculation.java:1084) - 			EP1:255 EP2:939 EP3:807 
+[DEBUG][2016-12-02 15:53:24,316](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AtrealJohnny, 3, 1
+[DEBUG][2016-12-02 15:53:24,331](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FxSnipes, 3, 1
+[DEBUG][2016-12-02 15:53:24,331](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : babpreetika, 3, 1
+[DEBUG][2016-12-02 15:53:24,331](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : giantblackdog, 3, 1
+[DEBUG][2016-12-02 15:53:24,347](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : devita180, 3, 1
+[DEBUG][2016-12-02 15:53:24,347](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : EastJesusArt, 3, 1
+[DEBUG][2016-12-02 15:53:24,347](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AccordingtoDrew, 3, 1
+[DEBUG][2016-12-02 15:53:24,347](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : GiantRobotKillr, 3, 1
+[DEBUG][2016-12-02 15:53:24,363](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CBGphotos, 3, 1
+[DEBUG][2016-12-02 15:53:24,363](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CasperDeWinter, 3, 1
+[DEBUG][2016-12-02 15:53:24,363](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dianaaavee, 3, 1
+[DEBUG][2016-12-02 15:53:24,363](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Duncan_Bramwell, 3, 1
+[DEBUG][2016-12-02 15:53:24,378](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CraigPeebles, 3, 1
+[DEBUG][2016-12-02 15:53:24,378](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BigWuiz, 3, 1
+[DEBUG][2016-12-02 15:53:24,378](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : cuteri22, 3, 1
+[DEBUG][2016-12-02 15:53:24,378](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ChrissyFromPDX, 3, 1
+[DEBUG][2016-12-02 15:53:24,394](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : abdullah_dawnak, 3, 1
+[DEBUG][2016-12-02 15:53:24,394](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DJTyga_SA, 3, 1
+[DEBUG][2016-12-02 15:53:24,394](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FightMuayThai, 3, 1
+[DEBUG][2016-12-02 15:53:24,394](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ChanceMaciolek, 3, 1
+[DEBUG][2016-12-02 15:53:24,409](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Evan_Boyd412, 3, 1
+[DEBUG][2016-12-02 15:53:24,409](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FrederickSFWong, 3, 1
+[DEBUG][2016-12-02 15:53:24,409](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DripDropSA, 3, 1
+[DEBUG][2016-12-02 15:53:24,409](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : aswin8783, 3, 1
+[DEBUG][2016-12-02 15:53:24,425](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : 604arun, 3, 1
+[DEBUG][2016-12-02 15:53:24,425](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : glenglet, 3, 1
+[DEBUG][2016-12-02 15:53:24,425](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AalexxxFoxwell, 3, 1
+[DEBUG][2016-12-02 15:53:24,425](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : fosisnorth, 3, 1
+[DEBUG][2016-12-02 15:53:24,441](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ccampanellaa, 3, 1
+[DEBUG][2016-12-02 15:53:24,441](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dianejenflores, 3, 1
+[DEBUG][2016-12-02 15:53:24,441](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : fluttergame, 3, 1
+[DEBUG][2016-12-02 15:53:24,441](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : flynnstone70, 3, 1
+[DEBUG][2016-12-02 15:53:24,456](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : blueskiesnola, 3, 1
+[DEBUG][2016-12-02 15:53:24,456](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Anja66T, 3, 1
+[DEBUG][2016-12-02 15:53:24,456](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Aayah6688, 3, 1
+[DEBUG][2016-12-02 15:53:24,472](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Challyadds, 3, 1
+[DEBUG][2016-12-02 15:53:24,472](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bellgiunta, 3, 1
+[DEBUG][2016-12-02 15:53:24,472](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : BerteroSindaco, 3, 1
+[DEBUG][2016-12-02 15:53:24,472](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ExpatGenius, 3, 1
+[DEBUG][2016-12-02 15:53:24,488](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : 8dfb4f5d646346b, 3, 1
+[DEBUG][2016-12-02 15:53:24,488](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ElsieMbatha, 3, 1
+[DEBUG][2016-12-02 15:53:24,488](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FrostfireAudio, 3, 1
+[DEBUG][2016-12-02 15:53:24,488](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : diane196030, 3, 1
+[DEBUG][2016-12-02 15:53:24,503](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Cindy_Nagel, 3, 1
+[DEBUG][2016-12-02 15:53:24,503](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Djaaaaayy, 3, 1
+[DEBUG][2016-12-02 15:53:24,503](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Bethany_R_Brown, 3, 1
+[DEBUG][2016-12-02 15:53:24,503](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Aparna160, 3, 1
+[DEBUG][2016-12-02 15:53:24,519](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : anyanildefonso, 3, 1
+[DEBUG][2016-12-02 15:53:24,519](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : EmmaLederer, 3, 1
+[DEBUG][2016-12-02 15:53:24,519](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : damibarrio, 3, 1
+[DEBUG][2016-12-02 15:53:24,519](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : 13DiYaNkA, 3, 1
+[DEBUG][2016-12-02 15:53:24,534](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CatherineKing10, 3, 1
+[DEBUG][2016-12-02 15:53:24,534](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AbiReimold, 3, 1
+[DEBUG][2016-12-02 15:53:24,534](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Dakota_Roice206, 3, 1
+[DEBUG][2016-12-02 15:53:24,534](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : agvthv, 3, 1
+[DEBUG][2016-12-02 15:53:24,550](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FiveFoldIreland, 3, 1
+[DEBUG][2016-12-02 15:53:24,550](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Dallasx06, 3, 1
+[DEBUG][2016-12-02 15:53:24,550](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : andrevsb, 3, 1
+[DEBUG][2016-12-02 15:53:24,550](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DanielMallia, 3, 1
+[DEBUG][2016-12-02 15:53:24,566](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : cgriffrun, 3, 1
+[DEBUG][2016-12-02 15:53:24,566](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : 123KatC, 3, 1
+[DEBUG][2016-12-02 15:53:24,566](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : craigmoses14, 2, 1
+[DEBUG][2016-12-02 15:53:24,566](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ep_nola, 2, 1
+[DEBUG][2016-12-02 15:53:24,581](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Avandros1, 2, 1
+[DEBUG][2016-12-02 15:53:24,581](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : freddieinstein, 2, 1
+[DEBUG][2016-12-02 15:53:24,581](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AHafiz_core, 2, 1
+[DEBUG][2016-12-02 15:53:24,597](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : EnriqueHuglin, 2, 1
+[DEBUG][2016-12-02 15:53:24,597](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ArchieGameDev, 2, 1
+[DEBUG][2016-12-02 15:53:24,597](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bhrioni, 2, 1
+[DEBUG][2016-12-02 15:53:24,597](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : andyrtd, 2, 1
+[DEBUG][2016-12-02 15:53:24,613](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : aleynquan, 2, 1
+[DEBUG][2016-12-02 15:53:24,613](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : EmilioMateuJi, 2, 1
+[DEBUG][2016-12-02 15:53:24,613](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AIMMS, 2, 1
+[DEBUG][2016-12-02 15:53:24,613](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dubcnews, 2, 1
+[DEBUG][2016-12-02 15:53:24,628](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Amu_Tsogoo, 2, 1
+[DEBUG][2016-12-02 15:53:24,628](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AlombossChollo, 2, 1
+[DEBUG][2016-12-02 15:53:24,628](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : asbernstein2185, 2, 1
+[DEBUG][2016-12-02 15:53:24,644](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : christel81570, 2, 1
+[DEBUG][2016-12-02 15:53:24,644](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : am050505, 2, 1
+[DEBUG][2016-12-02 15:53:24,644](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : davidjunge, 2, 1
+[DEBUG][2016-12-02 15:53:24,644](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : ExtonChamber, 2, 1
+[DEBUG][2016-12-02 15:53:24,659](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : DominosTaunton, 2, 1
+[DEBUG][2016-12-02 15:53:24,659](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : donscheibenreif, 2, 1
+[DEBUG][2016-12-02 15:53:24,659](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : FrazzyJazzy7, 2, 1
+[DEBUG][2016-12-02 15:53:24,675](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : artofmithril, 2, 1
+[DEBUG][2016-12-02 15:53:24,675](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Arushi134, 2, 1
+[DEBUG][2016-12-02 15:53:24,675](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Giselasumarauw, 2, 1
+[DEBUG][2016-12-02 15:53:24,675](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Flvckxo22, 2, 1
+[DEBUG][2016-12-02 15:53:24,675](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Bridgenti, 2, 1
+[DEBUG][2016-12-02 15:53:24,691](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CarolynArthurs1, 2, 1
+[DEBUG][2016-12-02 15:53:24,691](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Arun_bravo_M, 2, 1
+[DEBUG][2016-12-02 15:53:27,738](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 91
+[INFO ][2016-12-02 15:53:27,738](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 15:53:27,754](CLBCalculation.java:1139) - 			EP1:346 EP2:909 EP3:746 
+[INFO ][2016-12-02 15:53:27,754](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 15:53:28,176](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 15:53:28,176](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 15:53:28,191](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 15:53:28,191](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 15:53:28,207](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 15:53:28,207](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 16:51:35,096](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 16:51:38,362](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 16:51:42,160](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 16:52:15,147](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 16:52:15,163](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[DEBUG][2016-12-02 16:52:15,179](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 16:52:15,179](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 16:52:15,179](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-02 16:52:15,179](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 16:52:15,194](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 16:52:15,194](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 16:52:15,194](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 16:52:15,288](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 16:53:26,312](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 16:53:26,312](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 16:53:26,312](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 16:53:26,327](CLPCalculation.java:106) - 	* number of user : 1762
+[INFO ][2016-12-02 16:53:28,874](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 16:53:28,874](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 16:53:29,499](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 16:53:29,499](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 16:53:29,499](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 16:53:29,499](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 16:53:29,499](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 16:53:29,499](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 16:53:29,499](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 16:53:29,515](CLBCalculation.java:181) - 		* EP1 : 47008
+[DEBUG][2016-12-02 16:53:29,515](CLBCalculation.java:181) - 		* EP2 : 131341
+[DEBUG][2016-12-02 16:53:29,515](CLBCalculation.java:181) - 		* EP3 : 87564
+[DEBUG][2016-12-02 16:53:29,515](CLBCalculation.java:184) - 		* server total traffic : 265913
+[DEBUG][2016-12-02 16:53:29,515](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 16:53:29,530](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 16:53:29,530](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 16:53:29,530](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 16:53:29,530](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 16:53:29,530](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 16:53:30,796](CLBCalculation.java:336) - 	* before rematching process
+[INFO ][2016-12-02 16:53:30,796](CLBCalculation.java:340) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:87564, (Expected Traffic:0,) Remain Traffic:2436
+[INFO ][2016-12-02 16:53:30,796](CLBCalculation.java:340) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:131341, (Expected Traffic:0,) Remain Traffic:-1341
+[INFO ][2016-12-02 16:53:30,812](CLBCalculation.java:340) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:47008, (Expected Traffic:0,) Remain Traffic:82992
+[INFO ][2016-12-02 16:53:30,827](CLBCalculation.java:584) - 	[rematchUsersToCloud method] - Start
+[DEBUG][2016-12-02 16:53:30,827](CLBCalculation.java:689) - 		surplusServerList.size() > 1
+[DEBUG][2016-12-02 16:53:30,827](CLBCalculation.java:693) - 		* traffic type : * MEDIUM_TRAFFIC 
+
+[DEBUG][2016-12-02 16:53:30,827](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 16:53:30,827](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 16:53:30,827](CLBCalculation.java:708) - 		Priority 1. social + distance
+[INFO ][2016-12-02 16:53:30,827](CLBCalculation.java:1062) - 	[rematchUsersToCloud method] - End
+[INFO ][2016-12-02 16:53:30,827](CLBCalculation.java:413) - 	* after rematching process
+[INFO ][2016-12-02 16:53:30,843](CLBCalculation.java:417) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:87564, (Expected Traffic:0,) Remain Traffic:2436
+[INFO ][2016-12-02 16:53:30,843](CLBCalculation.java:417) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:131341, (Expected Traffic:0,) Remain Traffic:-1341
+[INFO ][2016-12-02 16:53:30,859](CLBCalculation.java:417) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:47008, (Expected Traffic:0,) Remain Traffic:82992
+[INFO ][2016-12-02 16:53:30,859](CLBCalculation.java:433) - 	[rematchForLoadBalancing method] - End
+[INFO ][2016-12-02 16:53:30,874](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 16:53:30,890](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 16:53:30,890](CLBCalculation.java:1084) - 			EP1:346 EP2:909 EP3:746 
+[DEBUG][2016-12-02 16:53:32,031](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : CookieThunder13, 2, 1
+[DEBUG][2016-12-02 16:53:32,046](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : almightyfighter, 2, 1
+[DEBUG][2016-12-02 16:53:35,109](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : callmerashi, 2, 3
+[DEBUG][2016-12-02 16:53:35,109](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 3
+[INFO ][2016-12-02 16:53:35,109](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 16:53:35,125](CLBCalculation.java:1139) - 			EP1:348 EP2:906 EP3:747 
+[INFO ][2016-12-02 16:53:35,125](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 16:53:35,500](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 16:53:35,500](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 16:53:35,500](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 16:53:35,515](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 16:53:35,515](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 16:53:35,515](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 17:51:41,670](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 17:51:43,358](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 17:51:46,062](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 17:52:20,112](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 17:52:20,112](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[DEBUG][2016-12-02 17:52:20,143](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 17:52:20,143](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 17:52:20,143](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-02 17:52:20,159](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 17:52:20,159](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 17:52:20,159](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 17:52:20,159](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 17:52:20,268](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 17:53:40,105](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 17:53:40,105](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 17:53:40,105](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 17:53:40,121](CLPCalculation.java:106) - 	* number of user : 1760
+[INFO ][2016-12-02 17:53:42,480](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 17:53:42,496](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 17:53:43,105](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 17:53:43,105](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 17:53:43,105](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 17:53:43,105](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 17:53:43,105](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 17:53:43,105](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 17:53:43,121](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 17:53:43,121](CLBCalculation.java:181) - 		* EP1 : 46328
+[DEBUG][2016-12-02 17:53:43,137](CLBCalculation.java:181) - 		* EP2 : 127699
+[DEBUG][2016-12-02 17:53:43,137](CLBCalculation.java:181) - 		* EP3 : 86728
+[DEBUG][2016-12-02 17:53:43,137](CLBCalculation.java:184) - 		* server total traffic : 260755
+[DEBUG][2016-12-02 17:53:43,137](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 17:53:43,137](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 17:53:43,137](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 17:53:43,137](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 17:53:43,137](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 17:53:43,152](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 17:53:43,152](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 17:53:43,168](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 17:53:43,184](CLBCalculation.java:1084) - 			EP1:348 EP2:906 EP3:747 
+[DEBUG][2016-12-02 17:53:47,168](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-02 17:53:47,168](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 17:53:47,184](CLBCalculation.java:1139) - 			EP1:348 EP2:906 EP3:747 
+[INFO ][2016-12-02 17:53:47,184](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 17:53:47,622](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 17:53:47,622](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 17:53:47,637](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 17:53:47,637](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 17:53:47,653](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 17:53:47,653](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 18:51:49,182](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 18:51:50,182](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 18:51:53,136](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 18:52:26,514](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 18:52:26,546](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[DEBUG][2016-12-02 18:52:26,546](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 18:52:26,546](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 18:52:26,546](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-02 18:52:26,546](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 18:52:26,561](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 18:52:26,561](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 18:52:26,561](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 18:52:26,655](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 18:53:36,428](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 18:53:36,428](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 18:53:36,428](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 18:53:36,444](CLPCalculation.java:106) - 	* number of user : 1743
+[INFO ][2016-12-02 18:53:39,069](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 18:53:39,069](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 18:53:39,663](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 18:53:39,679](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 18:53:39,679](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 18:53:39,679](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 18:53:39,679](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 18:53:39,679](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 18:53:39,679](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 18:53:39,694](CLBCalculation.java:181) - 		* EP1 : 46921
+[DEBUG][2016-12-02 18:53:39,694](CLBCalculation.java:181) - 		* EP2 : 129616
+[DEBUG][2016-12-02 18:53:39,694](CLBCalculation.java:181) - 		* EP3 : 87527
+[DEBUG][2016-12-02 18:53:39,694](CLBCalculation.java:184) - 		* server total traffic : 264064
+[DEBUG][2016-12-02 18:53:39,694](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 18:53:39,694](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 18:53:39,694](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 18:53:39,694](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 18:53:39,694](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 18:53:39,710](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 18:53:39,710](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 18:53:39,725](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 18:53:39,741](CLBCalculation.java:1084) - 			EP1:348 EP2:906 EP3:747 
+[DEBUG][2016-12-02 18:53:43,929](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-02 18:53:43,929](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 18:53:43,945](CLBCalculation.java:1139) - 			EP1:348 EP2:906 EP3:747 
+[INFO ][2016-12-02 18:53:43,945](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 18:53:44,304](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 18:53:44,304](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 18:53:44,320](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 18:53:44,320](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 18:53:44,320](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 18:53:44,335](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 19:51:54,772](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 19:51:57,085](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 19:52:04,773](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 19:52:36,855](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-02 19:52:36,855](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[DEBUG][2016-12-02 19:52:36,886](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 19:52:36,886](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 19:52:36,886](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-02 19:52:36,886](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 19:52:36,902](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 19:52:36,902](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 19:52:36,902](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 19:52:37,136](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 19:53:49,816](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 19:53:49,816](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 19:53:49,816](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 19:53:49,831](CLPCalculation.java:106) - 	* number of user : 1728
+[INFO ][2016-12-02 19:53:52,347](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 19:53:52,347](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 19:53:52,941](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 19:53:52,957](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 19:53:52,957](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 19:53:52,957](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 19:53:52,957](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 19:53:52,957](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 19:53:52,957](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 19:53:52,957](CLBCalculation.java:181) - 		* EP1 : 48618
+[DEBUG][2016-12-02 19:53:52,972](CLBCalculation.java:181) - 		* EP2 : 134352
+[DEBUG][2016-12-02 19:53:52,972](CLBCalculation.java:181) - 		* EP3 : 89717
+[DEBUG][2016-12-02 19:53:52,972](CLBCalculation.java:184) - 		* server total traffic : 272687
+[DEBUG][2016-12-02 19:53:52,972](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 19:53:52,972](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 19:53:52,972](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 19:53:52,972](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 19:53:52,972](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 19:53:52,988](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 19:53:54,254](CLBCalculation.java:336) - 	* before rematching process
+[INFO ][2016-12-02 19:53:54,254](CLBCalculation.java:340) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:48618, (Expected Traffic:0,) Remain Traffic:81382
+[INFO ][2016-12-02 19:53:54,269](CLBCalculation.java:340) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:89717, (Expected Traffic:0,) Remain Traffic:283
+[INFO ][2016-12-02 19:53:54,269](CLBCalculation.java:340) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:134352, (Expected Traffic:0,) Remain Traffic:-4352
+[INFO ][2016-12-02 19:53:54,269](CLBCalculation.java:584) - 	[rematchUsersToCloud method] - Start
+[DEBUG][2016-12-02 19:53:54,285](CLBCalculation.java:689) - 		surplusServerList.size() > 1
+[DEBUG][2016-12-02 19:53:54,285](CLBCalculation.java:693) - 		* traffic type : * MEDIUM_TRAFFIC 
+
+[DEBUG][2016-12-02 19:53:54,285](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 19:53:54,285](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 19:53:54,285](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 19:53:54,285](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 19:53:54,285](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 19:53:54,285](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 19:53:54,285](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 19:53:54,285](CLBCalculation.java:708) - 		Priority 1. social + distance
+[INFO ][2016-12-02 19:53:54,285](CLBCalculation.java:1062) - 	[rematchUsersToCloud method] - End
+[INFO ][2016-12-02 19:53:54,285](CLBCalculation.java:413) - 	* after rematching process
+[INFO ][2016-12-02 19:53:54,285](CLBCalculation.java:417) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:48618, (Expected Traffic:0,) Remain Traffic:81382
+[INFO ][2016-12-02 19:53:54,300](CLBCalculation.java:417) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:89717, (Expected Traffic:0,) Remain Traffic:283
+[INFO ][2016-12-02 19:53:54,300](CLBCalculation.java:417) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:134352, (Expected Traffic:0,) Remain Traffic:-4352
+[INFO ][2016-12-02 19:53:54,300](CLBCalculation.java:433) - 	[rematchForLoadBalancing method] - End
+[INFO ][2016-12-02 19:53:54,316](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 19:53:54,332](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 19:53:54,332](CLBCalculation.java:1084) - 			EP1:348 EP2:906 EP3:747 
+[DEBUG][2016-12-02 19:53:55,519](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Al1shaK, 2, 1
+[DEBUG][2016-12-02 19:53:55,535](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : AllanVoghan, 2, 1
+[DEBUG][2016-12-02 19:53:55,535](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : brahimchhit, 2, 1
+[DEBUG][2016-12-02 19:53:55,535](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : docarsenic, 2, 1
+[DEBUG][2016-12-02 19:53:55,551](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : enjoyyourwife, 2, 1
+[DEBUG][2016-12-02 19:53:55,551](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : emo_x_bunny, 2, 1
+[DEBUG][2016-12-02 19:53:55,551](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : aljastylison, 2, 1
+[DEBUG][2016-12-02 19:53:58,582](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : EnockDejavu, 2, 3
+[DEBUG][2016-12-02 19:53:58,582](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 8
+[INFO ][2016-12-02 19:53:58,582](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 19:53:58,582](CLBCalculation.java:1139) - 			EP1:355 EP2:898 EP3:748 
+[INFO ][2016-12-02 19:53:58,582](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 19:53:59,067](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 19:53:59,067](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 19:53:59,067](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 19:53:59,082](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 19:53:59,082](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 19:53:59,082](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 20:50:56,480](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 20:51:07,606](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 20:51:16,388](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 20:51:38,359](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 20:51:38,391](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-02 20:51:38,437](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-02 20:51:38,437](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 20:51:38,437](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 20:51:38,437](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 20:51:38,437](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 20:51:38,453](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 20:51:38,453](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 20:51:38,594](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 20:52:48,367](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 20:52:48,367](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 20:52:48,367](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 20:52:48,382](CLPCalculation.java:106) - 	* number of user : 1728
+[INFO ][2016-12-02 20:52:51,070](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 20:52:51,070](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 20:52:51,680](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 20:52:51,680](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 20:52:51,680](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 20:52:51,680](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 20:52:51,680](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 20:52:51,680](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 20:52:51,680](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 20:52:51,695](CLBCalculation.java:181) - 		* EP1 : 49982
+[DEBUG][2016-12-02 20:52:51,695](CLBCalculation.java:181) - 		* EP2 : 131699
+[DEBUG][2016-12-02 20:52:51,695](CLBCalculation.java:181) - 		* EP3 : 89985
+[DEBUG][2016-12-02 20:52:51,695](CLBCalculation.java:184) - 		* server total traffic : 271666
+[DEBUG][2016-12-02 20:52:51,695](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 20:52:51,695](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 20:52:51,695](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 20:52:51,695](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 20:52:51,695](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 20:52:51,711](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 20:52:52,899](CLBCalculation.java:336) - 	* before rematching process
+[INFO ][2016-12-02 20:52:52,899](CLBCalculation.java:340) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:49982, (Expected Traffic:0,) Remain Traffic:80018
+[INFO ][2016-12-02 20:52:52,899](CLBCalculation.java:340) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:89985, (Expected Traffic:0,) Remain Traffic:15
+[INFO ][2016-12-02 20:52:52,914](CLBCalculation.java:340) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:131699, (Expected Traffic:0,) Remain Traffic:-1699
+[INFO ][2016-12-02 20:52:52,914](CLBCalculation.java:584) - 	[rematchUsersToCloud method] - Start
+[DEBUG][2016-12-02 20:52:52,914](CLBCalculation.java:689) - 		surplusServerList.size() > 1
+[DEBUG][2016-12-02 20:52:52,914](CLBCalculation.java:693) - 		* traffic type : * MEDIUM_TRAFFIC 
+
+[DEBUG][2016-12-02 20:52:52,914](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 20:52:52,914](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 20:52:52,914](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 20:52:52,914](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 20:52:52,914](CLBCalculation.java:708) - 		Priority 1. social + distance
+[DEBUG][2016-12-02 20:52:52,914](CLBCalculation.java:708) - 		Priority 1. social + distance
+[INFO ][2016-12-02 20:52:52,914](CLBCalculation.java:1062) - 	[rematchUsersToCloud method] - End
+[INFO ][2016-12-02 20:52:52,930](CLBCalculation.java:413) - 	* after rematching process
+[INFO ][2016-12-02 20:52:52,930](CLBCalculation.java:417) - 		EP no.:1, Maximum Traffic:130000, Current Traffic:49982, (Expected Traffic:0,) Remain Traffic:80018
+[INFO ][2016-12-02 20:52:52,946](CLBCalculation.java:417) - 		EP no.:3, Maximum Traffic:90000, Current Traffic:89985, (Expected Traffic:0,) Remain Traffic:15
+[INFO ][2016-12-02 20:52:52,946](CLBCalculation.java:417) - 		EP no.:2, Maximum Traffic:130000, Current Traffic:131699, (Expected Traffic:0,) Remain Traffic:-1699
+[INFO ][2016-12-02 20:52:52,946](CLBCalculation.java:433) - 	[rematchForLoadBalancing method] - End
+[INFO ][2016-12-02 20:52:52,961](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 20:52:52,977](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 20:52:52,977](CLBCalculation.java:1084) - 			EP1:355 EP2:898 EP3:748 
+[DEBUG][2016-12-02 20:52:54,164](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : djitallkenya, 2, 1
+[DEBUG][2016-12-02 20:52:54,164](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : Gauthierlb_, 2, 1
+[DEBUG][2016-12-02 20:52:54,164](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : gazpoole, 2, 1
+[DEBUG][2016-12-02 20:52:54,180](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : deb_staub, 2, 1
+[DEBUG][2016-12-02 20:52:54,180](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : bob_woodburn, 2, 1
+[DEBUG][2016-12-02 20:52:54,180](CLBCalculation.java:1112) -  			- same user id -> update broker giver table (UserId, PrevCloudNo, CloudNo) : dx_camille, 2, 1
+[DEBUG][2016-12-02 20:52:57,133](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 6
+[INFO ][2016-12-02 20:52:57,133](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 20:52:57,133](CLBCalculation.java:1139) - 			EP1:361 EP2:892 EP3:748 
+[INFO ][2016-12-02 20:52:57,133](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 20:52:57,540](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 20:52:57,540](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 20:52:57,555](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 20:52:57,555](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 20:52:57,555](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 20:52:57,571](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 21:50:58,366](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 21:51:19,759](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 21:51:29,307](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 21:51:45,621](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 21:51:45,652](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[DEBUG][2016-12-02 21:51:45,652](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 21:51:45,652](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 21:51:45,652](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-02 21:51:45,652](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 21:51:45,652](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 21:51:45,668](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 21:51:45,668](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 21:51:45,824](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 21:52:55,738](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 21:52:55,754](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 21:52:55,754](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 21:52:55,769](CLPCalculation.java:106) - 	* number of user : 1718
+[INFO ][2016-12-02 21:52:58,410](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 21:52:58,410](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 21:52:59,004](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 21:52:59,004](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 21:52:59,004](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 21:52:59,004](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 21:52:59,004](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 21:52:59,004](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 21:52:59,020](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 21:52:59,035](CLBCalculation.java:181) - 		* EP1 : 48047
+[DEBUG][2016-12-02 21:52:59,035](CLBCalculation.java:181) - 		* EP2 : 126185
+[DEBUG][2016-12-02 21:52:59,051](CLBCalculation.java:181) - 		* EP3 : 86637
+[DEBUG][2016-12-02 21:52:59,051](CLBCalculation.java:184) - 		* server total traffic : 260869
+[DEBUG][2016-12-02 21:52:59,051](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 21:52:59,051](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 21:52:59,051](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 21:52:59,051](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 21:52:59,051](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 21:52:59,051](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 21:52:59,051](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 21:52:59,066](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 21:52:59,082](CLBCalculation.java:1084) - 			EP1:361 EP2:892 EP3:748 
+[DEBUG][2016-12-02 21:53:03,161](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-02 21:53:03,161](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 21:53:03,176](CLBCalculation.java:1139) - 			EP1:361 EP2:892 EP3:748 
+[INFO ][2016-12-02 21:53:03,176](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 21:53:03,739](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 21:53:03,739](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 21:53:03,755](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 21:53:03,755](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 21:53:03,755](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 21:53:03,770](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 22:51:00,315](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 22:51:32,459](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 22:51:41,725](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 22:51:49,070](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 22:51:49,070](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[DEBUG][2016-12-02 22:51:49,086](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 22:51:49,086](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 22:51:49,086](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-02 22:51:49,101](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 22:51:49,101](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 22:51:49,101](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 22:51:49,101](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 22:51:49,304](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 22:53:00,859](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 22:53:00,859](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 22:53:00,859](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 22:53:00,875](CLPCalculation.java:106) - 	* number of user : 1670
+[INFO ][2016-12-02 22:53:03,297](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 22:53:03,297](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 22:53:03,859](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 22:53:03,875](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 22:53:03,875](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 22:53:03,875](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 22:53:03,875](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 22:53:03,875](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 22:53:03,875](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 22:53:03,890](CLBCalculation.java:181) - 		* EP1 : 45188
+[DEBUG][2016-12-02 22:53:03,890](CLBCalculation.java:181) - 		* EP2 : 120339
+[DEBUG][2016-12-02 22:53:03,890](CLBCalculation.java:181) - 		* EP3 : 82942
+[DEBUG][2016-12-02 22:53:03,890](CLBCalculation.java:184) - 		* server total traffic : 248469
+[DEBUG][2016-12-02 22:53:03,890](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 22:53:03,890](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 22:53:03,890](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 22:53:03,890](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 22:53:03,890](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 22:53:03,906](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 22:53:03,906](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 22:53:03,922](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 22:53:03,937](CLBCalculation.java:1084) - 			EP1:361 EP2:892 EP3:748 
+[DEBUG][2016-12-02 22:53:07,954](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-02 22:53:07,954](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 22:53:07,969](CLBCalculation.java:1139) - 			EP1:361 EP2:892 EP3:748 
+[INFO ][2016-12-02 22:53:07,969](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 22:53:08,407](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 22:53:08,407](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 22:53:08,422](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 22:53:08,422](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 22:53:08,438](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 22:53:08,438](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-02 23:51:02,451](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 23:51:44,815](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-02 23:51:52,925](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-02 23:51:52,956](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-02 23:51:56,394](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[DEBUG][2016-12-02 23:51:56,629](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-02 23:51:56,629](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-02 23:51:56,629](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-02 23:51:56,629](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-02 23:51:56,629](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-02 23:51:56,629](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-02 23:51:56,629](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-02 23:51:56,801](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-02 23:53:04,120](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-02 23:53:04,120](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-02 23:53:04,120](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-02 23:53:04,136](CLPCalculation.java:106) - 	* number of user : 1617
+[INFO ][2016-12-02 23:53:06,449](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-02 23:53:06,449](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-02 23:53:06,980](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-02 23:53:06,980](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-02 23:53:06,980](CLBCalculation.java:34) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-02 23:53:06,980](CLBCalculation.java:35) - 	* current map.size() : 3
+[DEBUG][2016-12-02 23:53:06,980](CLBCalculation.java:39) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-02 23:53:06,980](CLBCalculation.java:45) - [lbMain method] - Start
+[INFO ][2016-12-02 23:53:06,996](CLBCalculation.java:175) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-02 23:53:06,996](CLBCalculation.java:181) - 		* EP1 : 42366
+[DEBUG][2016-12-02 23:53:06,996](CLBCalculation.java:181) - 		* EP2 : 111288
+[DEBUG][2016-12-02 23:53:07,011](CLBCalculation.java:181) - 		* EP3 : 77987
+[DEBUG][2016-12-02 23:53:07,011](CLBCalculation.java:184) - 		* server total traffic : 231641
+[DEBUG][2016-12-02 23:53:07,011](CLBCalculation.java:187) - 		* total capacity of clouds : 350000.0
+[DEBUG][2016-12-02 23:53:07,011](CLBCalculation.java:190) - 		* minimum capacity of Clouds : 90000.0
+[INFO ][2016-12-02 23:53:07,011](CLBCalculation.java:203) - 	[determineProcessType method] - End
+[DEBUG][2016-12-02 23:53:07,011](CLBCalculation.java:63) - 	* MEDIUM_TRAFFIC 
+
+[INFO ][2016-12-02 23:53:07,011](CLBCalculation.java:475) - 	[rematchForLoadBalancing method] - Start
+[DEBUG][2016-12-02 23:53:07,011](CLBCalculation.java:488) - is NOT First! (Medium)
+[INFO ][2016-12-02 23:53:07,027](CLBCalculation.java:1066) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-02 23:53:07,027](CLBCalculation.java:1074) -  		* before update : number of user at each cloud
+[INFO ][2016-12-02 23:53:07,042](CLBCalculation.java:1084) - 			EP1:361 EP2:892 EP3:748 
+[DEBUG][2016-12-02 23:53:11,230](CLBCalculation.java:1124) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-02 23:53:11,230](CLBCalculation.java:1129) - 		* after update : number of user at each cloud
+[INFO ][2016-12-02 23:53:11,230](CLBCalculation.java:1139) - 			EP1:361 EP2:892 EP3:748 
+[INFO ][2016-12-02 23:53:11,230](CLBCalculation.java:1143) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-02 23:53:11,621](CLBCalculation.java:96) - [lbMain method] - End 
+
+[INFO ][2016-12-02 23:53:11,621](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-02 23:53:11,637](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-02 23:53:11,637](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-02 23:53:11,637](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-02 23:53:11,652](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+

@@ -1,0 +1,185 @@
+[DEBUG][2016-12-05 00:51:53,310](WorkerRunnable.java:181) - tweet count : 5261.0
+[DEBUG][2016-12-05 00:51:53,326](WorkerRunnable.java:182) - read count : 55781.0
+[DEBUG][2016-12-05 00:51:53,326](WorkerRunnable.java:183) - reply count : 5004.0
+[DEBUG][2016-12-05 00:51:53,326](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 00:51:53,326](WorkerRunnable.java:187) - total write count : 10265.0
+
+[DEBUG][2016-12-05 00:51:53,326](WorkerRunnable.java:190) - total write + read count : 66046.0
+
+[DEBUG][2016-12-05 01:52:01,456](WorkerRunnable.java:181) - tweet count : 5306.0
+[DEBUG][2016-12-05 01:52:01,456](WorkerRunnable.java:182) - read count : 55916.0
+[DEBUG][2016-12-05 01:52:01,456](WorkerRunnable.java:183) - reply count : 5120.0
+[DEBUG][2016-12-05 01:52:01,456](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 01:52:01,456](WorkerRunnable.java:187) - total write count : 10426.0
+
+[DEBUG][2016-12-05 01:52:01,456](WorkerRunnable.java:190) - total write + read count : 66342.0
+
+[DEBUG][2016-12-05 02:51:09,267](WorkerRunnable.java:181) - tweet count : 5185.0
+[DEBUG][2016-12-05 02:51:09,267](WorkerRunnable.java:182) - read count : 53732.0
+[DEBUG][2016-12-05 02:51:09,267](WorkerRunnable.java:183) - reply count : 4965.0
+[DEBUG][2016-12-05 02:51:09,267](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 02:51:09,267](WorkerRunnable.java:187) - total write count : 10150.0
+
+[DEBUG][2016-12-05 02:51:09,267](WorkerRunnable.java:190) - total write + read count : 63882.0
+
+[DEBUG][2016-12-05 03:51:21,195](WorkerRunnable.java:181) - tweet count : 5008.0
+[DEBUG][2016-12-05 03:51:21,195](WorkerRunnable.java:182) - read count : 52611.0
+[DEBUG][2016-12-05 03:51:21,195](WorkerRunnable.java:183) - reply count : 4876.0
+[DEBUG][2016-12-05 03:51:21,195](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 03:51:21,195](WorkerRunnable.java:187) - total write count : 9884.0
+
+[DEBUG][2016-12-05 03:51:21,195](WorkerRunnable.java:190) - total write + read count : 62495.0
+
+[DEBUG][2016-12-05 04:51:31,997](WorkerRunnable.java:181) - tweet count : 3898.0
+[DEBUG][2016-12-05 04:51:31,997](WorkerRunnable.java:182) - read count : 44269.0
+[DEBUG][2016-12-05 04:51:31,997](WorkerRunnable.java:183) - reply count : 4061.0
+[DEBUG][2016-12-05 04:51:31,997](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 04:51:31,997](WorkerRunnable.java:187) - total write count : 7959.0
+
+[DEBUG][2016-12-05 04:51:31,997](WorkerRunnable.java:190) - total write + read count : 52228.0
+
+[DEBUG][2016-12-05 05:51:43,440](WorkerRunnable.java:181) - tweet count : 3061.0
+[DEBUG][2016-12-05 05:51:43,440](WorkerRunnable.java:182) - read count : 39351.0
+[DEBUG][2016-12-05 05:51:43,440](WorkerRunnable.java:183) - reply count : 3683.0
+[DEBUG][2016-12-05 05:51:43,440](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 05:51:43,440](WorkerRunnable.java:187) - total write count : 6744.0
+
+[DEBUG][2016-12-05 05:51:43,440](WorkerRunnable.java:190) - total write + read count : 46095.0
+
+[DEBUG][2016-12-05 06:51:54,945](WorkerRunnable.java:181) - tweet count : 2606.0
+[DEBUG][2016-12-05 06:51:54,945](WorkerRunnable.java:182) - read count : 34962.0
+[DEBUG][2016-12-05 06:51:54,945](WorkerRunnable.java:183) - reply count : 3129.0
+[DEBUG][2016-12-05 06:51:54,945](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 06:51:54,945](WorkerRunnable.java:187) - total write count : 5735.0
+
+[DEBUG][2016-12-05 06:51:54,945](WorkerRunnable.java:190) - total write + read count : 40697.0
+
+[DEBUG][2016-12-05 07:52:06,779](WorkerRunnable.java:181) - tweet count : 2124.0
+[DEBUG][2016-12-05 07:52:06,779](WorkerRunnable.java:182) - read count : 30249.0
+[DEBUG][2016-12-05 07:52:06,779](WorkerRunnable.java:183) - reply count : 2686.0
+[DEBUG][2016-12-05 07:52:06,779](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 07:52:06,779](WorkerRunnable.java:187) - total write count : 4810.0
+
+[DEBUG][2016-12-05 07:52:06,779](WorkerRunnable.java:190) - total write + read count : 35059.0
+
+[DEBUG][2016-12-05 08:51:18,887](WorkerRunnable.java:181) - tweet count : 2101.0
+[DEBUG][2016-12-05 08:51:18,887](WorkerRunnable.java:182) - read count : 28291.0
+[DEBUG][2016-12-05 08:51:18,887](WorkerRunnable.java:183) - reply count : 2397.0
+[DEBUG][2016-12-05 08:51:18,887](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 08:51:18,887](WorkerRunnable.java:187) - total write count : 4498.0
+
+[DEBUG][2016-12-05 08:51:18,887](WorkerRunnable.java:190) - total write + read count : 32789.0
+
+[DEBUG][2016-12-05 09:51:31,393](WorkerRunnable.java:181) - tweet count : 1945.0
+[DEBUG][2016-12-05 09:51:31,393](WorkerRunnable.java:182) - read count : 26328.0
+[DEBUG][2016-12-05 09:51:31,393](WorkerRunnable.java:183) - reply count : 2358.0
+[DEBUG][2016-12-05 09:51:31,393](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 09:51:31,393](WorkerRunnable.java:187) - total write count : 4303.0
+
+[DEBUG][2016-12-05 09:51:31,393](WorkerRunnable.java:190) - total write + read count : 30631.0
+
+[DEBUG][2016-12-05 10:51:44,398](WorkerRunnable.java:181) - tweet count : 2246.0
+[DEBUG][2016-12-05 10:51:44,398](WorkerRunnable.java:182) - read count : 30607.0
+[DEBUG][2016-12-05 10:51:44,398](WorkerRunnable.java:183) - reply count : 2594.0
+[DEBUG][2016-12-05 10:51:44,398](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 10:51:44,398](WorkerRunnable.java:187) - total write count : 4840.0
+
+[DEBUG][2016-12-05 10:51:44,398](WorkerRunnable.java:190) - total write + read count : 35447.0
+
+[DEBUG][2016-12-05 11:51:57,779](WorkerRunnable.java:181) - tweet count : 3051.0
+[DEBUG][2016-12-05 11:51:57,779](WorkerRunnable.java:182) - read count : 38194.0
+[DEBUG][2016-12-05 11:51:57,779](WorkerRunnable.java:183) - reply count : 3212.0
+[DEBUG][2016-12-05 11:51:57,779](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 11:51:57,779](WorkerRunnable.java:187) - total write count : 6263.0
+
+[DEBUG][2016-12-05 11:51:57,779](WorkerRunnable.java:190) - total write + read count : 44457.0
+
+[DEBUG][2016-12-05 12:53:49,782](ServiceServer.java:66) - location : NEWYORK
+[DEBUG][2016-12-05 13:51:44,820](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 13:51:44,820](WorkerRunnable.java:182) - read count : 60473.0
+[DEBUG][2016-12-05 13:51:44,820](WorkerRunnable.java:183) - reply count : 3658.0
+[DEBUG][2016-12-05 13:51:44,820](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 13:51:44,820](WorkerRunnable.java:187) - total write count : 3658.0
+
+[DEBUG][2016-12-05 13:51:44,820](WorkerRunnable.java:190) - total write + read count : 64131.0
+
+[DEBUG][2016-12-05 14:51:46,262](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 14:51:46,262](WorkerRunnable.java:182) - read count : 67744.0
+[DEBUG][2016-12-05 14:51:46,262](WorkerRunnable.java:183) - reply count : 4163.0
+[DEBUG][2016-12-05 14:51:46,262](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 14:51:46,262](WorkerRunnable.java:187) - total write count : 4163.0
+
+[DEBUG][2016-12-05 14:51:46,262](WorkerRunnable.java:190) - total write + read count : 71907.0
+
+[DEBUG][2016-12-05 15:51:49,673](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 15:51:49,673](WorkerRunnable.java:182) - read count : 72300.0
+[DEBUG][2016-12-05 15:51:49,673](WorkerRunnable.java:183) - reply count : 4482.0
+[DEBUG][2016-12-05 15:51:49,673](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 15:51:49,673](WorkerRunnable.java:187) - total write count : 4482.0
+
+[DEBUG][2016-12-05 15:51:49,673](WorkerRunnable.java:190) - total write + read count : 76782.0
+
+[DEBUG][2016-12-05 16:51:54,005](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 16:51:54,005](WorkerRunnable.java:182) - read count : 69289.0
+[DEBUG][2016-12-05 16:51:54,005](WorkerRunnable.java:183) - reply count : 4516.0
+[DEBUG][2016-12-05 16:51:54,005](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 16:51:54,005](WorkerRunnable.java:187) - total write count : 4516.0
+
+[DEBUG][2016-12-05 16:51:54,005](WorkerRunnable.java:190) - total write + read count : 73805.0
+
+[DEBUG][2016-12-05 17:51:58,291](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 17:51:58,291](WorkerRunnable.java:182) - read count : 67953.0
+[DEBUG][2016-12-05 17:51:58,291](WorkerRunnable.java:183) - reply count : 4650.0
+[DEBUG][2016-12-05 17:51:58,291](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 17:51:58,291](WorkerRunnable.java:187) - total write count : 4650.0
+
+[DEBUG][2016-12-05 17:51:58,291](WorkerRunnable.java:190) - total write + read count : 72603.0
+
+[DEBUG][2016-12-05 18:52:03,515](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 18:52:03,515](WorkerRunnable.java:182) - read count : 69441.0
+[DEBUG][2016-12-05 18:52:03,515](WorkerRunnable.java:183) - reply count : 4525.0
+[DEBUG][2016-12-05 18:52:03,515](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 18:52:03,515](WorkerRunnable.java:187) - total write count : 4525.0
+
+[DEBUG][2016-12-05 18:52:03,515](WorkerRunnable.java:190) - total write + read count : 73966.0
+
+[DEBUG][2016-12-05 19:51:08,873](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 19:51:08,873](WorkerRunnable.java:182) - read count : 73242.0
+[DEBUG][2016-12-05 19:51:08,873](WorkerRunnable.java:183) - reply count : 4531.0
+[DEBUG][2016-12-05 19:51:08,873](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 19:51:08,873](WorkerRunnable.java:187) - total write count : 4531.0
+
+[DEBUG][2016-12-05 19:51:08,873](WorkerRunnable.java:190) - total write + read count : 77773.0
+
+[DEBUG][2016-12-05 20:51:14,628](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 20:51:14,628](WorkerRunnable.java:182) - read count : 72031.0
+[DEBUG][2016-12-05 20:51:14,628](WorkerRunnable.java:183) - reply count : 4562.0
+[DEBUG][2016-12-05 20:51:14,628](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 20:51:14,628](WorkerRunnable.java:187) - total write count : 4562.0
+
+[DEBUG][2016-12-05 20:51:14,628](WorkerRunnable.java:190) - total write + read count : 76593.0
+
+[DEBUG][2016-12-05 21:51:20,148](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 21:51:20,148](WorkerRunnable.java:182) - read count : 68752.0
+[DEBUG][2016-12-05 21:51:20,148](WorkerRunnable.java:183) - reply count : 4410.0
+[DEBUG][2016-12-05 21:51:20,148](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 21:51:20,148](WorkerRunnable.java:187) - total write count : 4410.0
+
+[DEBUG][2016-12-05 21:51:20,148](WorkerRunnable.java:190) - total write + read count : 73162.0
+
+[DEBUG][2016-12-05 22:51:25,825](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 22:51:25,825](WorkerRunnable.java:182) - read count : 63666.0
+[DEBUG][2016-12-05 22:51:25,825](WorkerRunnable.java:183) - reply count : 4278.0
+[DEBUG][2016-12-05 22:51:25,825](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 22:51:25,825](WorkerRunnable.java:187) - total write count : 4278.0
+
+[DEBUG][2016-12-05 22:51:25,825](WorkerRunnable.java:190) - total write + read count : 67944.0
+
+[DEBUG][2016-12-05 23:51:31,673](WorkerRunnable.java:181) - tweet count : 0.0
+[DEBUG][2016-12-05 23:51:31,673](WorkerRunnable.java:182) - read count : 58648.0
+[DEBUG][2016-12-05 23:51:31,673](WorkerRunnable.java:183) - reply count : 3954.0
+[DEBUG][2016-12-05 23:51:31,673](WorkerRunnable.java:184) - retweet count : 0.0
+[DEBUG][2016-12-05 23:51:31,673](WorkerRunnable.java:187) - total write count : 3954.0
+
+[DEBUG][2016-12-05 23:51:31,673](WorkerRunnable.java:190) - total write + read count : 62602.0
+

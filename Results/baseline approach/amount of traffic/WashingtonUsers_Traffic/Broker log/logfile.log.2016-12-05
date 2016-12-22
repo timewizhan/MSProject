@@ -1,0 +1,1351 @@
+[INFO ][2016-12-05 00:51:02,869](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 00:51:18,839](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 00:51:52,984](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 00:52:02,516](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 00:52:04,938](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 00:52:04,969](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 00:52:04,969](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 00:52:04,969](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 00:52:04,969](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 00:52:04,969](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 00:52:04,985](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 00:52:04,985](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 00:52:05,204](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 00:52:44,771](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 00:52:44,771](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 00:52:44,786](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 00:52:44,786](CLPCalculation.java:106) - 	* number of user : 834
+[INFO ][2016-12-05 00:52:45,677](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 00:52:45,677](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 00:52:45,833](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 00:52:45,833](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 00:52:45,833](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 00:52:45,833](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 00:52:45,833](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 00:52:45,833](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 00:52:45,833](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 00:52:45,849](CLBCalculation.java:184) - 		* EP1 : 60326
+[DEBUG][2016-12-05 00:52:45,849](CLBCalculation.java:184) - 		* EP2 : 2843
+[DEBUG][2016-12-05 00:52:45,849](CLBCalculation.java:184) - 		* EP3 : 66379
+[DEBUG][2016-12-05 00:52:45,864](CLBCalculation.java:187) - 		* server total traffic : 129548
+[DEBUG][2016-12-05 00:52:45,864](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 00:52:45,864](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 00:52:45,864](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 00:52:45,864](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 00:52:46,990](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 00:52:46,990](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 00:52:47,005](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 00:52:50,771](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 00:52:50,771](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 00:52:50,787](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 00:52:50,787](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 00:52:51,131](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 00:52:51,131](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 00:52:51,131](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 00:52:51,146](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 00:52:51,146](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 00:52:51,146](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 01:51:03,614](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 01:51:18,507](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 01:51:58,870](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 01:52:08,918](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 01:52:10,653](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 01:52:10,809](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 01:52:10,809](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 01:52:10,809](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 01:52:10,809](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 01:52:10,809](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 01:52:10,809](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 01:52:10,809](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 01:52:11,059](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 01:52:44,719](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 01:52:44,719](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 01:52:44,719](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 01:52:44,735](CLPCalculation.java:106) - 	* number of user : 800
+[INFO ][2016-12-05 01:52:45,594](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 01:52:45,594](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 01:52:45,735](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 01:52:45,735](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 01:52:45,735](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 01:52:45,735](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 01:52:45,735](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 01:52:45,735](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 01:52:45,750](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 01:52:45,750](CLBCalculation.java:184) - 		* EP1 : 61083
+[DEBUG][2016-12-05 01:52:45,766](CLBCalculation.java:184) - 		* EP2 : 3040
+[DEBUG][2016-12-05 01:52:45,766](CLBCalculation.java:184) - 		* EP3 : 66625
+[DEBUG][2016-12-05 01:52:45,766](CLBCalculation.java:187) - 		* server total traffic : 130748
+[DEBUG][2016-12-05 01:52:45,766](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 01:52:45,766](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 01:52:45,766](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 01:52:45,766](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 01:52:46,891](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 01:52:46,907](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 01:52:46,907](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 01:52:50,517](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 01:52:50,517](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 01:52:50,517](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 01:52:50,517](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 01:52:50,954](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 01:52:50,954](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 01:52:50,970](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 01:52:50,970](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 01:52:50,985](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 01:52:50,985](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 02:51:04,344](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 02:51:18,471](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 02:51:19,190](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 02:51:28,894](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 02:52:05,179](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 02:52:05,320](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 02:52:05,320](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 02:52:05,320](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 02:52:05,320](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 02:52:05,335](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 02:52:05,335](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 02:52:05,335](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 02:52:05,507](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 02:52:38,261](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 02:52:38,261](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 02:52:38,261](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 02:52:38,276](CLPCalculation.java:106) - 	* number of user : 779
+[INFO ][2016-12-05 02:52:39,058](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 02:52:39,058](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 02:52:39,198](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 02:52:39,198](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 02:52:39,198](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 02:52:39,198](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 02:52:39,198](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 02:52:39,198](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 02:52:39,198](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 02:52:39,214](CLBCalculation.java:184) - 		* EP1 : 58529
+[DEBUG][2016-12-05 02:52:39,214](CLBCalculation.java:184) - 		* EP2 : 2901
+[DEBUG][2016-12-05 02:52:39,214](CLBCalculation.java:184) - 		* EP3 : 64113
+[DEBUG][2016-12-05 02:52:39,214](CLBCalculation.java:187) - 		* server total traffic : 125543
+[DEBUG][2016-12-05 02:52:39,229](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 02:52:39,229](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 02:52:39,229](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 02:52:39,229](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 02:52:40,323](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 02:52:40,323](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 02:52:40,339](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 02:52:43,886](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 02:52:43,886](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 02:52:43,902](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 02:52:43,902](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 02:52:44,199](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 02:52:44,199](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 02:52:44,214](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 02:52:44,214](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 02:52:44,230](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 02:52:44,230](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 03:51:05,105](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 03:51:20,044](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 03:51:30,389](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 03:51:41,515](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 03:52:11,644](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[DEBUG][2016-12-05 03:52:11,784](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 03:52:11,784](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 03:52:11,784](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-05 03:52:11,784](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 03:52:11,784](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 03:52:11,784](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 03:52:11,784](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 03:52:11,972](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 03:52:47,429](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 03:52:47,429](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 03:52:47,429](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 03:52:47,444](CLPCalculation.java:106) - 	* number of user : 752
+[INFO ][2016-12-05 03:52:48,257](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 03:52:48,257](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 03:52:48,382](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 03:52:48,382](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 03:52:48,382](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 03:52:48,382](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 03:52:48,382](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 03:52:48,382](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 03:52:48,398](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 03:52:48,398](CLBCalculation.java:184) - 		* EP1 : 57700
+[DEBUG][2016-12-05 03:52:48,398](CLBCalculation.java:184) - 		* EP2 : 2702
+[DEBUG][2016-12-05 03:52:48,413](CLBCalculation.java:184) - 		* EP3 : 62562
+[DEBUG][2016-12-05 03:52:48,413](CLBCalculation.java:187) - 		* server total traffic : 122964
+[DEBUG][2016-12-05 03:52:48,413](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 03:52:48,413](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 03:52:48,413](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 03:52:48,413](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 03:52:49,429](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 03:52:49,445](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 03:52:49,445](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 03:52:52,867](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 03:52:52,867](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 03:52:52,867](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 03:52:52,883](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 03:52:53,305](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 03:52:53,320](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 03:52:53,336](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 03:52:53,336](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 03:52:53,351](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 03:52:53,351](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 04:51:05,835](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 04:51:18,040](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 04:51:20,868](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 04:51:30,307](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 04:51:41,198](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 04:51:41,323](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 04:51:41,323](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 04:51:41,323](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 04:51:41,323](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 04:51:41,323](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 04:51:41,323](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 04:51:41,323](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 04:51:41,495](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 04:52:10,577](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 04:52:10,577](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 04:52:10,577](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 04:52:10,592](CLPCalculation.java:106) - 	* number of user : 693
+[INFO ][2016-12-05 04:52:11,264](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 04:52:11,264](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 04:52:11,373](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 04:52:11,389](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 04:52:11,389](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 04:52:11,389](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 04:52:11,389](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 04:52:11,389](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 04:52:11,389](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 04:52:11,389](CLBCalculation.java:184) - 		* EP1 : 48580
+[DEBUG][2016-12-05 04:52:11,405](CLBCalculation.java:184) - 		* EP2 : 2332
+[DEBUG][2016-12-05 04:52:11,405](CLBCalculation.java:184) - 		* EP3 : 52235
+[DEBUG][2016-12-05 04:52:11,405](CLBCalculation.java:187) - 		* server total traffic : 103147
+[DEBUG][2016-12-05 04:52:11,405](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 04:52:11,405](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 04:52:11,405](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 04:52:11,405](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 04:52:12,327](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 04:52:12,342](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 04:52:12,342](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 04:52:15,171](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 04:52:15,171](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 04:52:15,186](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 04:52:15,186](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 04:52:15,515](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 04:52:15,515](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 04:52:15,515](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 04:52:15,530](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 04:52:15,530](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 04:52:15,546](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 05:51:06,581](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 05:51:17,816](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 05:51:30,443](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 05:51:38,397](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 05:51:52,632](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[DEBUG][2016-12-05 05:51:52,757](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 05:51:52,757](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 05:51:52,757](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-05 05:51:52,757](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 05:51:52,773](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 05:51:52,773](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 05:51:52,773](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 05:51:52,930](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 05:52:20,557](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 05:52:20,557](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 05:52:20,557](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 05:52:20,557](CLPCalculation.java:106) - 	* number of user : 646
+[INFO ][2016-12-05 05:52:21,261](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 05:52:21,261](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 05:52:21,354](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 05:52:21,370](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 05:52:21,370](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 05:52:21,370](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 05:52:21,370](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 05:52:21,370](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 05:52:21,370](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 05:52:21,386](CLBCalculation.java:184) - 		* EP1 : 42307
+[DEBUG][2016-12-05 05:52:21,386](CLBCalculation.java:184) - 		* EP2 : 2050
+[DEBUG][2016-12-05 05:52:21,386](CLBCalculation.java:184) - 		* EP3 : 46095
+[DEBUG][2016-12-05 05:52:21,386](CLBCalculation.java:187) - 		* server total traffic : 90452
+[DEBUG][2016-12-05 05:52:21,386](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 05:52:21,401](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 05:52:21,401](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 05:52:21,401](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 05:52:22,245](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 05:52:22,245](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 05:52:22,261](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 05:52:25,073](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 05:52:25,073](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 05:52:25,073](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 05:52:25,073](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 05:52:25,433](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 05:52:25,433](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 05:52:25,448](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 05:52:25,464](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 05:52:25,464](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 05:52:25,464](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 06:51:07,389](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 06:51:17,858](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 06:51:39,673](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 06:51:47,502](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 06:52:04,129](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[DEBUG][2016-12-05 06:52:04,254](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 06:52:04,254](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 06:52:04,254](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-05 06:52:04,254](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 06:52:04,254](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 06:52:04,254](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 06:52:04,254](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 06:52:04,457](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 06:52:31,179](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 06:52:31,179](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 06:52:31,179](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 06:52:31,179](CLPCalculation.java:106) - 	* number of user : 583
+[INFO ][2016-12-05 06:52:31,710](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 06:52:31,726](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 06:52:31,804](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 06:52:31,804](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 06:52:31,804](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 06:52:31,804](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 06:52:31,804](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 06:52:31,804](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 06:52:31,804](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 06:52:31,820](CLBCalculation.java:184) - 		* EP1 : 38279
+[DEBUG][2016-12-05 06:52:31,820](CLBCalculation.java:184) - 		* EP2 : 1719
+[DEBUG][2016-12-05 06:52:31,820](CLBCalculation.java:184) - 		* EP3 : 40773
+[DEBUG][2016-12-05 06:52:31,820](CLBCalculation.java:187) - 		* server total traffic : 80771
+[DEBUG][2016-12-05 06:52:31,835](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 06:52:31,835](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 06:52:31,835](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 06:52:31,835](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 06:52:32,632](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 06:52:32,648](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 06:52:32,648](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 06:52:35,242](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 06:52:35,242](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 06:52:35,257](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 06:52:35,257](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 06:52:35,742](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 06:52:35,742](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 06:52:35,757](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 06:52:35,757](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 06:52:35,757](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 06:52:35,773](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 07:51:08,181](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 07:51:18,557](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 07:51:49,279](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 07:51:55,905](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 07:52:15,969](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[DEBUG][2016-12-05 07:52:16,063](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 07:52:16,063](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 07:52:16,063](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-05 07:52:16,063](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 07:52:16,063](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 07:52:16,079](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 07:52:16,079](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 07:52:16,235](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 07:52:37,394](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 07:52:37,394](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 07:52:37,394](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 07:52:37,409](CLPCalculation.java:106) - 	* number of user : 500
+[INFO ][2016-12-05 07:52:37,941](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 07:52:37,941](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 07:52:38,003](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 07:52:38,003](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 07:52:38,003](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 07:52:38,003](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 07:52:38,003](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 07:52:38,003](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 07:52:38,003](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 07:52:38,019](CLBCalculation.java:184) - 		* EP1 : 32692
+[DEBUG][2016-12-05 07:52:38,019](CLBCalculation.java:184) - 		* EP2 : 1514
+[DEBUG][2016-12-05 07:52:38,019](CLBCalculation.java:184) - 		* EP3 : 35059
+[DEBUG][2016-12-05 07:52:38,019](CLBCalculation.java:187) - 		* server total traffic : 69265
+[DEBUG][2016-12-05 07:52:38,019](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 07:52:38,019](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 07:52:38,019](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 07:52:38,034](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 07:52:38,706](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 07:52:38,706](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 07:52:38,722](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 07:52:40,785](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 07:52:40,785](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 07:52:40,800](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 07:52:40,800](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 07:52:41,129](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 07:52:41,129](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 07:52:41,144](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 07:52:41,144](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 07:52:41,160](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 07:52:41,160](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 08:51:08,911](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 08:51:17,021](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 08:51:28,069](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 08:51:33,382](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 08:51:59,385](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[DEBUG][2016-12-05 08:51:59,494](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 08:51:59,494](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 08:51:59,494](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-05 08:51:59,494](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 08:51:59,494](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 08:51:59,494](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 08:51:59,494](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 08:51:59,698](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 08:52:18,262](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 08:52:18,262](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 08:52:18,278](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 08:52:18,278](CLPCalculation.java:106) - 	* number of user : 451
+[INFO ][2016-12-05 08:52:18,699](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 08:52:18,699](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 08:52:18,762](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 08:52:18,762](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 08:52:18,762](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 08:52:18,762](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 08:52:18,762](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 08:52:18,762](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 08:52:18,778](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 08:52:18,778](CLBCalculation.java:184) - 		* EP1 : 30092
+[DEBUG][2016-12-05 08:52:18,778](CLBCalculation.java:184) - 		* EP2 : 1462
+[DEBUG][2016-12-05 08:52:18,778](CLBCalculation.java:184) - 		* EP3 : 32789
+[DEBUG][2016-12-05 08:52:18,793](CLBCalculation.java:187) - 		* server total traffic : 64343
+[DEBUG][2016-12-05 08:52:18,793](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 08:52:18,793](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 08:52:18,793](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 08:52:18,793](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 08:52:19,371](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 08:52:19,387](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 08:52:19,403](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 08:52:21,450](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 08:52:21,450](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 08:52:21,465](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 08:52:21,465](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 08:52:21,809](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 08:52:21,809](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 08:52:21,825](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 08:52:21,825](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 08:52:21,840](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 08:52:21,840](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 09:51:09,672](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 09:51:17,845](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 09:51:40,566](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 09:51:45,660](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 09:52:09,241](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[DEBUG][2016-12-05 09:52:09,350](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 09:52:09,350](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 09:52:09,350](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-05 09:52:09,350](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 09:52:09,350](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 09:52:09,350](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 09:52:09,350](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 09:52:09,553](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 09:52:27,508](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 09:52:27,508](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 09:52:27,508](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 09:52:27,524](CLPCalculation.java:106) - 	* number of user : 431
+[INFO ][2016-12-05 09:52:27,915](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 09:52:27,915](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 09:52:27,961](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 09:52:27,977](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 09:52:27,977](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 09:52:27,977](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 09:52:27,977](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 09:52:27,977](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 09:52:27,977](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 09:52:27,977](CLBCalculation.java:184) - 		* EP1 : 28888
+[DEBUG][2016-12-05 09:52:27,993](CLBCalculation.java:184) - 		* EP2 : 1439
+[DEBUG][2016-12-05 09:52:27,993](CLBCalculation.java:184) - 		* EP3 : 30737
+[DEBUG][2016-12-05 09:52:27,993](CLBCalculation.java:187) - 		* server total traffic : 61064
+[DEBUG][2016-12-05 09:52:27,993](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 09:52:27,993](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 09:52:27,993](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 09:52:27,993](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 09:52:28,587](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 09:52:28,602](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 09:52:28,602](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 09:52:30,587](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 09:52:30,587](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 09:52:30,587](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 09:52:30,587](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 09:52:30,962](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 09:52:30,962](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 09:52:30,977](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 09:52:30,977](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 09:52:30,977](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 09:52:30,993](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 10:51:10,511](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 10:51:19,309](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 10:51:19,512](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 10:51:26,091](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 10:51:53,578](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[DEBUG][2016-12-05 10:51:53,688](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 10:51:53,688](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 10:51:53,688](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-05 10:51:53,688](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 10:51:53,688](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 10:51:53,688](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 10:51:53,688](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 10:51:53,875](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 10:52:14,690](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 10:52:14,690](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 10:52:14,690](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 10:52:14,705](CLPCalculation.java:106) - 	* number of user : 503
+[INFO ][2016-12-05 10:52:15,127](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 10:52:15,143](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 10:52:15,205](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 10:52:15,205](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 10:52:15,205](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 10:52:15,205](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 10:52:15,205](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 10:52:15,205](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 10:52:15,205](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 10:52:15,221](CLBCalculation.java:184) - 		* EP1 : 33361
+[DEBUG][2016-12-05 10:52:15,221](CLBCalculation.java:184) - 		* EP2 : 1698
+[DEBUG][2016-12-05 10:52:15,221](CLBCalculation.java:184) - 		* EP3 : 35447
+[DEBUG][2016-12-05 10:52:15,221](CLBCalculation.java:187) - 		* server total traffic : 70506
+[DEBUG][2016-12-05 10:52:15,237](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 10:52:15,237](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 10:52:15,237](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 10:52:15,237](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 10:52:15,924](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 10:52:15,940](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 10:52:15,940](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 10:52:18,159](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 10:52:18,159](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 10:52:18,175](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 10:52:18,175](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 10:52:18,472](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 10:52:18,472](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 10:52:18,472](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 10:52:18,472](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 10:52:18,487](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 10:52:18,487](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 11:51:11,272](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 11:51:23,180](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 11:51:30,774](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 11:51:39,541](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 11:52:06,966](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[DEBUG][2016-12-05 11:52:07,075](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 11:52:07,075](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 11:52:07,075](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-05 11:52:07,075](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 11:52:07,091](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 11:52:07,091](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 11:52:07,091](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 11:52:07,247](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 11:52:35,578](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 11:52:35,578](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 11:52:35,578](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 11:52:35,594](CLPCalculation.java:106) - 	* number of user : 608
+[INFO ][2016-12-05 11:52:36,312](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 11:52:36,312](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 11:52:36,406](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 11:52:36,406](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 11:52:36,406](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 11:52:36,406](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 11:52:36,406](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 11:52:36,406](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 11:52:36,422](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 11:52:36,422](CLBCalculation.java:184) - 		* EP1 : 41455
+[DEBUG][2016-12-05 11:52:36,437](CLBCalculation.java:184) - 		* EP2 : 2021
+[DEBUG][2016-12-05 11:52:36,437](CLBCalculation.java:184) - 		* EP3 : 44456
+[DEBUG][2016-12-05 11:52:36,437](CLBCalculation.java:187) - 		* server total traffic : 87932
+[DEBUG][2016-12-05 11:52:36,437](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 11:52:36,437](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 11:52:36,437](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 11:52:36,437](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 11:52:37,250](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 11:52:37,250](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 11:52:37,266](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 11:52:40,063](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 11:52:40,063](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 11:52:40,079](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 11:52:40,079](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 11:52:40,485](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 11:52:40,485](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 11:52:40,500](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 11:52:40,500](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 11:52:40,516](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 11:52:40,516](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 12:56:19,685](CBroker.java:47) - ========================================================================================================
+[INFO ][2016-12-05 12:56:19,685](CBroker.java:48) - ============================================= BROKER START =============================================
+[INFO ][2016-12-05 12:56:19,685](CBroker.java:49) - ========================================================================================================
+
+[INFO ][2016-12-05 12:56:19,700](CLPCalculation.java:413) - LP Thread is Running Now..
+[INFO ][2016-12-05 12:56:19,700](CLPCalculation.java:24) - check the number of receiving monitored data 
+
+[INFO ][2016-12-05 12:56:19,700](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 12:56:19,716](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 12:56:19,716](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 12:56:19,716](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 13:51:32,274](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 13:51:32,337](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 13:51:53,167](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 13:51:53,917](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 13:51:56,355](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 13:51:56,496](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 13:51:56,496](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 13:51:56,496](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 13:51:56,496](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 13:51:56,511](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 13:51:56,511](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 13:51:56,511](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 13:51:56,511](CInitPrevMatch.java:12) - Initialize previous match - start
+[DEBUG][2016-12-05 13:51:56,511](CInitPrevMatch.java:32) - 	Number of users : 702
+[DEBUG][2016-12-05 13:51:56,511](CInitPrevMatch.java:33) - 	Previous match size : 702
+[DEBUG][2016-12-05 13:51:56,511](CInitPrevMatch.java:34) - Initialize previous match - end
+[DEBUG][2016-12-05 13:51:56,714](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 13:52:27,546](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 13:52:27,546](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 13:52:27,546](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 13:52:27,546](CLPCalculation.java:106) - 	* number of user : 702
+[INFO ][2016-12-05 13:52:28,218](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 13:52:28,218](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 13:52:28,343](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 13:52:28,343](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 13:52:28,343](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 13:52:28,343](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 13:52:28,343](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 13:52:28,343](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 13:52:28,343](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 13:52:28,358](CLBCalculation.java:184) - 		* EP1 : 31750
+[DEBUG][2016-12-05 13:52:28,358](CLBCalculation.java:184) - 		* EP2 : 3454
+[DEBUG][2016-12-05 13:52:28,374](CLBCalculation.java:184) - 		* EP3 : 64131
+[DEBUG][2016-12-05 13:52:28,374](CLBCalculation.java:187) - 		* server total traffic : 99335
+[DEBUG][2016-12-05 13:52:28,374](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 13:52:28,374](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 13:52:28,374](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 13:52:28,374](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 13:52:29,499](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 13:52:29,515](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 13:52:29,515](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 13:52:32,656](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 13:52:32,656](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 13:52:32,671](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 13:52:32,671](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 13:52:33,094](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 13:52:33,094](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 13:52:33,109](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 13:52:33,109](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 13:52:33,109](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 13:52:33,125](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 14:51:32,879](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 14:51:33,426](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 14:51:56,069](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 14:51:56,491](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 14:51:57,788](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 14:51:57,929](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 14:51:57,929](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 14:51:57,929](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 14:51:57,944](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 14:51:57,944](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 14:51:57,944](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 14:51:57,944](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 14:51:58,038](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 14:52:29,104](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 14:52:29,104](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 14:52:29,120](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 14:52:29,120](CLPCalculation.java:106) - 	* number of user : 751
+[INFO ][2016-12-05 14:52:29,854](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 14:52:29,870](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 14:52:29,979](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 14:52:29,979](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 14:52:29,979](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 14:52:29,979](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 14:52:29,979](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 14:52:29,979](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 14:52:29,995](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 14:52:29,995](CLBCalculation.java:184) - 		* EP1 : 34880
+[DEBUG][2016-12-05 14:52:30,010](CLBCalculation.java:184) - 		* EP2 : 3899
+[DEBUG][2016-12-05 14:52:30,010](CLBCalculation.java:184) - 		* EP3 : 72055
+[DEBUG][2016-12-05 14:52:30,010](CLBCalculation.java:187) - 		* server total traffic : 110834
+[DEBUG][2016-12-05 14:52:30,010](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 14:52:30,010](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 14:52:30,010](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 14:52:30,010](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 14:52:31,214](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 14:52:31,229](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 14:52:31,245](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 14:52:34,573](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 14:52:34,573](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 14:52:34,589](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 14:52:34,589](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 14:52:34,948](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 14:52:34,948](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 14:52:34,964](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 14:52:34,964](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 14:52:34,980](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 14:52:34,980](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 15:51:33,359](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 15:51:34,937](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 15:51:58,565](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 15:51:58,705](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 15:52:01,206](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 15:52:01,362](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 15:52:01,362](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 15:52:01,362](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 15:52:01,362](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 15:52:01,362](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 15:52:01,362](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 15:52:01,362](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 15:52:01,612](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 15:52:38,741](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 15:52:38,741](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 15:52:38,741](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 15:52:38,757](CLPCalculation.java:106) - 	* number of user : 778
+[INFO ][2016-12-05 15:52:39,585](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 15:52:39,585](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 15:52:39,725](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 15:52:39,725](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 15:52:39,725](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 15:52:39,725](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 15:52:39,725](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 15:52:39,725](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 15:52:39,725](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 15:52:39,741](CLBCalculation.java:184) - 		* EP1 : 36972
+[DEBUG][2016-12-05 15:52:39,741](CLBCalculation.java:184) - 		* EP2 : 4114
+[DEBUG][2016-12-05 15:52:39,741](CLBCalculation.java:184) - 		* EP3 : 76785
+[DEBUG][2016-12-05 15:52:39,757](CLBCalculation.java:187) - 		* server total traffic : 117871
+[DEBUG][2016-12-05 15:52:39,757](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 15:52:39,757](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 15:52:39,757](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 15:52:39,757](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 15:52:40,772](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 15:52:40,788](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 15:52:40,788](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 15:52:44,242](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 15:52:44,242](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 15:52:44,257](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 15:52:44,257](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 15:52:44,586](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 15:52:44,586](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 15:52:44,601](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 15:52:44,601](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 15:52:44,601](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 15:52:44,617](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 16:51:33,854](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 16:51:37,245](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 16:51:58,732](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 16:51:58,857](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 16:52:05,530](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 16:52:05,655](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 16:52:05,655](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 16:52:05,655](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 16:52:05,670](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 16:52:05,670](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 16:52:05,670](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 16:52:05,670](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 16:52:05,858](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 16:52:39,143](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 16:52:39,143](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 16:52:39,143](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 16:52:39,158](CLPCalculation.java:106) - 	* number of user : 785
+[INFO ][2016-12-05 16:52:39,955](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 16:52:39,971](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 16:52:40,096](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 16:52:40,111](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 16:52:40,111](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 16:52:40,111](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 16:52:40,111](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 16:52:40,111](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 16:52:40,111](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 16:52:40,111](CLBCalculation.java:184) - 		* EP1 : 35724
+[DEBUG][2016-12-05 16:52:40,127](CLBCalculation.java:184) - 		* EP2 : 4030
+[DEBUG][2016-12-05 16:52:40,127](CLBCalculation.java:184) - 		* EP3 : 74262
+[DEBUG][2016-12-05 16:52:40,127](CLBCalculation.java:187) - 		* server total traffic : 114016
+[DEBUG][2016-12-05 16:52:40,127](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 16:52:40,127](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 16:52:40,127](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 16:52:40,127](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 16:52:41,221](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 16:52:41,221](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 16:52:41,237](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 16:52:44,690](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 16:52:44,690](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 16:52:44,706](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 16:52:44,706](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 16:52:45,018](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 16:52:45,018](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 16:52:45,034](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 16:52:45,049](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 16:52:45,049](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 16:52:45,049](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 17:51:34,584](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 17:51:40,366](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 17:51:58,602](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 17:51:58,649](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 17:52:09,822](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 17:52:09,963](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 17:52:09,963](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 17:52:09,963](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 17:52:09,963](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 17:52:09,963](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 17:52:09,979](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 17:52:09,979](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 17:52:10,135](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 17:52:42,170](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 17:52:42,170](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 17:52:42,170](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 17:52:42,185](CLPCalculation.java:106) - 	* number of user : 779
+[INFO ][2016-12-05 17:52:42,998](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 17:52:42,998](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 17:52:43,123](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 17:52:43,138](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 17:52:43,138](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 17:52:43,138](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 17:52:43,138](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 17:52:43,138](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 17:52:43,138](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 17:52:43,154](CLBCalculation.java:184) - 		* EP1 : 34784
+[DEBUG][2016-12-05 17:52:43,154](CLBCalculation.java:184) - 		* EP2 : 4149
+[DEBUG][2016-12-05 17:52:43,154](CLBCalculation.java:184) - 		* EP3 : 72790
+[DEBUG][2016-12-05 17:52:43,154](CLBCalculation.java:187) - 		* server total traffic : 111723
+[DEBUG][2016-12-05 17:52:43,154](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 17:52:43,170](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 17:52:43,170](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 17:52:43,170](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 17:52:44,185](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 17:52:44,201](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 17:52:44,217](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 17:52:47,576](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 17:52:47,576](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 17:52:47,576](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 17:52:47,576](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 17:52:47,967](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 17:52:47,967](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 17:52:47,967](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 17:52:47,983](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 17:52:47,983](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 17:52:48,030](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 18:51:35,095](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 18:51:44,252](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 18:52:00,160](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 18:52:00,192](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 18:52:15,037](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 18:52:15,178](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 18:52:15,178](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 18:52:15,178](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 18:52:15,178](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 18:52:15,193](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 18:52:15,193](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 18:52:15,193](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 18:52:15,350](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 18:52:51,947](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 18:52:51,947](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 18:52:51,947](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 18:52:51,963](CLPCalculation.java:106) - 	* number of user : 771
+[INFO ][2016-12-05 18:52:52,744](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 18:52:52,760](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 18:52:52,885](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 18:52:52,885](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 18:52:52,885](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 18:52:52,885](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 18:52:52,885](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 18:52:52,885](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 18:52:52,885](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 18:52:52,900](CLBCalculation.java:184) - 		* EP1 : 35253
+[DEBUG][2016-12-05 18:52:52,900](CLBCalculation.java:184) - 		* EP2 : 4004
+[DEBUG][2016-12-05 18:52:52,900](CLBCalculation.java:184) - 		* EP3 : 73961
+[DEBUG][2016-12-05 18:52:52,900](CLBCalculation.java:187) - 		* server total traffic : 113218
+[DEBUG][2016-12-05 18:52:52,900](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 18:52:52,916](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 18:52:52,916](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 18:52:52,916](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 18:52:53,979](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 18:52:53,979](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 18:52:53,994](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 18:52:57,448](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 18:52:57,448](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 18:52:57,463](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 18:52:57,463](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 18:52:57,792](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 18:52:57,792](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 18:52:57,807](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 18:52:57,807](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 18:52:57,823](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 18:52:57,823](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 19:51:20,386](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 19:51:35,716](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 19:51:44,545](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 19:51:44,623](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 19:51:48,311](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 19:51:48,451](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 19:51:48,451](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 19:51:48,451](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 19:51:48,451](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 19:51:48,467](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 19:51:48,467](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 19:51:48,467](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 19:51:48,764](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 19:52:21,549](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 19:52:21,549](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 19:52:21,564](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 19:52:21,564](CLPCalculation.java:106) - 	* number of user : 771
+[INFO ][2016-12-05 19:52:22,346](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 19:52:22,361](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 19:52:22,486](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 19:52:22,486](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 19:52:22,486](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 19:52:22,486](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 19:52:22,486](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 19:52:22,486](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 19:52:22,486](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 19:52:22,502](CLBCalculation.java:184) - 		* EP1 : 36568
+[DEBUG][2016-12-05 19:52:22,502](CLBCalculation.java:184) - 		* EP2 : 4267
+[DEBUG][2016-12-05 19:52:22,502](CLBCalculation.java:184) - 		* EP3 : 78162
+[DEBUG][2016-12-05 19:52:22,502](CLBCalculation.java:187) - 		* server total traffic : 118997
+[DEBUG][2016-12-05 19:52:22,518](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 19:52:22,518](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 19:52:22,518](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 19:52:22,518](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 19:52:23,611](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 19:52:23,627](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 19:52:23,627](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 19:52:27,127](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 19:52:27,127](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 19:52:27,143](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 19:52:27,143](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 19:52:27,471](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 19:52:27,471](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 19:52:27,487](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 19:52:27,487](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 19:52:27,487](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 19:52:27,502](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 20:51:26,148](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 20:51:36,336](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 20:51:50,041](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 20:51:50,103](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 20:51:52,650](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 20:51:52,775](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 20:51:52,775](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 20:51:52,775](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 20:51:52,775](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 20:51:52,791](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 20:51:52,791](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 20:51:52,791](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 20:51:52,885](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 20:52:26,092](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 20:52:26,092](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 20:52:26,107](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 20:52:26,107](CLPCalculation.java:106) - 	* number of user : 770
+[INFO ][2016-12-05 20:52:26,998](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 20:52:26,998](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 20:52:27,123](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 20:52:27,123](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 20:52:27,123](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 20:52:27,123](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 20:52:27,123](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 20:52:27,123](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 20:52:27,138](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 20:52:27,138](CLBCalculation.java:184) - 		* EP1 : 36463
+[DEBUG][2016-12-05 20:52:27,138](CLBCalculation.java:184) - 		* EP2 : 4429
+[DEBUG][2016-12-05 20:52:27,154](CLBCalculation.java:184) - 		* EP3 : 77065
+[DEBUG][2016-12-05 20:52:27,154](CLBCalculation.java:187) - 		* server total traffic : 117957
+[DEBUG][2016-12-05 20:52:27,154](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 20:52:27,154](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 20:52:27,154](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 20:52:27,154](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 20:52:28,154](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 20:52:28,170](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 20:52:28,170](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 20:52:31,655](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 20:52:31,655](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 20:52:31,670](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 20:52:31,670](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 20:52:31,998](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 20:52:31,998](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 20:52:31,998](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 20:52:31,998](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 20:52:32,014](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 20:52:32,014](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 21:51:31,659](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 21:51:37,019](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 21:51:54,193](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 21:51:55,709](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 21:51:55,709](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 21:51:55,740](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 21:51:55,740](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 21:51:55,740](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 21:51:55,740](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 21:51:55,740](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 21:51:55,755](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 21:51:55,755](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 21:51:56,021](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 21:52:32,244](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 21:52:32,244](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 21:52:32,244](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 21:52:32,259](CLPCalculation.java:106) - 	* number of user : 766
+[INFO ][2016-12-05 21:52:33,009](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 21:52:33,009](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 21:52:33,150](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 21:52:33,150](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 21:52:33,150](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 21:52:33,150](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 21:52:33,150](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 21:52:33,150](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 21:52:33,150](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 21:52:33,166](CLBCalculation.java:184) - 		* EP1 : 34744
+[DEBUG][2016-12-05 21:52:33,166](CLBCalculation.java:184) - 		* EP2 : 3992
+[DEBUG][2016-12-05 21:52:33,166](CLBCalculation.java:184) - 		* EP3 : 73771
+[DEBUG][2016-12-05 21:52:33,166](CLBCalculation.java:187) - 		* server total traffic : 112507
+[DEBUG][2016-12-05 21:52:33,166](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 21:52:33,166](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 21:52:33,166](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 21:52:33,166](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 21:52:34,197](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 21:52:34,213](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 21:52:34,213](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 21:52:37,651](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 21:52:37,651](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 21:52:37,666](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 21:52:37,666](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 21:52:37,963](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 21:52:37,963](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 21:52:37,963](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 21:52:37,979](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 21:52:37,979](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 21:52:37,979](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 22:51:37,327](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 22:51:37,686](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 22:51:55,548](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 22:51:59,204](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 22:51:59,220](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[INFO ][2016-12-05 22:51:59,267](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[DEBUG][2016-12-05 22:51:59,267](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 22:51:59,267](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 22:51:59,283](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 22:51:59,283](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 22:51:59,283](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 22:51:59,283](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 22:51:59,423](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 22:52:29,880](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 22:52:29,880](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 22:52:29,880](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 22:52:29,911](CLPCalculation.java:106) - 	* number of user : 738
+[INFO ][2016-12-05 22:52:30,661](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 22:52:30,661](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 22:52:30,770](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 22:52:30,786](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 22:52:30,786](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 22:52:30,786](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 22:52:30,786](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 22:52:30,786](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 22:52:30,786](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 22:52:30,786](CLBCalculation.java:184) - 		* EP1 : 32649
+[DEBUG][2016-12-05 22:52:30,801](CLBCalculation.java:184) - 		* EP2 : 3674
+[DEBUG][2016-12-05 22:52:30,801](CLBCalculation.java:184) - 		* EP3 : 68326
+[DEBUG][2016-12-05 22:52:30,801](CLBCalculation.java:187) - 		* server total traffic : 104649
+[DEBUG][2016-12-05 22:52:30,801](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 22:52:30,801](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 22:52:30,801](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 22:52:30,801](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 22:52:31,864](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 22:52:31,880](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 22:52:31,880](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 22:52:35,068](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 22:52:35,068](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 22:52:35,068](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 22:52:35,068](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 22:52:35,536](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 22:52:35,536](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 22:52:35,552](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 22:52:35,552](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 22:52:35,552](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 22:52:35,568](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
+[INFO ][2016-12-05 23:51:38,385](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 23:51:43,182](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 23:51:57,637](CConnectionWrap.java:29) - 	* Message from Entry Point : Do extracting monitored data
+[INFO ][2016-12-05 23:51:59,700](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 1
+[INFO ][2016-12-05 23:51:59,715](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 2
+[DEBUG][2016-12-05 23:51:59,715](CLPCalculation.java:41) - # All The Monitored Data Was Received
+[DEBUG][2016-12-05 23:51:59,715](CLPCalculation.java:45) - # SET EP CONNECTIION COUNTER ZERO 
+
+[INFO ][2016-12-05 23:51:59,715](CConnectionWrap.java:43) - 	* Number of Entry Point Receving Data Completely : 3
+[INFO ][2016-12-05 23:51:59,731](CLPCalculation.java:74) - [doMatchAlgorithm method] - Start 
+
+[INFO ][2016-12-05 23:51:59,731](Normalization.java:21) - Normalization Start
+[DEBUG][2016-12-05 23:51:59,747](CNormalizeTraffic.java:16) - Normalization of Server Traffic Start
+[DEBUG][2016-12-05 23:51:59,747](CNormalizeDistance.java:15) - Normalization of Distance Start
+[DEBUG][2016-12-05 23:51:59,887](CNormalizeTraffic.java:32) - Normalization of Server Traffic Was Done
+[DEBUG][2016-12-05 23:52:29,078](CNormalizeDistance.java:59) - Normalization of Distance Was Done
+[INFO ][2016-12-05 23:52:29,078](Normalization.java:68) - Normalization Of All Factors Were Done 
+
+[INFO ][2016-12-05 23:52:29,078](CLPCalculation.java:97) - [calculateWeight method] - Start
+[DEBUG][2016-12-05 23:52:29,078](CLPCalculation.java:106) - 	* number of user : 717
+[INFO ][2016-12-05 23:52:29,765](CLPCalculation.java:153) - [calculateWeight method] - End 
+
+[INFO ][2016-12-05 23:52:29,765](CLPCalculation.java:158) - [calculateLP method] - Start
+[INFO ][2016-12-05 23:52:29,890](CLPCalculation.java:391) - [calculateLP method] - End 
+
+[DEBUG][2016-12-05 23:52:29,890](CLBCalculation.java:18) - [CLBCalculation constructor] - Start
+[DEBUG][2016-12-05 23:52:29,890](CLBCalculation.java:37) - 	* set capacity limitation of each cloud (server) using HashMap
+[DEBUG][2016-12-05 23:52:29,890](CLBCalculation.java:38) - 	* current map.size() : 3
+[DEBUG][2016-12-05 23:52:29,890](CLBCalculation.java:42) - [CLBCalculation constructor] - End 
+
+[INFO ][2016-12-05 23:52:29,890](CLBCalculation.java:48) - [lbMain method] - Start
+[INFO ][2016-12-05 23:52:29,890](CLBCalculation.java:178) - 	[determineProcessType method] - Start
+[DEBUG][2016-12-05 23:52:29,906](CLBCalculation.java:184) - 		* EP1 : 30527
+[DEBUG][2016-12-05 23:52:29,906](CLBCalculation.java:184) - 		* EP2 : 3335
+[DEBUG][2016-12-05 23:52:29,906](CLBCalculation.java:184) - 		* EP3 : 62602
+[DEBUG][2016-12-05 23:52:29,906](CLBCalculation.java:187) - 		* server total traffic : 96464
+[DEBUG][2016-12-05 23:52:29,906](CLBCalculation.java:190) - 		* total capacity of clouds : 3.0E7
+[DEBUG][2016-12-05 23:52:29,906](CLBCalculation.java:193) - 		* minimum capacity of Clouds : 1.0E7
+[INFO ][2016-12-05 23:52:29,906](CLBCalculation.java:206) - 	[determineProcessType method] - End
+[DEBUG][2016-12-05 23:52:29,906](CLBCalculation.java:58) - 	* MINIMUM_TRAFFIC 
+
+[INFO ][2016-12-05 23:52:30,891](CLBCalculation.java:1069) - 	[updateBrokerGiver method] - Start
+[INFO ][2016-12-05 23:52:30,906](CLBCalculation.java:1077) -  		* before update : number of user at each cloud
+[INFO ][2016-12-05 23:52:30,906](CLBCalculation.java:1087) - 			EP1:914 EP2:58 EP3:1029 
+[DEBUG][2016-12-05 23:52:34,063](CLBCalculation.java:1127) -  			- update count (cuz, different with the existing match): 0
+[INFO ][2016-12-05 23:52:34,063](CLBCalculation.java:1132) - 		* after update : number of user at each cloud
+[INFO ][2016-12-05 23:52:34,063](CLBCalculation.java:1142) - 			EP1:914 EP2:58 EP3:1029 
+[INFO ][2016-12-05 23:52:34,063](CLBCalculation.java:1146) - 	[updateBrokerGiver method] - End
+[INFO ][2016-12-05 23:52:34,454](CLBCalculation.java:99) - [lbMain method] - End 
+
+[INFO ][2016-12-05 23:52:34,454](CLPCalculation.java:92) - [doMatchAlgorithm method] - End 
+
+[INFO ][2016-12-05 23:52:34,454](CLPCalculation.java:27) - ****************************************************************************************
+[INFO ][2016-12-05 23:52:34,469](CLPCalculation.java:28) - ********************************* Broker routine START *********************************
+[INFO ][2016-12-05 23:52:34,469](CLPCalculation.java:29) - **************************************************************************************** 
+
+[INFO ][2016-12-05 23:52:34,469](CLPCalculation.java:34) - Initialize dynamic table (normalized_distance_table) 
+
